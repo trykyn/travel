@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#11777c" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b5458" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="여행">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<title>여행</title>
+<style>
+/* Aussehen: oben ein petrolfarbener Kopf (bei Reisen mit Titelbild das Bild), darunter ein weißes Blatt.
+   Farben je Art: Fahrt lila, Unterkunft blau, Essen orange, Sehenswert grün.
+   모양: 위는 바다색 머리(커버 사진이 있으면 사진), 아래는 흰 종이. 종류별 색: 이동 보라, 숙소 파랑, 맛집 주황, 관광 초록. */
+:root {
+  --brand: #11777c; --brand-2: #0d5f63; --on-brand: #fff; --sheet: #fff; --ink: #14211f; --muted: #627370; --line: #e7eeed;
+  --field: #f1f5f4; --soft: #e3f3f2; --accent: #0d6b70; --sun: #ffc94d; --sun-ink: #3b2c00;
+  --ok: #137a4b; --ok-bg: #e2f5ea; --warn: #b4520b; --warn-bg: #fff0dc; --bad: #c62f22;
+  --move: #7a5cd3; --stay: #2f72d6; --food: #e3702f; --see: #1d9a64; --etc: #7b8a88;
+  --move-bg: #efeafc; --stay-bg: #e7f0fd; --food-bg: #fdeee4; --see-bg: #e2f5ec; --etc-bg: #eef1f1;
+  --shadow: 0 1px 2px rgba(10, 40, 40, .06), 0 4px 14px rgba(10, 40, 40, .07);
+  --sans: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brand: #0b5458; --brand-2: #08403f; --sheet: #121918; --ink: #e6efed; --muted: #95a8a5; --line: #243130;
+    --field: #1c2524; --soft: #15302f; --accent: #6fd3cc; --sun: #f0bd3e;
+    --ok: #6fdca4; --ok-bg: #173526; --warn: #ffb070; --warn-bg: #3a2818; --bad: #ff7a6b;
+    --move: #a68cf0; --stay: #6ea4f5; --food: #f59a5e; --see: #4fcf94; --etc: #a2b0ae;
+    --move-bg: #262040; --stay-bg: #182a44; --food-bg: #3a2416; --see-bg: #14322a; --etc-bg: #222b2a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  }
+}
+* { box-sizing: border-box; touch-action: pan-x pan-y; -webkit-tap-highlight-color: transparent; }
+html { background: var(--brand); }
+body { margin: 0; background: var(--brand); color: var(--ink); font: 17px/1.5 var(--sans); -webkit-text-size-adjust: 100%; }
+body.locked { overflow: hidden; }
+#app { max-width: 620px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; display: flex; flex-direction: column; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; text-align: inherit; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Kopf / 머리 */
+.top { position: relative; padding: calc(16px + env(safe-area-inset-top)) 20px 30px; color: var(--on-brand); background: var(--brand) center/cover no-repeat; }
+.top.cover::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 30, 32, .35), rgba(0, 30, 32, .72)); }
+.top > * { position: relative; }
+.top :focus-visible { outline-color: #fff; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; }
+.icon-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; border-radius: 12px; font-size: 20px; }
+.top .icon-btn { background: rgba(255, 255, 255, .16); }
+.back { display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 8px; border-radius: 12px; background: rgba(255, 255, 255, .16); font-weight: 600; font-size: 15px; }
+.lang { display: flex; gap: 12px; }
+.lang button { font-size: 15px; opacity: .75; padding: 4px 0; border-bottom: 2px solid transparent; }
+.lang button.on { opacity: 1; font-weight: 700; border-bottom-color: var(--sun); }
+h1 { margin: 14px 0 0; font-size: 30px; font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
+h1 .fl { margin-right: 8px; }
+.sub { margin: 6px 0 0; font-size: 15px; opacity: .9; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.chip-d { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--sun); color: var(--sun-ink); font-weight: 800; font-size: 14px; }
+.tabs { display: flex; gap: 6px; overflow-x: auto; margin: 18px -20px 0; padding: 0 20px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; padding: 8px 14px; white-space: nowrap; font-size: 15px; font-weight: 600; border-radius: 999px; background: rgba(255, 255, 255, .16); }
+.tab.on { background: #fff; color: var(--brand-2); font-weight: 700; }
+
+/* Blatt / 종이 */
+.sheet { flex: 1; margin-top: -14px; padding: 20px 18px calc(110px + env(safe-area-inset-bottom)); background: var(--sheet); border-radius: 28px 28px 0 0; position: relative; }
+h2 { margin: 22px 2px 10px; font-size: 15px; font-weight: 700; color: var(--muted); letter-spacing: .01em; }
+h2:first-child { margin-top: 2px; }
+.empty { margin: 30px 0; text-align: center; color: var(--muted); }
+.banner { margin: 0 0 14px; padding: 11px 14px; border-radius: 14px; background: var(--warn-bg); color: var(--warn); font-size: 15px; font-weight: 600; }
+
+/* Startseite / 홈 */
+.hero { display: block; width: 100%; position: relative; overflow: hidden; border-radius: 22px; padding: 18px 18px 16px; min-height: 150px;
+  background: linear-gradient(135deg, #1a9a96, #11777c 60%, #0d5f63) center/cover no-repeat; color: #fff; box-shadow: var(--shadow); }
+.hero.cover::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 25, 28, .15), rgba(0, 25, 28, .7)); }
+.hero > * { position: relative; }
+.hero .label { font-size: 14px; font-weight: 600; opacity: .9; }
+.hero .big { display: block; margin-top: 2px; font-size: 44px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+.hero .name { display: block; margin-top: 18px; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+.hero .when { display: block; font-size: 15px; opacity: .92; }
+.trips { display: grid; gap: 10px; }
+.trip { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; border-radius: 18px; background: var(--sheet); box-shadow: var(--shadow); border: 1px solid var(--line); }
+.trip .fl { font-size: 30px; line-height: 1; width: 36px; text-align: center; flex: none; }
+.trip .tb { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.trip .tt { font-weight: 700; font-size: 18px; letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.trip .ts { font-size: 14px; color: var(--muted); }
+.trip .td { flex: none; font-weight: 800; color: var(--accent); font-size: 16px; }
+.trip.past { box-shadow: none; padding: 10px 12px; }
+.trip.past .fl { font-size: 24px; }
+.trip.past .tt { font-size: 16px; font-weight: 600; }
+.year { margin: 22px 2px 8px; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+h2 + .year { margin-top: 0; }
+
+/* Tage / 날짜별 일정 */
+.days { display: flex; gap: 6px; overflow-x: auto; margin: -4px -18px 14px; padding: 2px 18px 4px; scrollbar-width: none; position: sticky; top: 0; z-index: 3; background: var(--sheet); }
+.days::-webkit-scrollbar { display: none; }
+.days button { flex: none; display: flex; flex-direction: column; align-items: center; min-width: 52px; padding: 6px 8px; border-radius: 14px; background: var(--field); font-size: 13px; color: var(--muted); }
+.days button b { font-size: 17px; color: var(--ink); }
+.days button.today { background: var(--sun); color: var(--sun-ink); }
+.days button.today b { color: var(--sun-ink); }
+.day { scroll-margin-top: 76px; margin-bottom: 18px; }
+.dh { display: flex; align-items: baseline; gap: 8px; margin: 0 2px 8px; }
+.dh .n { font-weight: 800; font-size: 19px; letter-spacing: -.02em; }
+.dh .d { color: var(--muted); font-size: 15px; }
+.dh .now { margin-left: auto; padding: 1px 9px; border-radius: 999px; background: var(--sun); color: var(--sun-ink); font-size: 13px; font-weight: 800; }
+.night { display: flex; gap: 8px; align-items: center; margin: 0 0 8px; padding: 8px 12px; border-radius: 12px; background: var(--stay-bg); color: var(--stay); font-size: 14px; font-weight: 600; }
+.night span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.items { display: grid; gap: 8px; }
+.it { display: flex; gap: 12px; width: 100%; padding: 12px 14px 12px 12px; border-radius: 16px; background: var(--sheet); border: 1px solid var(--line); box-shadow: var(--shadow); position: relative; }
+.it::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 0 4px 4px 0; background: var(--c); }
+.it .ic { flex: none; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; background: var(--cbg); }
+.it .ib { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.it .t { font-weight: 700; font-size: 16.5px; line-height: 1.35; overflow-wrap: anywhere; }
+.it .m { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 14px; color: var(--muted); align-items: center; }
+.it .m .tm { color: var(--c); font-weight: 700; }
+.it .nt { font-size: 14px; color: var(--muted); white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.ok { color: var(--ok); font-weight: 700; }
+.todo { color: var(--warn); font-weight: 700; }
+.c-move { --c: var(--move); --cbg: var(--move-bg); } .c-stay { --c: var(--stay); --cbg: var(--stay-bg); }
+.c-food { --c: var(--food); --cbg: var(--food-bg); } .c-see { --c: var(--see); --cbg: var(--see-bg); } .c-etc { --c: var(--etc); --cbg: var(--etc-bg); }
+.add-day { width: 100%; margin-top: 8px; padding: 9px; border-radius: 12px; border: 1.5px dashed var(--line); color: var(--muted); font-size: 15px; font-weight: 600; text-align: center; }
+
+/* Buchungen / 예약 */
+.progress { height: 10px; border-radius: 99px; background: var(--field); overflow: hidden; margin: 8px 0 4px; }
+.progress span { display: block; height: 100%; border-radius: 99px; background: var(--brand); }
+.progress.over span { background: var(--bad); }
+.stat { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.stat b { font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
+.stat span { color: var(--muted); font-size: 15px; }
+.bk { display: flex; gap: 12px; align-items: flex-start; }
+.bk .it { flex: 1; }
+.tick { flex: none; width: 52px; align-self: stretch; border-radius: 16px; border: 1.5px solid var(--line); display: grid; place-items: center; }
+.tick .box { width: 28px; height: 28px; border-radius: 9px; border: 2px solid var(--muted); display: grid; place-items: center; color: #fff; font-size: 17px; font-weight: 800; }
+.tick.on { background: var(--ok-bg); border-color: transparent; }
+.tick.on .box { background: var(--ok); border-color: var(--ok); }
+.code { display: inline-flex; align-items: center; gap: 6px; padding: 1px 8px; border-radius: 8px; background: var(--field); font: 600 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); }
+.gaps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.gaps span { padding: 3px 10px; border-radius: 999px; background: var(--warn); color: #fff; font-size: 14px; font-weight: 700; }
+
+/* Geld / 돈 */
+.card { padding: 16px; border-radius: 18px; background: var(--field); }
+.card + .card { margin-top: 10px; }
+.bars { display: grid; gap: 10px; margin-top: 4px; }
+.bars .row { display: grid; grid-template-columns: 64px 1fr auto; gap: 10px; align-items: center; font-size: 15px; }
+.bars .row i { display: block; height: 12px; border-radius: 99px; background: var(--c); min-width: 4px; }
+.bars .row b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.rate { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; font-size: 15px; }
+.conv { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.conv input { flex: 1; min-width: 0; }
+.conv output { font-weight: 800; font-size: 20px; min-width: 90px; text-align: right; font-variant-numeric: tabular-nums; }
+.lines { list-style: none; margin: 0; padding: 0; }
+.lines li { display: flex; gap: 10px; align-items: baseline; padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.lines li .x { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lines li .dt { color: var(--muted); font-size: 13px; width: 44px; flex: none; }
+.lines li .am { text-align: right; font-variant-numeric: tabular-nums; }
+.lines li .am small { display: block; color: var(--muted); font-size: 12px; }
+
+/* Checkliste / 체크리스트 */
+.add { display: flex; gap: 8px; margin-bottom: 12px; }
+.add input { flex: 1; min-width: 0; }
+.tpl { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; }
+.pill { padding: 6px 12px; border-radius: 999px; background: var(--field); font-size: 14px; font-weight: 600; }
+.pill.on { background: var(--brand); color: #fff; }
+.checks { list-style: none; margin: 0; padding: 0; }
+.checks li { display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--line); }
+.checks .cb { flex: 1; display: flex; align-items: center; gap: 12px; padding: 12px 2px; min-width: 0; }
+.checks .box { flex: none; width: 26px; height: 26px; border-radius: 8px; border: 2px solid var(--muted); display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 800; }
+.checks li.done .box { background: var(--brand); border-color: var(--brand); }
+.checks li.done .tx { color: var(--muted); text-decoration: line-through; }
+.checks .tx { overflow-wrap: anywhere; }
+.checks .rm { flex: none; width: 36px; height: 36px; color: var(--muted); font-size: 20px; border-radius: 10px; }
+
+/* Notiz / 메모 */
+.memo { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; line-height: 1.6; }
+
+/* Felder und Knöpfe / 입력칸과 버튼 */
+.in, .add input { width: 100%; padding: 11px 13px; font-size: 17px; outline: 0; -webkit-appearance: none; appearance: none; background: var(--field); border: 1.5px solid transparent; border-radius: 13px; }
+.in:focus, .add input:focus { border-color: var(--brand); }
+textarea.in { resize: vertical; min-height: 84px; line-height: 1.5; }
+select.in { background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+input[type="date"].in { min-height: 46px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 18px; min-height: 46px; border-radius: 13px; background: var(--brand); color: #fff; font-weight: 700; }
+.btn.sun { background: var(--sun); color: var(--sun-ink); }
+.btn.ghost { background: none; color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.btn.danger { background: none; color: var(--bad); box-shadow: inset 0 0 0 1.5px var(--bad); }
+.btn.small { min-height: 36px; padding: 0 12px; font-size: 14px; border-radius: 10px; }
+.fab { position: fixed; z-index: 5; right: max(18px, calc(50% - 292px)); bottom: calc(22px + env(safe-area-inset-bottom)); height: 58px; padding: 0 22px; border-radius: 20px; background: var(--sun); color: var(--sun-ink); font-weight: 800; font-size: 17px; box-shadow: 0 6px 20px rgba(0, 0, 0, .18); }
+
+/* Eingabeblatt von unten / 아래에서 올라오는 입력 창 */
+#sheet-root { position: fixed; inset: 0; z-index: 20; }
+.scrim { position: absolute; inset: 0; background: rgba(0, 20, 20, .45); animation: fade .15s ease-out; }
+.panel { position: absolute; left: 0; right: 0; bottom: 0; max-width: 620px; margin: 0 auto; max-height: 92vh; max-height: 92dvh; overflow-y: auto; overscroll-behavior: contain;
+  padding: 10px 18px calc(20px + env(safe-area-inset-bottom)); background: var(--sheet); border-radius: 24px 24px 0 0; animation: up .2s ease-out; }
+.panel .grab { width: 40px; height: 5px; border-radius: 9px; background: var(--line); margin: 0 auto 10px; }
+.panel h3 { margin: 4px 0 14px; font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
+.panel h4 { margin: 20px 0 8px; font-size: 15px; color: var(--muted); }
+.fld { display: block; margin-bottom: 12px; }
+.fld > span { display: block; margin: 0 0 5px 2px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.cats label { position: relative; }
+.cats input { position: absolute; opacity: 0; pointer-events: none; }
+.cats span { display: inline-flex; gap: 5px; align-items: center; padding: 7px 13px; border-radius: 999px; background: var(--field); font-size: 15px; font-weight: 600; }
+.cats input:checked + span { background: var(--c); color: #fff; }
+.cats input:focus-visible + span { outline: 2px solid var(--accent); }
+.toggle { display: flex; align-items: center; gap: 12px; padding: 10px 2px; font-weight: 600; }
+.toggle input { width: 24px; height: 24px; accent-color: var(--brand); }
+.acts { display: flex; gap: 8px; margin-top: 18px; }
+.acts .btn { flex: 1; }
+.linkrow { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 12px; }
+.linkrow a { display: inline-block; max-width: 100%; padding: 4px 10px; border-radius: 9px; background: var(--soft); font-size: 14px; font-weight: 600; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flags { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 0; }
+.flags button { font-size: 24px; width: 40px; height: 40px; border-radius: 10px; }
+.flags button.on { background: var(--soft); box-shadow: inset 0 0 0 2px var(--brand); }
+.picks { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 14px; }
+.note { font-size: 14px; color: var(--muted); margin: 6px 2px 0; }
+.set-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+#toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); z-index: 30; max-width: calc(100% - 32px);
+  padding: 11px 18px; border-radius: 14px; background: #10302f; color: #fff; font-size: 15px; font-weight: 600; opacity: 0; pointer-events: none; transition: .2s; }
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+@keyframes up { from { transform: translateY(40px); opacity: .4; } }
+@keyframes fade { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="sheet-root" hidden></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+// ---------- Speicher / 저장 ----------
+// Ohne Anmeldung liegt alles in localStorage. Angemeldet ist das Dokument households/{가족 코드}_travel die Quelle,
+// localStorage behält nur eine Kopie für den schnellen Start.
+// 로그인 안 하면 이 기기에만 저장. 로그인하면 households/{가족 코드}_travel 문서가 원본이고 기기에는 사본만.
+const LS = 'travel-v1';
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(LS + ':' + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  put(k, v) { try { localStorage.setItem(LS + ':' + k, JSON.stringify(v)); } catch {} },
+};
+let trips = store.get('trips', {});
+let unsynced = new Set(store.get('unsynced', []));
+
+// ---------- Texte / 문구 ----------
+const T = {
+  ko: {
+    app: '여행', upcoming: '다가오는 여행', past: '지난 여행', newTrip: '+ 새 여행', noTrips: '아직 여행이 없어요. 아래 버튼으로 첫 여행을 만들어 보세요.',
+    undated: '날짜 미정', ongoing: '여행 중', dayN: '{n}일째', nights: '{n}박', next: '다음 여행', back: '여행',
+    tabs: { plan: '일정', book: '예약', money: '돈', check: '체크리스트', memo: '메모' },
+    cats: { move: '이동', stay: '숙소', food: '맛집', see: '관광', etc: '기타' },
+    dayNo: '{n}일차', today: '오늘', cand: '날짜 미정 · 후보', addHere: '+ 추가', addItem: '+ 일정', noItems: '아직 일정이 없어요',
+    night: '숙박 {a}/{b}박', checkout: '체크아웃', booked: '예약완료', notBooked: '예약 전', items: '일정 {n}',
+    newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란', date: '날짜', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)',
+    time: '시간', timePh: '예: 15:00-16:30', isBooked: '예약 완료', code: '예약번호', cost: '비용', notes: '메모', links: '링크 (한 줄에 하나)',
+    save: '저장', cancel: '취소', del: '삭제', delItemQ: '"{t}" 일정을 지울까요?', map: '🗺 지도에서 찾기', copied: '복사했어요',
+    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '예약한 일정', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요 👍', noBook: '숙소·이동 일정이 아직 없어요',
+    total: '총 비용', inLocal: '현지 통화로 {x}', budgetOf: '예산 {b}', left: '{x} 남음', over: '{x} 초과', byCat: '종류별', rate: '환율', fetchRate: '오늘 환율로', rateOk: '오늘 환율로 바꿨어요', rateFail: '환율을 불러오지 못했어요',
+    noRate: '환율이 없어서 유로로 못 바꾼 비용이 있어요', conv: '바로 환산', costList: '비용 목록', noCosts: '비용을 넣은 일정이 없어요', setRate: '환율 넣기',
+    addCheckPh: '준비물이나 할 일', add: '추가', tplTitle: '목록 넣기', addedN: '{n}개 넣었어요', noneAdded: '이미 다 들어 있어요', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요. 위에서 목록을 넣어 보세요.',
+    tpl: { basic: '기본', kids: '아이', flight: '비행기', beach: '해변', ski: '스키', before: '출발 전 할 일' },
+    edit: '편집', memoEmpty: '메모가 없어요', memoPh: '숙소 후보, 교통권, 참고 링크…',
+    tripInfo: '여행 정보', newTripT: '새 여행', tripTitle: '여행 이름', tripTitlePh: '예: 가을방학 파리', icon: '아이콘', start: '출발', end: '돌아오는 날', year: '연도 (날짜 미정일 때)',
+    cur: '현지 통화', rateL: '1 {c} = ? €', budget: '예산 (€, 선택)', cover: '커버 사진 링크 (선택)', delTrip: '여행 지우기', delTripQ: '"{t}" 여행을 지울까요? 되돌릴 수 없어요.', needTitle: '여행 이름을 넣어 주세요',
+    settings: '설정', sync: '함께 보기', syncInfo: '장보기·주간식단과 같은 가족 코드를 쓰면 가족 모두의 폰에 같은 여행이 보여요.', signin: '구글로 로그인', signout: '로그아웃',
+    codePh: '가족 코드', join: '참여', create: '새 가족 코드 만들기', connected: '가족 코드 {c} 에 연결됨', connecting: '연결을 준비하고 있어요…', unavailable: '이 버전에서는 함께 보기를 쓸 수 없어요.',
+    badCode: '그 가족 코드를 찾지 못했어요', localOnly: '지금은 이 기기에만 저장돼요.', backup: '백업', exportBtn: '파일로 저장', importBtn: '파일에서 가져오기', importNote: '노션에서 옮긴 여행 파일이나 백업 파일을 넣을 수 있어요. 같은 여행은 파일 내용으로 바뀌어요.',
+    imported: '{n}개 여행을 가져왔어요', importBad: '여행 파일이 아니에요', replaceQ: '이미 있는 여행 {n}개가 파일 내용으로 바뀌어요. 계속할까요?', lang: '언어',
+    saveFail: '서버에 저장하지 못했어요. 인터넷 연결을 확인해 주세요', signinFail: '로그인하지 못했어요. 다시 시도해 주세요', joinFail: '연결하지 못했어요. 인터넷 연결을 확인해 주세요',
+  },
+  de: {
+    app: 'Reisen', upcoming: 'Kommende Reisen', past: 'Vergangene Reisen', newTrip: '+ Neue Reise', noTrips: 'Noch keine Reisen. Leg unten die erste an.',
+    undated: 'ohne Datum', ongoing: 'Unterwegs', dayN: 'Tag {n}', nights: '{n} Nächte', next: 'Nächste Reise', back: 'Reisen',
+    tabs: { plan: 'Plan', book: 'Buchungen', money: 'Kosten', check: 'Checkliste', memo: 'Notizen' },
+    cats: { move: 'Fahrt', stay: 'Unterkunft', food: 'Essen', see: 'Ausflug', etc: 'Sonstiges' },
+    dayNo: 'Tag {n}', today: 'Heute', cand: 'Ohne Datum · Ideen', addHere: '+ Hinzufügen', addItem: '+ Eintrag', noItems: 'Noch keine Einträge',
+    night: 'Nacht {a}/{b}', checkout: 'Check-out', booked: 'gebucht', notBooked: 'nicht gebucht', items: '{n} Einträge',
+    newItem: 'Neuer Eintrag', editItem: 'Eintrag bearbeiten', title: 'Name', titlePh: 'z. B. Mittagessen – Ichiran', date: 'Datum', endStay: 'Abreise', endMove: 'Rückweg (bei Hin und Zurück)',
+    time: 'Uhrzeit', timePh: 'z. B. 15:00-16:30', isBooked: 'gebucht', code: 'Buchungsnummer', cost: 'Kosten', notes: 'Notiz', links: 'Links (einer pro Zeile)',
+    save: 'Speichern', cancel: 'Abbrechen', del: 'Löschen', delItemQ: '„{t}“ löschen?', map: '🗺 In Karte suchen', copied: 'Kopiert',
+    bookDone: 'Gebucht', bookOf: '{a} von {b}', stays: 'Unterkünfte', moves: 'Fahrten', others: 'Weitere Buchungen', gaps: 'Nächte ohne Unterkunft', allNights: 'Jede Nacht hat eine Unterkunft 👍', noBook: 'Noch keine Unterkünfte oder Fahrten',
+    total: 'Gesamt', inLocal: 'in Landeswährung {x}', budgetOf: 'Budget {b}', left: '{x} übrig', over: '{x} drüber', byCat: 'Nach Art', rate: 'Kurs', fetchRate: 'Heutiger Kurs', rateOk: 'Heutigen Kurs übernommen', rateFail: 'Kurs nicht abrufbar',
+    noRate: 'Ohne Kurs konnten nicht alle Kosten in Euro umgerechnet werden', conv: 'Umrechner', costList: 'Alle Kosten', noCosts: 'Noch keine Kosten eingetragen', setRate: 'Kurs eintragen',
+    addCheckPh: 'Mitnehmen oder erledigen', add: 'Hinzufügen', tplTitle: 'Liste einfügen', addedN: '{n} eingefügt', noneAdded: 'Schon alles drin', checkProg: '{a} von {b} erledigt', noChecks: 'Noch leer. Füge oben eine Liste ein.',
+    tpl: { basic: 'Grundausstattung', kids: 'Kinder', flight: 'Flug', beach: 'Strand', ski: 'Ski', before: 'Vor der Abreise' },
+    edit: 'Bearbeiten', memoEmpty: 'Keine Notizen', memoPh: 'Hotelideen, Fahrkarten, Links …',
+    tripInfo: 'Reise', newTripT: 'Neue Reise', tripTitle: 'Name der Reise', tripTitlePh: 'z. B. Herbstferien Paris', icon: 'Symbol', start: 'Hinreise', end: 'Rückreise', year: 'Jahr (ohne Datum)',
+    cur: 'Landeswährung', rateL: '1 {c} = ? €', budget: 'Budget (€, optional)', cover: 'Link zum Titelbild (optional)', delTrip: 'Reise löschen', delTripQ: '„{t}“ löschen? Das lässt sich nicht rückgängig machen.', needTitle: 'Bitte einen Namen eingeben',
+    settings: 'Einstellungen', sync: 'Gemeinsam nutzen', syncInfo: 'Mit demselben Familiencode wie Einkaufsliste und Wochenplan sieht die ganze Familie dieselben Reisen.', signin: 'Mit Google anmelden', signout: 'Abmelden',
+    codePh: 'Familiencode', join: 'Beitreten', create: 'Neuen Familiencode anlegen', connected: 'Verbunden mit Familiencode {c}', connecting: 'Verbindung wird vorbereitet …', unavailable: 'In dieser Version nicht verfügbar.',
+    badCode: 'Diesen Familiencode gibt es nicht', localOnly: 'Gerade nur auf diesem Gerät gespeichert.', backup: 'Sicherung', exportBtn: 'Als Datei speichern', importBtn: 'Aus Datei laden', importNote: 'Reise-Datei aus Notion oder eine Sicherung. Gleiche Reisen werden ersetzt.',
+    imported: '{n} Reisen geladen', importBad: 'Keine Reise-Datei', replaceQ: '{n} vorhandene Reisen werden ersetzt. Weiter?', lang: 'Sprache',
+    saveFail: 'Speichern fehlgeschlagen. Bitte Internetverbindung prüfen', signinFail: 'Anmeldung fehlgeschlagen. Bitte nochmal versuchen', joinFail: 'Verbindung fehlgeschlagen. Bitte Internet prüfen',
+  },
+};
+const ui = { lang: store.get('lang', 'ko'), view: 'home', trip: null, tab: 'plan', scrolled: '' };
+const L = () => T[ui.lang];
+function t(k, args) {
+  let s = k.split('.').reduce((o, p) => (o ? o[p] : undefined), L());
+  if (s === undefined) s = k;
+  if (args) for (const [a, v] of Object.entries(args)) s = s.split('{' + a + '}').join(v);
+  return s;
+}
+const locale = () => (ui.lang === 'de' ? 'de-DE' : 'ko-KR');
+const nightsText = (n) => (ui.lang === 'de' && n === 1 ? '1 Nacht' : t('nights', { n }));
+
+// ---------- Hilfen / 도우미 ----------
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const pad = (n) => String(n).padStart(2, '0');
+const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const pd = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = pd(s); d.setDate(d.getDate() + n); return iso(d); };
+const diff = (a, b) => Math.round((pd(b) - pd(a)) / 864e5);
+const today = () => iso(new Date());
+const isDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(s || '');
+const dayName = (s, o) => new Intl.DateTimeFormat(locale(), o).format(pd(s));
+const md = (s) => (ui.lang === 'de' ? `${+s.slice(8)}.${+s.slice(5, 7)}.` : `${+s.slice(5, 7)}.${+s.slice(8)}`);
+function fmtRange(tr) {
+  if (!isDate(tr.start)) return `${tr.year || ''} · ${t('undated')}`;
+  const s = tr.start, e = isDate(tr.end) ? tr.end : s, y1 = s.slice(0, 4), y2 = e.slice(0, 4);
+  if (ui.lang === 'de') {
+    if (s === e) return `${md(s)}${y1}`;
+    return y1 === y2 ? `${md(s)} – ${md(e)}${y2}` : `${md(s)}${y1} – ${md(e)}${y2}`;
+  }
+  if (s === e) return `${y1}.${md(s)}`;
+  return y1 === y2 ? `${y1}.${md(s)} – ${md(e)}` : `${y1}.${md(s)} – ${y2}.${md(e)}`;
+}
+function money(n, cur) {
+  if (n == null || isNaN(n)) return '';
+  const zero = ['JPY', 'KRW', 'HUF', 'IDR', 'VND', 'CZK'].includes(cur) || Math.abs(n) >= 1000;
+  try { return new Intl.NumberFormat(locale(), { style: 'currency', currency: cur, currencyDisplay: 'narrowSymbol', maximumFractionDigits: zero ? 0 : 2, minimumFractionDigits: 0 }).format(n); }
+  catch { return n.toLocaleString(locale()) + ' ' + cur; }
+}
+const URL_RE = /https?:\/\/[^\s<>"')]+/g;
+function linkify(text) {
+  let out = '', last = 0;
+  String(text || '').replace(URL_RE, (u, i) => {
+    out += esc(text.slice(last, i));
+    let host = u; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch {}
+    out += `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(host)}</a>`;
+    last = i + u.length; return u;
+  });
+  return out + esc(String(text || '').slice(last));
+}
+function toast(msg) {
+  const el = $('#toast'); el.textContent = msg; el.classList.add('on');
+  clearTimeout(toast.tm); toast.tm = setTimeout(() => el.classList.remove('on'), 2400);
+}
+
+// ---------- Daten ändern / 데이터 바꾸기 ----------
+const valid = (tr) => tr && tr.title;
+const allTrips = () => Object.values(trips).filter(valid);
+function persist() { store.put('trips', trips); }
+const connected = () => !!(window.cloud && window.cloud.user && window.cloud.house);
+// Ein Pfad wie ['trips', id, 'items', itemId]; value null = löschen. Mehrere Änderungen gehen zusammen hoch.
+// 경로 예: ['trips', 여행ID, 'items', 일정ID]. 값이 null 이면 지움. 여러 변경은 한 번에 올림.
+function write(entries) {
+  for (const [path, value] of entries) {
+    let o = { trips };
+    for (let i = 0; i < path.length - 1; i++) { if (!o[path[i]] || typeof o[path[i]] !== 'object') o[path[i]] = {}; o = o[path[i]]; }
+    const k = path[path.length - 1];
+    if (value == null) delete o[k]; else o[k] = JSON.parse(JSON.stringify(value));
+  }
+  persist();
+  if (connected()) window.cloud.write(entries);
+  else { for (const [path] of entries) unsynced.add(path[1]); store.put('unsynced', [...unsynced]); }
+  render(true);
+}
+const put = (path, value) => write([[path, value]]);
+function touch(tid) { return [['trips', tid, 'mt'], Date.now()]; }
+
+// ---------- Reisen einordnen / 여행 분류 ----------
+function status(tr) {
+  const now = today();
+  if (isDate(tr.start)) {
+    const end = isDate(tr.end) ? tr.end : tr.start;
+    if (now < tr.start) return 'up';
+    if (now <= end) return 'now';
+    return 'past';
+  }
+  return (tr.year || 0) >= new Date().getFullYear() ? 'up' : 'past';
+}
+const items = (tr) => Object.values(tr.items || {}).filter((x) => x && x.id);
+function tripDays(tr) {
+  if (isDate(tr.start)) {
+    const end = isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start, out = [];
+    for (let d = tr.start; d <= end && out.length < 120; d = addDays(d, 1)) out.push(d);
+    return out;
+  }
+  return [...new Set(items(tr).flatMap((x) => [x.date, x.end]).filter(isDate))].sort();
+}
+const eurOf = (cost, tr) => {
+  if (!cost || !cost.amount) return 0;
+  if (cost.cur === 'EUR') return cost.amount;
+  if (cost.cur === tr.cur && tr.rate) return cost.amount * tr.rate;
+  return null;
+};
+const CAT_ORDER = ['move', 'stay', 'food', 'see', 'etc'];
+function icon(it) {
+  if (it.cat === 'move') {
+    const s = (it.title + ' ' + (it.notes || '')).toLowerCase();
+    if (/버스|bus/.test(s)) return '🚌';
+    if (/기차|열차|신칸센|역→|역 →|train|zug|bahn|ice\b|tgv/.test(s)) return '🚆';
+    if (/배|페리|크루즈|ferry|fähre|boot|speedboat/.test(it.title.toLowerCase())) return '⛴️';
+    if (/항공|비행|공항|귀국|출국|인천|김포|flug|flight|air|아시아나|대한항공|티웨이|lufthansa|^[a-z]{3}\s*-\s*[a-z]{3}$/.test(s) || /^[A-Z]{3}\s*[-→]\s*[A-Z]{3}/.test(it.title)
+      || /\b[A-Z]{2}\s?\d{2,4}\b/.test((it.time || '') + ' ' + (it.notes || '') + ' ' + it.title)) return '✈️';
+    if (/로프웨이|케이블|gondel|seilbahn/.test(s)) return '🚡';
+    return '🚗';
+  }
+  return { stay: '🛏️', food: '🍽️', see: '📍', etc: '📝' }[it.cat] || '📝';
+}
+// Sortierschlüssel im Tag: erste Uhrzeit; Mahlzeiten ohne Uhrzeit nach Tageszeit; sonst bleibt es hinter dem vorigen Eintrag.
+// 하루 안의 순서: 적힌 시간 → 시간 없으면 아침/점심/저녁 → 그것도 없으면 앞 일정 바로 뒤.
+function timeKey(it, day) {
+  const src = it.cat === 'stay' && day === it.end ? '' : (it.time || '');
+  const m = src.match(/(\d{1,2})[:시](\d{2})?/);
+  if (m && +m[1] < 30) return +m[1] * 60 + (+m[2] || 0);
+  const s = it.title;
+  if (/^(아침|조식|frühstück)/i.test(s)) return 8 * 60;
+  if (/^(점심|mittag)/i.test(s)) return 12 * 60;
+  if (/^(카페|café|cafe)/i.test(s)) return 15 * 60;
+  if (/^(저녁|abend)/i.test(s)) return 18 * 60 + 30;
+  if (it.cat === 'stay') return 15 * 60;
+  return null;
+}
+function dayItems(tr, day) {
+  const list = items(tr).filter((x) => x.date === day || (x.cat === 'move' && x.end === day)).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  let last = 0;
+  const keyed = list.map((x) => { const k = timeKey(x, day); last = k ?? last; return { x, k: k ?? last }; });
+  return keyed.sort((a, b) => a.k - b.k || (a.x.order ?? 0) - (b.x.order ?? 0)).map((o) => o.x);
+}
+
+// ---------- Darstellung / 화면 ----------
+const app = $('#app');
+let pending = false;
+function render(force) {
+  const a = document.activeElement;
+  if (!force && a && app.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { pending = true; return; }
+  pending = false;
+  document.documentElement.lang = ui.lang;
+  document.title = ui.view === 'trip' && trips[ui.trip] ? trips[ui.trip].title : t('app');
+  app.innerHTML = ui.view === 'trip' && valid(trips[ui.trip]) ? tripView(trips[ui.trip]) : homeView();
+  afterRender();
+}
+app.addEventListener('focusout', () => setTimeout(() => { if (pending) render(); }, 0));
+
+function langSwitch() {
+  return `<div class="lang">${['ko', 'de'].map((l) => `<button data-act="lang" data-l="${l}" class="${ui.lang === l ? 'on' : ''}">${l === 'ko' ? '한국어' : 'Deutsch'}</button>`).join('')}</div>`;
+}
+function dLabel(tr) {
+  const st = status(tr);
+  if (st === 'now') return `${t('ongoing')} · ${t('dayN', { n: diff(tr.start, today()) + 1 })}`;
+  if (st === 'up' && isDate(tr.start)) { const n = diff(today(), tr.start); return n === 0 ? 'D-Day' : `D-${n}`; }
+  return '';
+}
+function nightsLabel(tr) {
+  if (!isDate(tr.start) || !isDate(tr.end) || tr.end <= tr.start) return '';
+  return nightsText(diff(tr.start, tr.end));
+}
+const coverStyle = (tr) => (tr.cover && /^https:\/\//.test(tr.cover) ? ` style="background-image:url('${esc(tr.cover).replace(/'/g, '%27')}')"` : '');
+
+function homeView() {
+  const list = allTrips();
+  const byStart = (a, b) => (a.start || `${a.year || 9999}-99`).localeCompare(b.start || `${b.year || 9999}-99`);
+  const now = list.filter((x) => status(x) === 'now').sort(byStart);
+  const up = list.filter((x) => status(x) === 'up').sort(byStart);
+  const past = list.filter((x) => status(x) === 'past').sort((a, b) => byStart(b, a));
+  const hero = now[0] || up.find((x) => isDate(x.start));
+  let h = `<header class="top"><div class="bar"><div style="font-weight:800;font-size:15px;opacity:.9">🧳</div>${langSwitch()}
+    <button class="icon-btn" data-act="settings" aria-label="${esc(t('settings'))}">⚙️</button></div>
+    <h1>${esc(t('app'))}</h1></header><section class="sheet">`;
+  if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
+  if (!list.length) h += `<p class="empty">${esc(t('noTrips'))}</p>`;
+  if (hero) {
+    const st = status(hero);
+    h += `<button class="hero${hero.cover ? ' cover' : ''}" data-act="open" data-id="${hero.id}"${coverStyle(hero)}>
+      <span class="label">${esc(st === 'now' ? t('ongoing') : t('next'))}</span>
+      <span class="big">${esc(st === 'now' ? t('dayN', { n: diff(hero.start, today()) + 1 }) : dLabel(hero))}</span>
+      <span class="name">${esc(hero.icon || '✈️')} ${esc(hero.title)}</span>
+      <span class="when">${esc(fmtRange(hero))}${nightsLabel(hero) ? ' · ' + esc(nightsLabel(hero)) : ''}</span></button>`;
+  }
+  const rest = [...now, ...up].filter((x) => x !== hero);
+  if (rest.length) h += `<h2>${esc(t('upcoming'))}</h2><div class="trips">${rest.map((x) => tripCard(x)).join('')}</div>`;
+  if (past.length) {
+    h += `<h2>${esc(t('past'))}</h2>`;
+    let y = null;
+    for (const x of past) {
+      const yy = (x.start || '').slice(0, 4) || String(x.year || '');
+      if (yy !== y) { if (y !== null) h += '</div>'; y = yy; h += `<div class="year">${esc(yy)}</div><div class="trips">`; }
+      h += tripCard(x, true);
+    }
+    h += '</div>';
+  }
+  h += `</section><button class="fab" data-act="new-trip">${esc(t('newTrip'))}</button>`;
+  return h;
+}
+function tripCard(x, past) {
+  const n = items(x).length;
+  const sub = [fmtRange(x), nightsLabel(x), !past && n ? t('items', { n }) : ''].filter(Boolean).join(' · ');
+  return `<button class="trip${past ? ' past' : ''}" data-act="open" data-id="${x.id}"><span class="fl">${esc(x.icon || '✈️')}</span>
+    <span class="tb"><span class="tt">${esc(x.title)}</span><span class="ts">${esc(sub)}</span></span>
+    ${past ? '' : `<span class="td">${esc(dLabel(x))}</span>`}</button>`;
+}
+
+function tripView(tr) {
+  const tabs = ['plan', 'book', 'money', 'check', 'memo'];
+  const d = dLabel(tr);
+  let h = `<header class="top${tr.cover ? ' cover' : ''}"${coverStyle(tr)}><div class="bar">
+    <button class="back" data-act="home">‹ ${esc(t('back'))}</button>
+    <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">✎</button></div>
+    <h1><span class="fl">${esc(tr.icon || '✈️')}</span>${esc(tr.title)}</h1>
+    <p class="sub"><span>${esc(fmtRange(tr))}</span>${nightsLabel(tr) ? `<span>${esc(nightsLabel(tr))}</span>` : ''}${d ? `<span class="chip-d">${esc(d)}</span>` : ''}</p>
+    <nav class="tabs">${tabs.map((k) => `<button class="tab${ui.tab === k ? ' on' : ''}" data-act="tab" data-tab="${k}">${esc(t('tabs.' + k))}</button>`).join('')}</nav>
+    </header><section class="sheet">`;
+  if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
+  h += { plan: planTab, book: bookTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
+  h += '</section>';
+  if (ui.tab === 'plan') h += `<button class="fab" data-act="new-item">${esc(t('addItem'))}</button>`;
+  if (ui.tab === 'book') h += `<button class="fab" data-act="new-item" data-cat="stay">${esc(t('addItem'))}</button>`;
+  return h;
+}
+
+function itemCard(it, tr, day) {
+  const meta = [];
+  const isOut = it.cat === 'stay' && day && day === it.end;
+  const tm = isOut ? (it.time || '').split(/\n|\//).find((s) => /아웃|out/i.test(s)) || '' : (it.time || '').split('\n')[0];
+  if (tm) meta.push(`<span class="tm">${esc(tm.trim())}</span>`);
+  if (it.cat === 'stay' && isDate(it.date) && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} – ${md(it.end)} · ${nightsText(diff(it.date, it.end))}`));
+  if (it.cat === 'move' && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} · ${md(it.end)}`));
+  if (!isOut) {
+    if (it.booked) meta.push(`<span class="ok">✓ ${esc(t('booked'))}</span>`);
+    else if (it.cat === 'stay' || it.cat === 'move') meta.push(`<span class="todo">${esc(t('notBooked'))}</span>`);
+    if (it.cost && it.cost.amount) meta.push(esc(money(it.cost.amount, it.cost.cur)));
+  }
+  if ((it.links && it.links.length) || URL_RE.test(it.notes || '')) meta.push('🔗');
+  URL_RE.lastIndex = 0;
+  const notes = (it.notes || '').replace(URL_RE, '').trim();
+  return `<button class="it c-${it.cat || 'etc'}" data-act="edit-item" data-id="${it.id}">
+    <span class="ic" aria-hidden="true">${isOut ? '🧳' : icon(it)}</span>
+    <span class="ib"><span class="t">${isOut ? esc(t('checkout')) + ' · ' : ''}${esc(it.title || '—')}</span>
+    ${meta.length ? `<span class="m">${meta.join('')}</span>` : ''}
+    ${notes && !isOut ? `<span class="nt">${esc(notes)}</span>` : ''}</span></button>`;
+}
+
+function planTab(tr) {
+  const days = tripDays(tr), now = today(), all = items(tr);
+  let h = '';
+  if (days.length > 1) {
+    h += `<nav class="days">${days.map((d, i) => `<button data-act="jump" data-day="${d}" class="${d === now ? 'today' : ''}">
+      <span>${esc(t('dayNo', { n: i + 1 }))}</span><b>${esc(md(d))}</b></button>`).join('')}</nav>`;
+  }
+  if (!all.length) h += `<p class="empty">${esc(t('noItems'))}</p>`;
+  const stays = all.filter((x) => x.cat === 'stay' && isDate(x.date) && isDate(x.end));
+  days.forEach((d, i) => {
+    const list = dayItems(tr, d);
+    // Nächte mitten im Aufenthalt und der Abreisetag / 숙박 중간 밤과 체크아웃 날
+    const mid = stays.filter((s) => s.date < d && d < s.end);
+    const outs = stays.filter((s) => s.end === d);
+    h += `<div class="day" id="d-${d}"><div class="dh"><span class="n">${esc(t('dayNo', { n: i + 1 }))}</span>
+      <span class="d">${esc(dayName(d, { month: 'long', day: 'numeric', weekday: 'short' }))}</span>${d === now ? `<span class="now">${esc(t('today'))}</span>` : ''}</div>`;
+    for (const s of mid) h += `<div class="night"><span>🛏️</span><span>${esc(t('night', { a: diff(s.date, d) + 1, b: diff(s.date, s.end) }))} · ${esc(s.title)}</span></div>`;
+    h += `<div class="items">${outs.map((s) => itemCard(s, tr, d)).join('')}${list.map((x) => itemCard(x, tr, d)).join('')}</div>
+      <button class="add-day" data-act="new-item" data-day="${d}">${esc(t('addHere'))}</button></div>`;
+  });
+  const set = new Set(days);
+  const cand = all.filter((x) => !set.has(x.date) && !(x.cat === 'move' && set.has(x.end))).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  if (cand.length) h += `<h2>${esc(t('cand'))}</h2><div class="items">${cand.map((x) => itemCard(x, tr)).join('')}</div>`;
+  return h;
+}
+
+function bookTab(tr) {
+  const all = items(tr);
+  const byDate = (a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0);
+  const stays = all.filter((x) => x.cat === 'stay').sort(byDate);
+  const moves = all.filter((x) => x.cat === 'move').sort(byDate);
+  const others = all.filter((x) => x.booked && x.cat !== 'stay' && x.cat !== 'move').sort(byDate);
+  const need = [...stays, ...moves, ...others];
+  const done = need.filter((x) => x.booked).length;
+  let h = '';
+  if (need.length) {
+    h += `<div class="card"><div class="stat"><span>${esc(t('bookDone'))}</span><b>${esc(t('bookOf', { a: done, b: need.length }))}</b></div>
+      <div class="progress"><span style="width:${Math.round((done / need.length) * 100)}%"></span></div></div>`;
+  }
+  // Nächte ohne Unterkunft / 숙소가 없는 밤
+  if (isDate(tr.start) && isDate(tr.end) && tr.end > tr.start) {
+    const gaps = [];
+    for (let d = tr.start; d < tr.end; d = addDays(d, 1)) {
+      if (!stays.some((s) => isDate(s.date) && s.date <= d && d < (isDate(s.end) ? s.end : addDays(s.date, 1)))) gaps.push(d);
+    }
+    h += `<div class="card">${gaps.length ? `<b>${esc(t('gaps'))}</b><div class="gaps">${gaps.map((d) => `<span>${esc(dayName(d, { month: 'numeric', day: 'numeric', weekday: 'short' }))}</span>`).join('')}</div>` : esc(t('allNights'))}</div>`;
+  }
+  if (!stays.length && !moves.length) h += `<p class="empty">${esc(t('noBook'))}</p>`;
+  const sec = (title, list) => (list.length ? `<h2>${esc(title)}</h2><div class="items">${list.map((x) => `<div class="bk">${itemCard(x, tr)}
+    <button class="tick${x.booked ? ' on' : ''}" data-act="toggle-book" data-id="${x.id}" aria-pressed="${!!x.booked}" aria-label="${esc(t('isBooked'))}"><span class="box">${x.booked ? '✓' : ''}</span></button></div>
+    ${x.code ? `<div style="margin:-2px 0 4px 6px"><button class="code" data-act="copy" data-v="${esc(x.code)}">${esc(x.code)} ⧉</button></div>` : ''}`).join('')}</div>` : '');
+  h += sec(t('stays'), stays) + sec(t('moves'), moves) + sec(t('others'), others);
+  return h;
+}
+
+function moneyTab(tr) {
+  const all = items(tr).filter((x) => x.cost && x.cost.amount);
+  let total = 0, local = 0, missing = 0;
+  const by = {};
+  for (const x of all) {
+    const e = eurOf(x.cost, tr);
+    if (e == null) missing++; else { total += e; by[x.cat] = (by[x.cat] || 0) + e; }
+    if (x.cost.cur === tr.cur) local += x.cost.amount;
+  }
+  let h = `<div class="card"><div class="stat"><span>${esc(t('total'))}</span><b>${esc(money(total, 'EUR'))}</b></div>`;
+  if (tr.cur && tr.cur !== 'EUR' && local) h += `<div class="note" style="margin:2px 0 0">${esc(t('inLocal', { x: money(local, tr.cur) }))}</div>`;
+  if (tr.budget) {
+    const pct = Math.min(100, Math.round((total / tr.budget) * 100)), over = total > tr.budget;
+    h += `<div class="progress${over ? ' over' : ''}"><span style="width:${pct}%"></span></div>
+      <div class="stat"><span>${esc(t('budgetOf', { b: money(tr.budget, 'EUR') }))}</span><span class="${over ? 'todo' : 'ok'}">${esc(t(over ? 'over' : 'left', { x: money(Math.abs(tr.budget - total), 'EUR') }))}</span></div>`;
+  }
+  if (missing) h += `<p class="note">${esc(t('noRate'))}</p>`;
+  h += '</div>';
+  const max = Math.max(1, ...Object.values(by));
+  if (Object.keys(by).length) {
+    h += `<div class="card"><b>${esc(t('byCat'))}</b><div class="bars">${CAT_ORDER.filter((c) => by[c]).map((c) => `<div class="row c-${c}">
+      <span>${esc(t('cats.' + c))}</span><i style="width:${Math.round((by[c] / max) * 100)}%"></i><b>${esc(money(by[c], 'EUR'))}</b></div>`).join('')}</div></div>`;
+  }
+  if (tr.cur && tr.cur !== 'EUR') {
+    h += `<div class="card"><div class="rate"><span>${esc(t('rate'))}: ${tr.rate ? `1 ${esc(tr.cur)} = ${esc(String(+tr.rate.toPrecision(4)))} €` : '—'}</span>
+      <button class="btn small ghost" data-act="fetch-rate">${esc(t('fetchRate'))}</button></div>
+      ${tr.rate ? `<div class="conv"><input class="in" id="conv" inputmode="decimal" placeholder="${esc(money(1000, tr.cur))}" aria-label="${esc(t('conv'))}"><output id="conv-out">€</output></div>` : ''}</div>`;
+  }
+  h += `<h2>${esc(t('costList'))}</h2>`;
+  if (!all.length) h += `<p class="empty">${esc(t('noCosts'))}</p>`;
+  else {
+    const sorted = all.sort((a, b) => (a.date || '9').localeCompare(b.date || '9'));
+    h += `<ul class="lines">${sorted.map((x) => {
+      const e = eurOf(x.cost, tr);
+      return `<li><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${icon(x)} ${esc(x.title)}</button>
+        <span class="am">${esc(money(x.cost.amount, x.cost.cur))}${x.cost.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
+    }).join('')}</ul>`;
+  }
+  return h;
+}
+
+const TPL = {
+  basic: { ko: ['여권', '신분증·운전면허증', '충전기·보조배터리', '여행자 보험', '상비약', '현금·카드', '멀티 어댑터'], de: ['Reisepass', 'Ausweis·Führerschein', 'Ladegerät·Powerbank', 'Reiseversicherung', 'Reiseapotheke', 'Bargeld·Karten', 'Reiseadapter'] },
+  kids: { ko: ['아이 여권', '카시트', '간식', '장난감·색칠놀이', '아이 상비약 (해열제)', '여벌 옷', '물티슈'], de: ['Kinderreisepass', 'Kindersitz', 'Snacks', 'Spielzeug·Malbuch', 'Kinderapotheke (Fiebersaft)', 'Wechselkleidung', 'Feuchttücher'] },
+  flight: { ko: ['온라인 체크인', '좌석 지정', '수하물 무게 확인', '헤드폰', '목베개'], de: ['Online-Check-in', 'Sitzplätze reservieren', 'Gepäckgewicht prüfen', 'Kopfhörer', 'Nackenkissen'] },
+  beach: { ko: ['수영복', '선크림', '래시가드', '모자·선글라스', '비치타월', '물놀이 장난감', 'Strandmuschel'], de: ['Badesachen', 'Sonnencreme', 'UV-Shirt', 'Hut·Sonnenbrille', 'Strandtuch', 'Wasserspielzeug', 'Strandmuschel'] },
+  ski: { ko: ['스키복', '장갑·넥워머', '고글·헬멧', '스키 양말', '핫팩', '리프트권 예약', '스키 대여 예약'], de: ['Skianzug', 'Handschuhe·Schlauchschal', 'Skibrille·Helm', 'Skisocken', 'Taschenwärmer', 'Skipass reservieren', 'Skiverleih reservieren'] },
+  before: { ko: ['숙소 예약 확인', '렌트카 예약', '여행자 보험 가입', '환전·카드 해외결제 확인', '유치원·학교에 알리기', '우편물·화분 부탁하기', '주차 예약'], de: ['Unterkünfte prüfen', 'Mietwagen buchen', 'Reiseversicherung abschließen', 'Geld wechseln·Karte freischalten', 'Kita·Schule Bescheid sagen', 'Post·Pflanzen organisieren', 'Parkplatz reservieren'] },
+};
+function checkTab(tr) {
+  const list = Object.values(tr.checks || {}).filter((x) => x && x.id).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
+  const done = list.filter((x) => x.done).length;
+  let h = `<form class="add" data-form="add-check"><input name="text" placeholder="${esc(t('addCheckPh'))}" autocomplete="off" enterkeyhint="done"><button class="btn sun">${esc(t('add'))}</button></form>
+    <div class="tpl"><span class="note" style="margin:6px 4px 0 2px">${esc(t('tplTitle'))}</span>${Object.keys(TPL).map((k) => `<button class="pill" data-act="tpl" data-k="${k}">${esc(t('tpl.' + k))}</button>`).join('')}</div>`;
+  if (!list.length) return h + `<p class="empty">${esc(t('noChecks'))}</p>`;
+  h += `<div class="stat" style="margin:0 2px"><span>${esc(t('checkProg', { a: done, b: list.length }))}</span></div><div class="progress"><span style="width:${Math.round((done / list.length) * 100)}%"></span></div>`;
+  h += `<ul class="checks">${list.map((x) => `<li class="${x.done ? 'done' : ''}"><button class="cb" data-act="check" data-id="${x.id}" role="checkbox" aria-checked="${!!x.done}">
+    <span class="box">${x.done ? '✓' : ''}</span><span class="tx">${esc(x.text)}</span></button>
+    <button class="rm" data-act="rm-check" data-id="${x.id}" aria-label="${esc(t('del'))}">×</button></li>`).join('')}</ul>`;
+  return h;
+}
+
+function memoTab(tr) {
+  if (ui.memoEdit) {
+    return `<form data-form="memo"><textarea class="in" name="memo" rows="16" placeholder="${esc(t('memoPh'))}" style="min-height:50vh">${esc(tr.memo || '')}</textarea>
+      <div class="acts"><button type="button" class="btn ghost" data-act="memo-cancel">${esc(t('cancel'))}</button><button class="btn">${esc(t('save'))}</button></div></form>`;
+  }
+  return `<div class="set-row" style="justify-content:flex-end;margin-bottom:8px"><button class="btn small ghost" data-act="memo-edit">${esc(t('edit'))}</button></div>
+    ${tr.memo ? `<div class="memo">${linkify(tr.memo)}</div>` : `<p class="empty">${esc(t('memoEmpty'))}</p>`}`;
+}
+
+function afterRender() {
+  // Während der Reise beim Öffnen zum heutigen Tag springen / 여행 중이면 처음 열 때 오늘로 이동
+  if (ui.view === 'trip' && ui.tab === 'plan' && ui.scrolled !== ui.trip) {
+    ui.scrolled = ui.trip;
+    const el = document.getElementById('d-' + today());
+    if (el) setTimeout(() => el.scrollIntoView({ block: 'start' }), 50);
+  }
+  const conv = $('#conv');
+  if (conv) conv.addEventListener('input', () => {
+    const tr = trips[ui.trip], v = parseFloat(conv.value.replace(/[^\d.,]/g, '').replace(',', '.'));
+    $('#conv-out').textContent = isNaN(v) ? '€' : money(v * tr.rate, 'EUR');
+  });
+}
+
+// ---------- Navigation ----------
+// Der Zustand steht auch in der Adresse (#/t/{id}/{tab}), damit ein Neuladen dieselbe Seite zeigt.
+// 주소(#/t/{id}/{탭})에도 남겨서 새로 고쳐도 같은 화면.
+function go(hash) {
+  try { if (location.hash !== hash) history.pushState(null, '', hash); } catch {}
+  route(hash);
+}
+function route(hash) {
+  const m = (typeof hash === 'string' ? hash : location.hash).match(/^#\/t\/([^/]+)(?:\/(\w+))?/);
+  if (m && valid(trips[m[1]])) { ui.view = 'trip'; if (ui.trip !== m[1]) ui.memoEdit = false; ui.trip = m[1]; ui.tab = m[2] || 'plan'; }
+  else { ui.view = 'home'; ui.trip = null; ui.scrolled = ''; }
+  render(true);
+  window.scrollTo(0, 0);
+}
+window.addEventListener('popstate', () => route());
+
+// ---------- Eingabeblatt / 입력 창 ----------
+const sheetRoot = $('#sheet-root');
+function openSheet(html, mount) {
+  sheetRoot.innerHTML = `<div class="scrim" data-act="close"></div><div class="panel" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  sheetRoot.hidden = false; document.body.classList.add('locked');
+  const panel = sheetRoot.querySelector('.panel');
+  if (mount) mount(panel);
+}
+function closeSheet() { sheetRoot.hidden = true; sheetRoot.innerHTML = ''; document.body.classList.remove('locked'); if (pending) render(); }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheetRoot.hidden) closeSheet(); });
+
+const CURS = ['EUR', 'KRW', 'JPY', 'USD', 'GBP', 'CHF', 'CZK', 'HUF', 'PLN', 'DKK', 'SEK', 'NOK', 'TRY', 'THB', 'CNY', 'HKD', 'TWD', 'SGD', 'IDR', 'MYR', 'PHP', 'VND', 'AUD', 'CAD', 'MVR'];
+const FLAGS = [['🇰🇷', 'KRW'], ['🇯🇵', 'JPY'], ['🇫🇷', 'EUR'], ['🇮🇹', 'EUR'], ['🇪🇸', 'EUR'], ['🇦🇹', 'EUR'], ['🇩🇪', 'EUR'], ['🇨🇭', 'CHF'], ['🇨🇿', 'CZK'], ['🇳🇱', 'EUR'],
+  ['🇬🇷', 'EUR'], ['🇵🇹', 'EUR'], ['🇭🇷', 'EUR'], ['🇬🇧', 'GBP'], ['🇺🇸', 'USD'], ['🇹🇭', 'THB'], ['🇲🇻', 'USD'], ['🇩🇰', 'DKK'], ['🎿', 'EUR'], ['🏖️', 'EUR'], ['⛺', 'EUR'], ['✈️', 'EUR']];
+
+function itemSheet(tr, it, defaults = {}) {
+  const isNew = !it;
+  it = it || { id: uid('i'), cat: defaults.cat || 'see', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false };
+  const days = tripDays(tr);
+  const cost = it.cost || {};
+  const curOpts = [...new Set([tr.cur || 'EUR', 'EUR', cost.cur].filter(Boolean))];
+  const links = (it.links || []).join('\n');
+  const dateMin = isDate(tr.start) ? tr.start : '', dateMax = isDate(tr.end) ? tr.end : '';
+  openSheet(`<h3>${esc(t(isNew ? 'newItem' : 'editItem'))}</h3><form data-form="item">
+    <div class="cats">${CAT_ORDER.map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${it.cat === c ? 'checked' : ''}><span>${icon({ cat: c, title: c === 'move' ? 'flug' : '' })} ${esc(t('cats.' + c))}</span></label>`).join('')}</div>
+    <label class="fld"><span>${esc(t('title'))}</span><input class="in" name="title" value="${esc(it.title)}" placeholder="${esc(t('titlePh'))}" autocomplete="off"></label>
+    <div class="two"><label class="fld"><span>${esc(t('date'))}</span><input class="in" type="date" name="date" value="${esc(it.date)}" ${dateMin ? `min="${addDays(dateMin, -60)}"` : ''}></label>
+    <label class="fld" data-end><span data-endl>${esc(t(it.cat === 'stay' ? 'endStay' : 'endMove'))}</span><input class="in" type="date" name="end" value="${esc(it.end || '')}"></label></div>
+    ${days.length ? `<div class="picks">${days.slice(0, 21).map((d) => `<button type="button" class="pill${d === it.date ? ' on' : ''}" data-pick="${d}">${esc(md(d))}</button>`).join('')}</div>` : ''}
+    <label class="fld"><span>${esc(t('time'))}</span><textarea class="in" name="time" rows="${Math.min(4, (it.time || '').split('\n').length)}" style="min-height:46px" placeholder="${esc(t('timePh'))}">${esc(it.time || '')}</textarea></label>
+    <label class="toggle"><input type="checkbox" name="booked" ${it.booked ? 'checked' : ''}>${esc(t('isBooked'))}</label>
+    <label class="fld"><span>${esc(t('code'))}</span><input class="in" name="code" value="${esc(it.code || '')}" autocomplete="off" autocapitalize="characters"></label>
+    <div class="fld"><span>${esc(t('cost'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="amount" inputmode="decimal" value="${cost.amount ?? ''}" aria-label="${esc(t('cost'))}">
+      <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curOpts.map((c) => `<option ${c === (cost.cur || tr.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div>
+    <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
+    <label class="fld"><span>${esc(t('links'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px">${esc(links)}</textarea></label>
+    <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].map((u) => { let host = u; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch {} return `<a href="${esc(u)}" target="_blank" rel="noopener">🔗 ${esc(host)}</a>`; }).join('')}
+      ${it.title ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(it.title.replace(/^(점심|저녁|아침|카페)\s*-\s*/, ''))}" target="_blank" rel="noopener">${esc(t('map'))}</a>` : ''}</div>
+    <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-item" data-id="${it.id}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
+  </form>`, (p) => {
+    const f = p.querySelector('form');
+    const syncEnd = () => {
+      const c = f.cat.value, box = p.querySelector('[data-end]');
+      box.hidden = !(c === 'stay' || c === 'move');
+      p.querySelector('[data-endl]').textContent = t(c === 'stay' ? 'endStay' : 'endMove');
+    };
+    syncEnd();
+    f.addEventListener('change', (e) => { if (e.target.name === 'cat') syncEnd(); });
+    p.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
+      f.date.value = b.dataset.pick;
+      p.querySelectorAll('[data-pick]').forEach((x) => x.classList.toggle('on', x === b));
+    }));
+    if (isNew) setTimeout(() => f.title.focus(), 250);
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const amount = parseFloat(String(f.amount.value).replace(/\s/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.'));
+      const x = {
+        ...it, cat: f.cat.value, title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
+        time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.booked.checked, code: f.code.value.trim(),
+        links: f.links.value.split(/\s+/).map((s) => s.trim()).filter((s) => /^https?:\/\//.test(s)),
+        order: it.order ?? Date.now() / 1000,
+      };
+      if (!isNaN(amount) && amount) x.cost = { amount, cur: f.cur.value }; else delete x.cost;
+      if (!x.code) delete x.code;
+      if (!x.links.length) delete x.links;
+      if (!x.title) { f.title.focus(); return; }
+      write([[['trips', tr.id, 'items', x.id], x], touch(tr.id)]);
+      closeSheet();
+    });
+  });
+}
+
+function tripSheet(tr) {
+  const isNew = !tr;
+  tr = tr || { id: uid('t'), title: '', icon: '✈️', start: '', end: '', year: new Date().getFullYear(), cur: 'EUR', rate: 1 };
+  openSheet(`<h3>${esc(t(isNew ? 'newTripT' : 'tripInfo'))}</h3><form data-form="trip">
+    <label class="fld"><span>${esc(t('tripTitle'))}</span><input class="in" name="title" value="${esc(tr.title)}" placeholder="${esc(t('tripTitlePh'))}" autocomplete="off"></label>
+    <div class="fld"><span>${esc(t('icon'))}</span><input class="in" name="icon" value="${esc(tr.icon || '')}" style="width:80px;font-size:24px;text-align:center" aria-label="${esc(t('icon'))}">
+      <div class="flags">${FLAGS.map(([f, c]) => `<button type="button" data-flag="${f}" data-cur="${c}" class="${tr.icon === f ? 'on' : ''}">${f}</button>`).join('')}</div></div>
+    <div class="two"><label class="fld"><span>${esc(t('start'))}</span><input class="in" type="date" name="start" value="${esc(tr.start || '')}"></label>
+      <label class="fld"><span>${esc(t('end'))}</span><input class="in" type="date" name="end" value="${esc(tr.end || '')}"></label></div>
+    <label class="fld" data-year><span>${esc(t('year'))}</span><input class="in" name="year" inputmode="numeric" value="${esc(tr.year || '')}"></label>
+    <div class="two"><label class="fld"><span>${esc(t('cur'))}</span><select class="in" name="cur">${CURS.map((c) => `<option ${c === (tr.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
+      <label class="fld" data-rate><span data-ratel>${esc(t('rateL', { c: tr.cur || 'EUR' }))}</span><input class="in" name="rate" inputmode="decimal" value="${tr.rate ?? ''}"></label></div>
+    <label class="fld"><span>${esc(t('budget'))}</span><input class="in" name="budget" inputmode="decimal" value="${tr.budget ?? ''}"></label>
+    <label class="fld"><span>${esc(t('cover'))}</span><input class="in" name="cover" value="${esc(tr.cover || '')}" placeholder="https://…" autocomplete="off"></label>
+    <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-trip">${esc(t('delTrip'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
+  </form>`, (p) => {
+    const f = p.querySelector('form');
+    const sync = () => {
+      p.querySelector('[data-year]').hidden = !!f.start.value;
+      p.querySelector('[data-rate]').hidden = f.cur.value === 'EUR';
+      p.querySelector('[data-ratel]').textContent = t('rateL', { c: f.cur.value });
+    };
+    sync();
+    f.addEventListener('change', async (e) => {
+      if (e.target.name === 'start' && f.start.value && (!f.end.value || f.end.value < f.start.value)) f.end.value = f.start.value;
+      if (e.target.name === 'cur') { f.rate.value = f.cur.value === 'EUR' ? 1 : ''; if (f.cur.value !== 'EUR') { const r = await fetchRate(f.cur.value); if (r) f.rate.value = r; } }
+      sync();
+    });
+    p.querySelectorAll('[data-flag]').forEach((b) => b.addEventListener('click', async () => {
+      f.icon.value = b.dataset.flag;
+      p.querySelectorAll('[data-flag]').forEach((x) => x.classList.toggle('on', x === b));
+      if (isNew && f.cur.value !== b.dataset.cur) {
+        f.cur.value = b.dataset.cur; f.rate.value = b.dataset.cur === 'EUR' ? 1 : '';
+        sync();
+        if (b.dataset.cur !== 'EUR') { const r = await fetchRate(b.dataset.cur); if (r) f.rate.value = r; }
+      }
+    }));
+    if (isNew) setTimeout(() => f.title.focus(), 250);
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = f.title.value.trim();
+      if (!title) { toast(t('needTitle')); f.title.focus(); return; }
+      const num = (v) => { const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? null : n; };
+      const start = f.start.value, end = f.end.value && f.end.value >= start ? f.end.value : start;
+      const fields = {
+        title, icon: f.icon.value.trim() || '✈️', start, end: start ? end : '', year: start ? +start.slice(0, 4) : (parseInt(f.year.value, 10) || new Date().getFullYear()),
+        cur: f.cur.value, rate: f.cur.value === 'EUR' ? 1 : num(f.rate.value), budget: num(f.budget.value), cover: f.cover.value.trim(), mt: Date.now(),
+      };
+      if (isNew) {
+        write([[['trips', tr.id], { id: tr.id, ...fields, items: {}, checks: {}, memo: '', created: Date.now() }]]);
+        closeSheet(); go(`#/t/${tr.id}/plan`);
+      } else {
+        write(Object.entries(fields).map(([k, v]) => [['trips', tr.id, k], v]));
+        closeSheet();
+      }
+    });
+  });
+}
+
+async function fetchRate(cur) {
+  try {
+    const r = await fetch(`https://api.frankfurter.dev/v1/latest?base=${encodeURIComponent(cur)}&symbols=EUR`);
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    return j.rates && j.rates.EUR ? +j.rates.EUR.toPrecision(5) : null;
+  } catch { return null; }
+}
+
+function settingsSheet() {
+  const c = window.cloud;
+  let sync = '';
+  if (!window.FIREBASE_CONFIG || (c && c.unavailable)) sync = `<p class="note">${esc(t('unavailable'))}</p>`;
+  else if (!c || !c.ready) sync = `<p class="note">${esc(t('connecting'))}</p>`;
+  else if (!c.user) sync = `<p class="note">${esc(t('syncInfo'))}</p><p class="note">${esc(t('localOnly'))}</p><div class="set-row" style="margin-top:10px"><button class="btn" data-act="signin">${esc(t('signin'))}</button></div>`;
+  else if (!c.house) sync = `<p class="note">${esc(t('syncInfo'))}</p><form class="add" data-form="join" style="margin-top:10px"><input name="code" placeholder="${esc(t('codePh'))}" autocomplete="off" autocapitalize="characters"><button class="btn">${esc(t('join'))}</button></form>
+    <div class="set-row"><button class="btn ghost" data-act="create-house">${esc(t('create'))}</button><button class="btn small ghost" data-act="signout">${esc(t('signout'))}</button></div>`;
+  else sync = `<p style="margin:0 0 4px;font-weight:700" class="ok">✓ ${esc(t('connected', { c: c.house }))}</p><p class="note">${esc(c.user.email || '')}</p><div class="set-row" style="margin-top:10px"><button class="btn small ghost" data-act="signout">${esc(t('signout'))}</button></div>`;
+  if (c && c.note) sync += `<p class="note todo">${esc(c.note)}</p>`;
+  openSheet(`<h3>${esc(t('settings'))}</h3>
+    <h4>${esc(t('lang'))}</h4><div class="set-row">${['ko', 'de'].map((l) => `<button class="pill${ui.lang === l ? ' on' : ''}" data-act="lang" data-l="${l}">${l === 'ko' ? '한국어' : 'Deutsch'}</button>`).join('')}</div>
+    <h4>${esc(t('sync'))}</h4><div id="sync-box">${sync}</div>
+    <h4>${esc(t('backup'))}</h4><div class="set-row"><button class="btn ghost" data-act="export">${esc(t('exportBtn'))}</button>
+      <label class="btn ghost">${esc(t('importBtn'))}<input type="file" accept=".json,application/json" id="import-file" hidden></label></div>
+    <p class="note">${esc(t('importNote'))}</p>
+    <div class="acts"><button class="btn ghost" data-act="close">OK</button></div>`, (p) => {
+    p.querySelector('#import-file').addEventListener('change', (e) => importFile(e.target.files[0]));
+  });
+}
+window.refreshSettings = () => { if (!sheetRoot.hidden && $('#sync-box')) { const y = sheetRoot.querySelector('.panel').scrollTop; settingsSheet(); sheetRoot.querySelector('.panel').scrollTop = y; } };
+
+async function importFile(file) {
+  if (!file) return;
+  let data;
+  try { data = JSON.parse(await file.text()); } catch { toast(t('importBad')); return; }
+  const list = data && data.trips && typeof data.trips === 'object' ? Object.values(data.trips).filter((x) => x && x.id && x.title) : [];
+  if (!list.length) { toast(t('importBad')); return; }
+  const same = list.filter((x) => valid(trips[x.id])).length;
+  if (same && !confirm(t('replaceQ', { n: same }))) return;
+  write(list.map((x) => [['trips', x.id], x]));
+  closeSheet();
+  toast(t('imported', { n: list.length }));
+}
+function exportFile() {
+  const blob = new Blob([JSON.stringify({ app: 'travel', version: 1, exported: new Date().toISOString(), trips }, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `travel-${today()}.json`;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+// ---------- Aktionen / 동작 ----------
+const cur = () => trips[ui.trip];
+const ACT = {
+  lang: (b) => { ui.lang = b.dataset.l; store.put('lang', ui.lang); render(true); if (!sheetRoot.hidden) settingsSheet(); },
+  settings: () => settingsSheet(),
+  close: () => closeSheet(),
+  home: () => go('#/'),
+  open: (b) => go(`#/t/${b.dataset.id}/plan`),
+  tab: (b) => { ui.memoEdit = false; go(`#/t/${ui.trip}/${b.dataset.tab}`); },
+  'new-trip': () => tripSheet(),
+  'edit-trip': () => tripSheet(cur()),
+  'del-trip': () => {
+    const tr = cur();
+    if (!confirm(t('delTripQ', { t: tr.title }))) return;
+    closeSheet(); go('#/'); put(['trips', tr.id], null);
+  },
+  'new-item': (b) => {
+    const tr = cur(), now = today();
+    const day = b.dataset.day || (isDate(tr.start) && now >= tr.start && now <= (tr.end || tr.start) ? now : '');
+    itemSheet(tr, null, { date: day, cat: b.dataset.cat });
+  },
+  'edit-item': (b) => itemSheet(cur(), cur().items[b.dataset.id]),
+  'del-item': (b) => {
+    const it = cur().items[b.dataset.id];
+    if (!confirm(t('delItemQ', { t: it.title }))) return;
+    write([[['trips', ui.trip, 'items', it.id], null], touch(ui.trip)]); closeSheet();
+  },
+  'toggle-book': (b) => { const it = cur().items[b.dataset.id]; write([[['trips', ui.trip, 'items', it.id, 'booked'], !it.booked], touch(ui.trip)]); },
+  jump: (b) => { const el = document.getElementById('d-' + b.dataset.day); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
+  copy: async (b) => { try { await navigator.clipboard.writeText(b.dataset.v); toast(t('copied')); } catch {} },
+  'fetch-rate': async () => {
+    const tr = cur(), r = await fetchRate(tr.cur);
+    if (r) { write([[['trips', tr.id, 'rate'], r], touch(tr.id)]); toast(t('rateOk')); } else toast(t('rateFail'));
+  },
+  check: (b) => { const x = cur().checks[b.dataset.id]; write([[['trips', ui.trip, 'checks', x.id, 'done'], !x.done], touch(ui.trip)]); },
+  'rm-check': (b) => write([[['trips', ui.trip, 'checks', b.dataset.id], null], touch(ui.trip)]),
+  tpl: (b) => {
+    const tr = cur(), have = new Set(Object.values(tr.checks || {}).map((x) => x.text));
+    const add = TPL[b.dataset.k][ui.lang].filter((s) => !have.has(s));
+    const base = Date.now() / 1000;
+    write([...add.map((text, i) => { const id = uid('c'); return [['trips', tr.id, 'checks', id], { id, text, done: false, order: base + i }]; }), touch(tr.id)]);
+    toast(add.length ? t('addedN', { n: add.length }) : t('noneAdded'));
+  },
+  'memo-edit': () => { ui.memoEdit = true; render(true); const ta = $('textarea[name=memo]'); if (ta) ta.focus(); },
+  'memo-cancel': () => { ui.memoEdit = false; render(true); },
+  export: () => exportFile(),
+  signin: async () => { const c = window.cloud; c.note = ''; try { await c.signIn(); } catch (e) { console.warn(e); c.note = t('signinFail'); } window.refreshSettings(); },
+  signout: async () => { await window.cloud.signOut(); window.refreshSettings(); render(true); },
+  'create-house': async () => { const c = window.cloud; c.note = ''; try { await c.create(); } catch (e) { console.warn(e); c.note = t('joinFail'); } window.refreshSettings(); },
+};
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-act]');
+  if (!b || !ACT[b.dataset.act]) return;
+  if (b.tagName === 'BUTTON' && b.type === 'submit' && b.form) return;
+  e.preventDefault();
+  ACT[b.dataset.act](b, e);
+});
+document.addEventListener('submit', async (e) => {
+  const f = e.target, kind = f.dataset.form;
+  if (kind === 'add-check') {
+    e.preventDefault();
+    const text = f.text.value.trim();
+    if (!text) return;
+    const id = uid('c');
+    write([[['trips', ui.trip, 'checks', id], { id, text, done: false, order: Date.now() / 1000 }], touch(ui.trip)]);
+    const input = $('form[data-form=add-check] input'); if (input) input.focus();
+  } else if (kind === 'memo') {
+    e.preventDefault();
+    ui.memoEdit = false;
+    write([[['trips', ui.trip, 'memo'], f.memo.value], touch(ui.trip)]);
+  } else if (kind === 'join') {
+    e.preventDefault();
+    const c = window.cloud; c.note = '';
+    try { if (!(await c.join(f.code.value))) c.note = t('badCode'); } catch (err) { console.warn(err); c.note = t('joinFail'); }
+    window.refreshSettings();
+  }
+});
+// iOS: kein Zoomen mit zwei Fingern / 두 손가락 확대 막기
+document.addEventListener('gesturestart', (e) => e.preventDefault());
+
+// ---------- Schnittstelle für die Synchronisierung / 동기화 연결부 ----------
+window.travel = {
+  trips: () => trips,
+  setTrips(remote) { trips = remote || {}; persist(); if (ui.view === 'trip' && !valid(trips[ui.trip])) go('#/'); else render(); window.refreshSettings(); },
+  unsynced: () => unsynced,
+  clearUnsynced() { unsynced = new Set(); store.put('unsynced', []); },
+  syncedHouse: () => store.get('house', null),
+  setSyncedHouse: (h) => store.put('house', h),
+  refresh() { render(); window.refreshSettings(); },
+};
+route();
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
+</script>
+<script src="firebase-config.js"></script>
+<script type="module">
+// ---------- 함께 보기 (Firebase) ----------
+// Gleiches Firebase-Projekt und gleicher Familiencode wie 장보기/주간식단. Die Reisen liegen in einem eigenen
+// Dokument households/{code}_travel, damit das gemeinsame Haushaltsdokument klein bleibt.
+// 장보기·주간식단과 같은 Firebase, 같은 가족 코드. 여행은 따로 households/{코드}_travel 문서에 저장.
+const cfg = window.FIREBASE_CONFIG, APP = window.travel;
+if (cfg && APP) {
+  const cloud = window.cloud = { ready: false, user: null, house: null, live: false, error: '', note: '' };
+  let A, F, initializeApp;
+  try {
+    const V = 'https://www.gstatic.com/firebasejs/10.12.2/';
+    [{ initializeApp }, A, F] = await Promise.all([import(V + 'firebase-app.js'), import(V + 'firebase-auth.js'), import(V + 'firebase-firestore.js')]);
+  } catch (e) {
+    console.warn('firebase', e);
+    cloud.ready = true; cloud.unavailable = true; APP.refresh();
+  }
+  if (A) {
+    const fb = initializeApp(cfg), auth = A.getAuth(fb);
+    const db = F.initializeFirestore(fb, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) });
+    const tdoc = () => F.doc(db, 'households', cloud.house + '_travel');
+    let unsub = null, retryTimer = 0, retries = 0;
+    const msg = () => (document.documentElement.lang === 'de' ? 'Speichern fehlgeschlagen. Bitte Internetverbindung prüfen' : '서버에 저장하지 못했어요. 인터넷 연결을 확인해 주세요');
+    const fail = (e) => { console.warn('sync', e); cloud.error = msg(); APP.refresh(); };
+    const ok = () => { if (cloud.error) { cloud.error = ''; APP.refresh(); } };
+    function stop() { if (unsub) unsub(); unsub = null; cloud.live = false; }
+
+    cloud.write = (entries) => {
+      const args = [];
+      // JSON hin und zurück: Firestore lehnt "undefined" ab / Firestore는 undefined 값을 거부하므로 정리
+      for (const [path, v] of entries) args.push(new F.FieldPath(...path), v == null ? F.deleteField() : JSON.parse(JSON.stringify(v)));
+      return F.updateDoc(tdoc(), ...args).then(ok, fail);
+    };
+
+    function listen() {
+      stop(); clearTimeout(retryTimer);
+      let first = true, creating = false;
+      unsub = F.onSnapshot(tdoc(), async (snap) => {
+        if (!snap.exists()) {
+          // Erstes Mal für diese Familie: Dokument anlegen / 이 가족의 첫 여행 문서 만들기
+          if (!creating) { creating = true; try { await F.setDoc(tdoc(), { trips: {}, created: Date.now() }, { merge: true }); } catch (e) { fail(e); } }
+          return;
+        }
+        retries = 0;
+        const remote = snap.data().trips || {};
+        if (first) {
+          first = false;
+          // Beim ersten Kontakt: Reisen, die nur hier liegen, mitnehmen; bei einem anderen Familiencode nichts mitnehmen.
+          // 처음 연결: 이 기기에만 있는 여행을 올림. 다른 가족 코드로 옮길 때는 올리지 않음.
+          const mine = APP.trips(), synced = APP.syncedHouse(), entries = [];
+          const firstEver = !synced, same = synced === cloud.house, dirty = APP.unsynced();
+          for (const id of Object.keys(mine)) {
+            if (!mine[id] || !mine[id].title) continue;
+            if ((firstEver && !remote[id]) || (same && dirty.has(id))) { entries.push([['trips', id], mine[id]]); remote[id] = mine[id]; }
+          }
+          if (same) for (const id of dirty) if (!mine[id] && remote[id]) { entries.push([['trips', id], null]); delete remote[id]; }
+          APP.clearUnsynced(); APP.setSyncedHouse(cloud.house);
+          if (entries.length) cloud.write(entries);
+          cloud.live = true;
+        }
+        APP.setTrips(remote);
+      }, (e) => {
+        stop(); fail(e);
+        retryTimer = setTimeout(() => { if (cloud.user && cloud.house) listen(); }, Math.min(120, 10 * ++retries) * 1000);
+      });
+    }
+    async function link(code) {
+      cloud.house = code;
+      try { localStorage.setItem('travel-v1:lastHouse', JSON.stringify(code)); } catch {}
+      await F.setDoc(F.doc(db, 'users', auth.currentUser.uid), { house: code }, { merge: true });
+      listen(); APP.refresh();
+    }
+    cloud.signIn = () => A.signInWithPopup(auth, new A.GoogleAuthProvider());
+    cloud.signOut = async () => { clearTimeout(retryTimer); stop(); cloud.house = null; await A.signOut(auth); APP.refresh(); };
+    cloud.create = async () => {
+      const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      const code = [...crypto.getRandomValues(new Uint8Array(10))].map((n) => abc[n % abc.length]).join('');
+      await F.setDoc(F.doc(db, 'households', code), { stores: {}, items: {}, stock: {}, meals: {}, created: Date.now() });
+      await link(code);
+    };
+    cloud.join = async (raw) => {
+      const code = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!code || !(await F.getDoc(F.doc(db, 'households', code))).exists()) return false;
+      await link(code);
+      return true;
+    };
+    A.onAuthStateChanged(auth, async (user) => {
+      cloud.user = user;
+      if (!user) { stop(); cloud.house = null; }
+      else if (!cloud.house) {
+        try {
+          const u = await F.getDoc(F.doc(db, 'users', user.uid));
+          if (u.exists() && u.data().house) cloud.house = u.data().house;
+        } catch (e) { console.warn('sync', e); }
+        if (cloud.house) listen();
+      }
+      cloud.ready = true;
+      APP.refresh();
+    });
+  }
+}
+</script>
+</body>
+</html>
