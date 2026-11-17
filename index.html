@@ -778,8 +778,8 @@ function moneyTab(tr) {
 }
 
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
-Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기' });
-Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen' });
+Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기', naver: '네이버 지도', map: '🗺 구글 지도' });
+Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen', naver: 'Naver Map', map: '🗺 Google Maps' });
 // Notion-Abgleich / 노션 연결
 Object.assign(T.ko, {
   nOpen: '노션에서 열기', nEditMemo: '노션에서 고치기', nBody: '노션 페이지 안 내용', whichTable: '어느 표에 넣을까요', grpMain: '기본 표',
@@ -813,7 +813,22 @@ function spendLine(s, tr, withDate) {
 }
 // "점심 - 이치란" → "이치란": der Ortsname ohne Mahlzeit davor / 장소 이름만
 const cleanName = (s) => String(s || '').replace(/^(점심|저녁|아침|카페|조식|브런치|간식|lunch|dinner|breakfast|mittag(essen)?|abendessen|frühstück)\s*[-–:·]?\s*/i, '').replace(/\s*[-–]\s*$/, '').trim();
-function dirUrl(it) {
+// In Korea ist Naver Map besser als Google (Wege, Läden): Orte in Korea öffnen in Naver Map.
+// Auf dem iPhone öffnet der Link die Naver-Map-App, wenn sie installiert ist, sonst die Webseite.
+// 한국은 구글보다 네이버 지도가 나아서, 한국 장소는 네이버 지도로 열기 (앱이 있으면 앱, 없으면 웹)
+function inKorea(it) {
+  // Zuerst die Flagge der Reise (Kyushu liegt direkt neben Busan) / 먼저 여행 국기로 (규슈가 부산 바로 옆이라)
+  const tr = trips[ui.trip], cc = tr ? flagCC(tr.icon) : '';
+  if (cc) return cc === 'kr';
+  if (!(it.loc && isFinite(it.loc.lat))) return false;
+  const { lat, lng } = it.loc;
+  return lat > 33 && lat < 38.7 && lng > 124.5 && (lng < 129.6 || (lat > 37 && lng < 131.9));
+}
+const naverUrl = (it) => { const q = cleanName(it.title) || (it.loc && shortName(it.loc.name).split(',')[0]) || ''; return q ? `https://map.naver.com/p/search/${encodeURIComponent(q)}` : ''; };
+const googleUrl = (it) => dirUrl(it, true);
+const dirLabel = (it) => (inKorea(it) ? '🟢 ' + t('naver') : '🧭 ' + t('dir'));
+function dirUrl(it, google) {
+  if (!google && inKorea(it)) return naverUrl(it);
   if (it.loc && it.loc.pid) return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(it.loc.name || cleanName(it.title))}&destination_place_id=${encodeURIComponent(it.loc.pid)}`;
   if (it.loc && isFinite(it.loc.lat)) return `https://www.google.com/maps/dir/?api=1&destination=${it.loc.lat},${it.loc.lng}`;
   const q = cleanName(it.title);
@@ -843,7 +858,7 @@ function todayTab(tr) {
     const dir = dirUrl(next), tm = (next.time || '').split('\n')[0];
     h += `<div class="next"><div class="lb">${esc(t('nextUp'))}</div><span class="nt-title">${icon(next)} ${esc(next.title)}</span>
       ${tm ? `<span class="nt-when">${esc(tm)}</span>` : ''}${cd ? ` <span class="cd">${esc(cd)}</span>` : ''}
-      <div class="row-btns">${dir ? `<a class="btn small" href="${esc(dir)}" target="_blank" rel="noopener">🧭 ${esc(t('dir'))}</a>` : ''}
+      <div class="row-btns">${dir ? `<a class="btn small" href="${esc(dir)}" target="_blank" rel="noopener">${esc(dirLabel(next))}</a>` : ''}
       <button class="btn small" data-act="toggle-done" data-id="${next.id}">${esc(t('markDone'))}</button>
       <button class="btn small" data-act="edit-item" data-id="${next.id}" aria-label="${esc(t('editItem'))}">✎</button></div></div>`;
   } else {
@@ -858,7 +873,7 @@ function todayTab(tr) {
     const dir = dirUrl(tonight);
     h += `<div class="mini"><b>🛏️ ${esc(t('tonight'))}</b><div style="font-weight:700;font-size:17px;margin-top:2px">${esc(tonight.title)}</div>
       ${tm ? `<div class="note" style="margin:2px 0 0">${esc(tm.trim())}</div>` : ''}
-      <div class="row-btns" style="margin-top:8px">${dir ? `<a class="btn small ghost" href="${esc(dir)}" target="_blank" rel="noopener">🧭 ${esc(t('dir'))}</a>` : ''}
+      <div class="row-btns" style="margin-top:8px">${dir ? `<a class="btn small ghost" href="${esc(dir)}" target="_blank" rel="noopener">${esc(dirLabel(tonight))}</a>` : ''}
       ${tonight.code ? `<button class="code" data-act="copy" data-v="${esc(tonight.code)}">${esc(tonight.code)} ⧉</button>` : ''}</div></div>`;
   }
   // Ausgabe eintragen / 지출 기록
@@ -1010,7 +1025,7 @@ function mapList(tr, day) {
 }
 function popupHtml(x) {
   const when = [x.date ? dayName(x.date, { month: 'short', day: 'numeric', weekday: 'short' }) : '', (x.time || '').split('\n')[0]].filter(Boolean).join(' · ');
-  return `<div class="pop"><b>${icon(x)} ${esc(x.title)}</b>${esc(when)}<div class="row-btns"><a class="btn small" href="${esc(dirUrl(x))}" target="_blank" rel="noopener">🧭 ${esc(t('dir'))}</a>
+  return `<div class="pop"><b>${icon(x)} ${esc(x.title)}</b>${esc(when)}<div class="row-btns"><a class="btn small" href="${esc(dirUrl(x))}" target="_blank" rel="noopener">${esc(dirLabel(x))}</a>
     <button class="btn small ghost" data-act="edit-item" data-id="${x.id}">✎</button></div></div>`;
 }
 async function initGoogleMap(tr, box, list, day, days) {
@@ -1330,7 +1345,7 @@ function itemSheet(tr, it, defaults = {}) {
     ${it.body ? `<div class="fld"><span>${esc(t('nBody'))}</span><div class="memo card" style="font-size:15px">${linkify(it.body)}</div></div>` : ''}
     <label class="fld"><span>${esc(t('links'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px">${esc(links)}</textarea></label>
     <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">🔗 ${esc(hostOf(u))}</a>`).join('')}
-      ${dirUrl(it) ? `<a href="${esc(dirUrl(it))}" target="_blank" rel="noopener">${esc(t('map'))}</a>` : ''}</div>
+      ${inKorea(it) && naverUrl(it) ? `<a href="${esc(naverUrl(it))}" target="_blank" rel="noopener">🟢 ${esc(t('naver'))}</a>` : ''}${googleUrl(it) ? `<a href="${esc(googleUrl(it))}" target="_blank" rel="noopener">${esc(t('map'))}</a>` : ''}</div>
     <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-item" data-id="${it.id}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
   </form>`, (p) => {
     const f = p.querySelector('form');
