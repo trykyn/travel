@@ -3,6 +3,6 @@
 // 구글 지도 키 (브라우저용, https://trykyn.github.io/* 에서만 쓰이게 잠금, 하루 상한 설정됨).
 // 비어 있으면 OpenStreetMap 지도를 씀. mapId: 구글 클라우드의 '지도 관리'에서 만든 지도 ID (핀 표시에 필요).
 window.GMAPS = {
-  key: '',
-  mapId: '',
+  key: 'AIzaSyCvMM-2mO7e18jhTwYXwVyfvSakPL9n0J4',
+  mapId: 'b008728f8a6019a6f2c267d9',
 };
