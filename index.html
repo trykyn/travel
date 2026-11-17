@@ -185,6 +185,13 @@ h2:first-child { margin-top: 2px; }
 .who .face { width: 22px; height: 22px; margin: -3px 4px -3px -4px; }
 .pk { flex: none; display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--k); color: #fff; }
 .pk .ms { font-size: 19px; vertical-align: 0; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+.seg { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: var(--field); }
+.seg button { flex: 1; padding: 9px 8px; border-radius: 11px; font-size: 15px; font-weight: 800; color: var(--muted); }
+.seg button.on { background: var(--sheet); color: var(--ink); box-shadow: var(--shadow); }
+.ck-seg { margin: 0 0 12px; }
+.ck-seg button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+.ck-seg .ms { font-size: 18px; vertical-align: 0; }
+.ck-seg .n { min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 12px; line-height: 20px; }
 .checks .tx small { color: var(--muted); font-size: 12.5px; }
 .dh { flex-wrap: wrap; }
 .dh-act { margin-left: auto; display: inline-flex; gap: 6px; }
@@ -436,7 +443,7 @@ const T = {
   ko: {
     app: '여행', upcoming: '다가오는 여행', past: '지난 여행', newTrip: '+ 새 여행', noTrips: '아직 여행이 없어요. 아래 버튼으로 첫 여행을 만들어 보세요.',
     undated: '날짜 미정', ongoing: '여행 중', dayN: '{n}일째', nights: '{n}박', next: '다음 여행', back: '여행',
-    tabs: { plan: '일정', book: '예약', money: '돈', check: '체크리스트', memo: '메모' },
+    tabs: { plan: '일정', book: '예약', money: '돈', check: '할 일·짐', memo: '메모' },
     cats: { move: '이동', stay: '숙소', food: '맛집', see: '관광', etc: '기타' },
     dayNo: '{n}일차', today: '오늘', cand: '날짜 미정 · 후보', addHere: '+ 추가', addItem: '+ 일정', noItems: '아직 일정이 없어요',
     night: '숙박 {a}/{b}박', checkout: '체크아웃', booked: '예약완료', notBooked: '예약 전', items: '일정 {n}',
@@ -446,7 +453,7 @@ const T = {
     bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '예약한 일정', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '숙소·이동 일정이 아직 없어요',
     total: '총 비용', inLocal: '현지 통화로 {x}', budgetOf: '예산 {b}', left: '{x} 남음', over: '{x} 초과', byCat: '종류별', rate: '환율', fetchRate: '오늘 환율로', rateOk: '오늘 환율로 바꿨어요', rateFail: '환율을 불러오지 못했어요',
     noRate: '환율이 없어서 유로로 못 바꾼 비용이 있어요', conv: '바로 환산', costList: '비용 목록', noCosts: '비용을 넣은 일정이 없어요', setRate: '환율 넣기',
-    addCheckPh: '준비물이나 할 일', add: '추가', tplTitle: '목록 넣기', addedN: '{n}개 넣었어요', noneAdded: '이미 다 들어 있어요', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요. 위에서 목록을 넣어 보세요.',
+    addCheckPh: '준비물이나 할 일', add: '추가', tplTitle: '목록 넣기', addedN: '{n}개 넣었어요', noneAdded: '이미 다 들어 있어요', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요.',
     tpl: { basic: '기본', kids: '아이', flight: '비행기', beach: '해변', ski: '스키', before: '출발 전 할 일' },
     edit: '편집', memoEmpty: '메모가 없어요', memoPh: '숙소 후보, 교통권, 참고 링크…',
     tripInfo: '여행 정보', newTripT: '새 여행', tripTitle: '여행 이름', tripTitlePh: '예: 가을방학 파리', icon: '아이콘', start: '출발', end: '돌아오는 날', year: '연도 (날짜 미정일 때)',
@@ -460,7 +467,7 @@ const T = {
   de: {
     app: 'Reisen', upcoming: 'Kommende Reisen', past: 'Vergangene Reisen', newTrip: '+ Neue Reise', noTrips: 'Noch keine Reisen. Leg unten die erste an.',
     undated: 'ohne Datum', ongoing: 'Unterwegs', dayN: 'Tag {n}', nights: '{n} Nächte', next: 'Nächste Reise', back: 'Reisen',
-    tabs: { plan: 'Plan', book: 'Buchungen', money: 'Kosten', check: 'Checkliste', memo: 'Notizen' },
+    tabs: { plan: 'Plan', book: 'Buchungen', money: 'Kosten', check: 'To-do & Packen', memo: 'Notizen' },
     cats: { move: 'Fahrt', stay: 'Unterkunft', food: 'Essen', see: 'Ausflug', etc: 'Sonstiges' },
     dayNo: 'Tag {n}', today: 'Heute', cand: 'Ohne Datum · Ideen', addHere: '+ Hinzufügen', addItem: '+ Eintrag', noItems: 'Noch keine Einträge',
     night: 'Nacht {a}/{b}', checkout: 'Check-out', booked: 'gebucht', notBooked: 'nicht gebucht', items: '{n} Einträge',
@@ -470,7 +477,7 @@ const T = {
     bookDone: 'Gebucht', bookOf: '{a} von {b}', stays: 'Unterkünfte', moves: 'Fahrten', others: 'Weitere Buchungen', gaps: 'Nächte ohne Unterkunft', allNights: 'Jede Nacht hat eine Unterkunft', noBook: 'Noch keine Unterkünfte oder Fahrten',
     total: 'Gesamt', inLocal: 'in Landeswährung {x}', budgetOf: 'Budget {b}', left: '{x} übrig', over: '{x} drüber', byCat: 'Nach Art', rate: 'Kurs', fetchRate: 'Heutiger Kurs', rateOk: 'Heutigen Kurs übernommen', rateFail: 'Kurs nicht abrufbar',
     noRate: 'Ohne Kurs konnten nicht alle Kosten in Euro umgerechnet werden', conv: 'Umrechner', costList: 'Alle Kosten', noCosts: 'Noch keine Kosten eingetragen', setRate: 'Kurs eintragen',
-    addCheckPh: 'Mitnehmen oder erledigen', add: 'Hinzufügen', tplTitle: 'Liste einfügen', addedN: '{n} eingefügt', noneAdded: 'Schon alles drin', checkProg: '{a} von {b} erledigt', noChecks: 'Noch leer. Füge oben eine Liste ein.',
+    addCheckPh: 'Mitnehmen oder erledigen', add: 'Hinzufügen', tplTitle: 'Liste einfügen', addedN: '{n} eingefügt', noneAdded: 'Schon alles drin', checkProg: '{a} von {b} erledigt', noChecks: 'Noch leer.',
     tpl: { basic: 'Grundausstattung', kids: 'Kinder', flight: 'Flug', beach: 'Strand', ski: 'Ski', before: 'Vor der Abreise' },
     edit: 'Bearbeiten', memoEmpty: 'Keine Notizen', memoPh: 'Hotelideen, Fahrkarten, Links …',
     tripInfo: 'Reise', newTripT: 'Neue Reise', tripTitle: 'Name der Reise', tripTitlePh: 'z. B. Herbstferien Paris', icon: 'Symbol', start: 'Hinreise', end: 'Rückreise', year: 'Jahr (ohne Datum)',
@@ -1026,12 +1033,10 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
+Object.assign(T.ko, { ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
   todoUnbooked: '예약 전 {n}', todoChecks: '할 일·짐 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
-Object.assign(T.ko.tpl, { kidpack: '아이 짐' });
-Object.assign(T.de, { dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
+Object.assign(T.de, { ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
   todoUnbooked: '{n} nicht gebucht', todoChecks: '{n} offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
-Object.assign(T.de.tpl, { kidpack: 'Kindersachen' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
 Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
 Object.assign(T.ko, { bookLink: '예약 링크 (한 줄에 하나)' });
@@ -1817,14 +1822,12 @@ function recordSheet(tr, d) {
 function todoCounts(tr) {
   return {
     unbooked: items(tr).filter((x) => (x.cat === 'stay' || x.cat === 'move') && !x.booked).length,
-    checks: Object.values(tr.checks || {}).filter((c) => c && c.id && !c.done).length,
   };
 }
 function todoLine(tr) {
   if (status(tr) !== 'up') return '';
   const c = todoCounts(tr), parts = [];
   if (c.unbooked) parts.push(`${ms('pending')} ${esc(t('todoUnbooked', { n: c.unbooked }))}`);
-  if (c.checks) parts.push(`${ms('checklist')} ${esc(t('todoChecks', { n: c.checks }))}`);
   return parts.length ? `<span class="todo-line">${parts.join('<i>·</i>')}</span>` : '';
 }
 
@@ -1835,22 +1838,18 @@ const PACK_ICON = [[/잠옷|schlafanzug|pyjama/i, 'bedtime'], [/수영|bade/i, '
 const packIcon = (text) => (PACK_ICON.find(([re]) => re.test(text)) || [, 'backpack'])[1];
 const kidColor = (k) => (KIDS.find((x) => x[0] === k) || [])[3] || 'var(--muted)';
 
-const TPL = {
-  basic: { ko: ['여권', '신분증·운전면허증', '충전기·보조배터리', '여행자 보험', '상비약', '현금·카드', '멀티 어댑터'], de: ['Reisepass', 'Ausweis·Führerschein', 'Ladegerät·Powerbank', 'Reiseversicherung', 'Reiseapotheke', 'Bargeld·Karten', 'Reiseadapter'] },
-  kidpack: { ko: ['내일 입을 옷', '잠옷', '수영복', '신발', '좋아하는 장난감', '책', '간식', '물병', '헤드폰', '모자'], de: ['Kleidung für morgen', 'Schlafanzug', 'Badesachen', 'Schuhe', 'Lieblingsspielzeug', 'Buch', 'Snack', 'Trinkflasche', 'Kopfhörer', 'Mütze'] },
-  kids: { ko: ['아이 여권', '카시트', '간식', '장난감·색칠놀이', '아이 상비약 (해열제)', '여벌 옷', '물티슈'], de: ['Kinderreisepass', 'Kindersitz', 'Snacks', 'Spielzeug·Malbuch', 'Kinderapotheke (Fiebersaft)', 'Wechselkleidung', 'Feuchttücher'] },
-  flight: { ko: ['온라인 체크인', '좌석 지정', '수하물 무게 확인', '헤드폰', '목베개'], de: ['Online-Check-in', 'Sitzplätze reservieren', 'Gepäckgewicht prüfen', 'Kopfhörer', 'Nackenkissen'] },
-  beach: { ko: ['수영복', '선크림', '래시가드', '모자·선글라스', '비치타월', '물놀이 장난감', 'Strandmuschel'], de: ['Badesachen', 'Sonnencreme', 'UV-Shirt', 'Hut·Sonnenbrille', 'Strandtuch', 'Wasserspielzeug', 'Strandmuschel'] },
-  ski: { ko: ['스키복', '장갑·넥워머', '고글·헬멧', '스키 양말', '핫팩', '리프트권 예약', '스키 대여 예약'], de: ['Skianzug', 'Handschuhe·Schlauchschal', 'Skibrille·Helm', 'Skisocken', 'Taschenwärmer', 'Skipass reservieren', 'Skiverleih reservieren'] },
-  before: { ko: ['숙소 예약 확인', '렌트카 예약', '여행자 보험 가입', '환전·카드 해외결제 확인', '유치원·학교에 알리기', '우편물·화분 부탁하기', '주차 예약'], de: ['Unterkünfte prüfen', 'Mietwagen buchen', 'Reiseversicherung abschließen', 'Geld wechseln·Karte freischalten', 'Kita·Schule Bescheid sagen', 'Post·Pflanzen organisieren', 'Parkplatz reservieren'] },
-};
+// Zwei Unterthemen: 할 일 (Aufgaben, auch die To-dos aus Notion) und 체크리스트 (Packliste, je Kind filterbar)
+// 소주제 두 개: 할 일(노션 할 일 포함)과 체크리스트(짐, 아이별로 볼 수 있음)
+const isPack = (x) => x.kind === 'pack' || !!x.who;
 function checkTab(tr) {
-  const who = ui.who || '';
-  const list = Object.values(tr.checks || {}).filter((x) => x && x.id && (ui.grp == null || !x.grp || x.grp === ui.grp) && (!who || (who === 'fam' ? !x.who : x.who === who))).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
+  const ck = ui.ck === 'pack' ? 'pack' : 'todo', who = ck === 'pack' ? ui.who || '' : '';
+  const scoped = Object.values(tr.checks || {}).filter((x) => x && x.id && (ui.grp == null || !x.grp || x.grp === ui.grp));
+  const open = (k) => scoped.filter((x) => (isPack(x) ? 'pack' : 'todo') === k && !x.done).length;
+  const list = scoped.filter((x) => (isPack(x) ? 'pack' : 'todo') === ck && (!who || (who === 'fam' ? !x.who : x.who === who))).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
   const done = list.filter((x) => x.done).length;
-  let h = `<div class="tpl who">${[['', t('whoAll')], ['fam', t('whoFam')], ...KIDS.map(([k]) => [k, kidName(k)])].map(([k, l]) => `<button class="pill${who === k ? ' on' : ''}" data-act="who" data-k="${k}">${KIDS.some(([x]) => x === k) ? `<span class="face">${kidFace(k)}</span>` : ''}${esc(l)}</button>`).join('')}</div>`;
-  h += `<form class="add" data-form="add-check"><input name="text" placeholder="${esc(t('addCheckPh'))}" autocomplete="off" enterkeyhint="done"><button class="btn sun">${esc(t('add'))}</button></form>
-    <div class="tpl"><span class="note" style="margin:6px 4px 0 2px">${esc(t('tplTitle'))}</span>${Object.keys(TPL).map((k) => `<button class="pill" data-act="tpl" data-k="${k}">${esc(t('tpl.' + k))}</button>`).join('')}</div>`;
+  let h = `<div class="seg ck-seg">${['todo', 'pack'].map((k) => `<button class="${ck === k ? 'on' : ''}" data-act="ck" data-k="${k}">${ms(k === 'todo' ? 'checklist' : 'luggage')} ${esc(t('ck_' + k))}${open(k) ? `<span class="n">${open(k)}</span>` : ''}</button>`).join('')}</div>`;
+  if (ck === 'pack') h += `<div class="tpl who">${[['', t('whoAll')], ['fam', t('whoFam')], ...KIDS.map(([k]) => [k, kidName(k)])].map(([k, l]) => `<button class="pill${who === k ? ' on' : ''}" data-act="who" data-k="${k}">${KIDS.some(([x]) => x === k) ? `<span class="face">${kidFace(k)}</span>` : ''}${esc(l)}</button>`).join('')}</div>`;
+  h += `<form class="add" data-form="add-check"><input name="text" placeholder="${esc(t(ck === 'pack' ? 'addPackPh' : 'addTodoPh'))}" autocomplete="off" enterkeyhint="done"><button class="btn sun">${esc(t('add'))}</button></form>`;
   if (!list.length) return h + `<p class="empty">${esc(t('noChecks'))}</p>`;
   h += `<div class="stat" style="margin:0 2px"><span>${esc(t('checkProg', { a: done, b: list.length }))}</span></div><div class="progress"><span style="width:${Math.round((done / list.length) * 100)}%"></span></div>`;
   h += `<ul class="checks">${list.map((x) => `<li class="${x.done ? 'done' : ''}"><button class="cb" data-act="check" data-id="${x.id}" role="checkbox" aria-checked="${!!x.done}">
@@ -1918,7 +1917,7 @@ function route(hash) {
   const m = (typeof hash === 'string' ? hash : location.hash).match(/^#\/t\/([^/]+)(?:\/(\w+))?/);
   if (m && valid(trips[m[1]])) {
     ui.view = 'trip';
-    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = undefined; ui.who = ''; ui.dayMaps = new Set(); if (window.notionSync) window.notionSync.opened(m[1]); }
+    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = undefined; ui.who = ''; ui.ck = ''; ui.dayMaps = new Set(); if (window.notionSync) window.notionSync.opened(m[1]); }
     ui.trip = m[1]; ui.tab = m[2] || (status(trips[m[1]]) === 'now' ? 'today' : 'plan');
   }
   else { ui.view = 'home'; ui.trip = null; ui.scrolled = ''; }
@@ -2261,6 +2260,7 @@ const ACT = {
   'find-all': () => findAll(),
   rec: (b) => recordSheet(cur(), b.dataset.day),
   who: (b) => { ui.who = b.dataset.k; render(true); },
+  ck: (b) => { ui.ck = b.dataset.k; render(true); },
   'day-map': (b) => { const d = b.dataset.day; ui.dayMaps = ui.dayMaps || new Set(); if (ui.dayMaps.has(d)) ui.dayMaps.delete(d); else ui.dayMaps.add(d); render(true); },
   'find-day': (b) => { const tr = cur(); findAll(dayStops(tr, b.dataset.day).filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title)), b); },
   'visited-map': () => visitedSheet(),
@@ -2301,14 +2301,6 @@ const ACT = {
     write(entries);
     toast(t('removedFromPlan'));
   },
-  tpl: (b) => {
-    const kid = KIDS.some(([k]) => k === ui.who) ? ui.who : '', g = ui.grp && ui.grp !== '*' ? ui.grp : '';
-    const tr = cur(), have = new Set(Object.values(tr.checks || {}).filter((x) => x && (x.who || '') === kid && (!x.grp || x.grp === g)).map((x) => x.text));
-    const add = TPL[b.dataset.k][ui.lang].filter((s) => !have.has(s));
-    const base = Date.now() / 1000;
-    write([...add.map((text, i) => { const id = uid('c'); return [['trips', tr.id, 'checks', id], { id, text, done: false, order: base + i, ...(ui.grp && { grp: ui.grp }), ...(KIDS.some(([k]) => k === ui.who) && { who: ui.who }) }]; }), touch(tr.id)]);
-    toast(add.length ? t('addedN', { n: add.length }) : t('noneAdded'));
-  },
   'memo-edit': () => { ui.memoEdit = true; render(true); const ta = $('textarea[name=memo]'); if (ta) ta.focus(); },
   'memo-cancel': () => { ui.memoEdit = false; render(true); },
   export: () => exportFile(),
@@ -2331,7 +2323,7 @@ document.addEventListener('submit', async (e) => {
     const text = f.text.value.trim();
     if (!text) return;
     const id = uid('c');
-    write([[['trips', ui.trip, 'checks', id], { id, text, done: false, order: Date.now() / 1000, ...(ui.grp && { grp: ui.grp }), ...(KIDS.some(([k]) => k === ui.who) && { who: ui.who }) }], touch(ui.trip)]);
+    write([[['trips', ui.trip, 'checks', id], { id, text, done: false, order: Date.now() / 1000, ...(ui.grp && { grp: ui.grp }), ...(ui.ck === 'pack' && { kind: 'pack' }), ...(ui.ck === 'pack' && KIDS.some(([k]) => k === ui.who) && { who: ui.who }) }], touch(ui.trip)]);
     const input = $('form[data-form=add-check] input'); if (input) input.focus();
   } else if (kind === 'spend') {
     e.preventDefault();
