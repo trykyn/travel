@@ -517,14 +517,24 @@ const put = (path, value) => write([[path, value]]);
 function touch(tid) { return [['trips', tid, 'mt'], Date.now()]; }
 
 // ---------- Reisen einordnen / 여행 분류 ----------
-function status(tr) {
+// Reisen ohne eigenes Datum (Notion-Seite ohne Datum, z. B. zwei Skireisen als Unterseiten): Zeitraum der Gruppe,
+// die gerade läuft oder als nächste kommt, sonst der letzten. / 날짜 없는 여행(노션 페이지에 날짜가 없고 하위 페이지에만 있는 경우):
+// 진행 중이거나 다음에 올 묶음의 기간, 다 지났으면 마지막 묶음의 기간.
+function effSpan(tr) {
+  if (isDate(tr.start)) return [tr.start, isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start];
+  const spans = groupsOf(tr).map((g) => groupSpan(tr, g)).filter(Boolean);
+  if (!spans.length) return null;
   const now = today();
-  if (isDate(tr.start)) {
-    const end = isDate(tr.end) ? tr.end : tr.start;
-    if (now < tr.start) return 'up';
-    if (now <= end) return 'now';
-    return 'past';
-  }
+  const cur = spans.find(([s, e]) => s <= now && now <= e);
+  if (cur) return cur;
+  const next = spans.filter(([s]) => s > now).sort((a, b) => a[0].localeCompare(b[0]))[0];
+  return next || spans.sort((a, b) => b[1].localeCompare(a[1]))[0];
+}
+// Für Anzeigen: die Reise mit diesem Zeitraum als start/end / 화면용: 위 기간을 start/end로 넣은 사본
+const viewOf = (tr) => { if (isDate(tr.start)) return tr; const sp = effSpan(tr); return sp ? { ...tr, start: sp[0], end: sp[1] } : tr; };
+function status(tr) {
+  const now = today(), sp = effSpan(tr);
+  if (sp) return now < sp[0] ? 'up' : now <= sp[1] ? 'now' : 'past';
   return (tr.year || 0) >= new Date().getFullYear() ? 'up' : 'past';
 }
 const items = (tr) => Object.values(tr.items || {}).filter((x) => x && x.id);
@@ -595,9 +605,10 @@ function langSwitch() {
   return `<div class="lang">${['ko', 'de'].map((l) => `<button data-act="lang" data-l="${l}" class="${ui.lang === l ? 'on' : ''}">${l === 'ko' ? '한국어' : 'Deutsch'}</button>`).join('')}</div>`;
 }
 function dLabel(tr) {
-  const st = status(tr);
-  if (st === 'now') return `${t('ongoing')} · ${t('dayN', { n: diff(tr.start, today()) + 1 })}`;
-  if (st === 'up' && isDate(tr.start)) { const n = diff(today(), tr.start); return n === 0 ? 'D-Day' : `D-${n}`; }
+  const st = status(tr), sp = effSpan(tr);
+  if (!sp) return '';
+  if (st === 'now') return `${t('ongoing')} · ${t('dayN', { n: diff(sp[0], today()) + 1 })}`;
+  if (st === 'up') { const n = diff(today(), sp[0]); return n === 0 ? 'D-Day' : `D-${n}`; }
   return '';
 }
 function nightsLabel(tr) {
@@ -617,7 +628,8 @@ const AIRPORTS = [
   [/바르셀로나|barcelona/i, 'BCN'], [/로마|\brom\b|rome/i, 'FCO'], [/밀라노|milan|mailand/i, 'MXP'], [/베네치아|venedig|venice/i, 'VCE'],
   [/런던|london/i, 'LHR'], [/방콕|bangkok/i, 'BKK'], [/뉴욕|new york/i, 'JFK'], [/빈\b|wien|vienna/i, 'VIE'], [/리스본|lisbon|lissabon/i, 'LIS'],
   [/아테네|athen/i, 'ATH'], [/테네리페|tenerife|teneriffa/i, 'TFS'], [/가르다|garda|이탈리아|italien|italy/i, 'VRN'], [/암스테르담|amsterdam/i, 'AMS'],
-  [/취리히|zürich|zurich/i, 'ZRH'], [/니스|\bnice\b|nizza/i, 'NCE'], [/크로아티아|kroatien|croatia|split/i, 'SPU'], [/스키|\bski\b/i, 'SKI'],
+  [/취리히|zürich|zurich/i, 'ZRH'], [/니스|\bnice\b|nizza/i, 'NCE'], [/크로아티아|kroatien|croatia|split/i, 'SPU'], [/잘츠부르크|salzburg/i, 'SZG'],
+  [/오스트리아|österreich|austria|티롤|tirol|인스브루크|innsbruck|피츠탈|pitztal|나우더스|nauders|하우터른|hohentauern/i, 'INN'], [/스위스|schweiz|switzerland/i, 'ZRH'], [/스키|\bski\b/i, 'SKI'],
 ];
 function codeTo(tr) {
   if (tr.apTo) return tr.apTo;
@@ -632,7 +644,7 @@ const mmdd = (s) => (isDate(s) ? `${s.slice(5, 7)}.${s.slice(8)}` : '—');
 
 // ---------- Startseite / 홈 ----------
 function homeView() {
-  const list = allTrips();
+  const list = allTrips().map(viewOf);
   const byStart = (a, b) => (a.start || `${a.year || 9999}-99`).localeCompare(b.start || `${b.year || 9999}-99`);
   const now = list.filter((x) => status(x) === 'now').sort(byStart);
   const up = list.filter((x) => status(x) === 'up').sort(byStart);
@@ -701,7 +713,7 @@ function tripView(tr) {
   // Im Plan mit gewählter Gruppe zeigt die Bordkarte deren Zeitraum / 일정 탭에서 묶음을 고르면 탑승권도 그 묶음 날짜로
   if (ui.tab === 'plan') resolveGroup(tr);
   const gs = ui.tab === 'plan' && ui.grp != null ? groupSpan(tr, ui.grp) : null;
-  const v = gs ? { ...tr, start: gs[0], end: gs[1] } : tr;
+  const v = gs ? { ...tr, start: gs[0], end: gs[1] } : viewOf(tr);
   const d = dLabel(v);
   // Kopf als Bordkarte: Route mit Flughafen-Codes, Daten, Nächte, D-Tag / 머리는 탑승권: 공항 코드, 날짜, 박, D-day
   const tm = (s) => (isDate(s) ? dayName(s, { month: 'numeric', day: 'numeric', weekday: 'short' }) : t('undated'));
@@ -1007,11 +1019,11 @@ function todayTab(tr) {
   if (todays.length) h += `<p class="note" style="margin:10px 2px 0"><b>${esc(t('spendToday', { x: money(sum, 'EUR') }))}</b></p><ul class="lines">${todays.map((s) => spendLine(s, tr)).join('')}</ul>`;
   // Der ganze Tag / 오늘 전체 일정
   if (list.length) {
-    h += `<h2>${esc(t('todayPlan'))} · ${esc(t('dayOfTrip', { n: diff(tr.start, d) + 1 }))}</h2><div class="items">${list.map((x) => `<div class="bk">${itemCard(x, tr, d)}
+    h += `<h2>${esc(t('todayPlan'))} · ${esc(t('dayOfTrip', { n: diff(viewOf(tr).start, d) + 1 }))}</h2><div class="items">${list.map((x) => `<div class="bk">${itemCard(x, tr, d)}
       <button class="tick${x.done ? ' on' : ''}" data-act="toggle-done" data-id="${x.id}" aria-pressed="${!!x.done}" aria-label="${esc(t('markDone'))}"><span class="box">${x.done ? '✓' : ''}</span></button></div>`).join('')}</div>`;
   }
   const tm = addDays(d, 1);
-  if (isDate(tr.end) && tm <= tr.end) {
+  if (isDate(viewOf(tr).end) && tm <= viewOf(tr).end) {
     const nx = dayItems(tr, tm);
     if (nx.length) h += `<h2>${esc(t('tomorrow'))} · ${esc(dayName(tm, { month: 'long', day: 'numeric', weekday: 'short' }))}</h2><div class="items">${nx.slice(0, 5).map((x) => itemCard(x, tr, tm)).join('')}</div>`;
   }
