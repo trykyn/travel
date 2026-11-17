@@ -192,7 +192,8 @@ h2:first-child { margin-top: 2px; }
 .dbtn { display: inline-flex; align-items: center; gap: 3px; padding: 3px 10px; border-radius: 999px; background: var(--sheet); box-shadow: var(--shadow); font-size: 13px; font-weight: 700; color: var(--accent); text-decoration: none; }
 .dbtn.on { background: var(--brand); color: #fff; }
 .dbtn .ms { font-size: 16px; vertical-align: 0; }
-.day-map { height: 240px; min-height: 0; margin: 0 0 10px; }
+.map.day-map { height: 240px; min-height: 0; margin: 0 0 10px; }
+.map.day-map.nomap { height: auto; padding: 14px; font-size: 14px; color: var(--muted); text-align: center; }
 .find-day { margin: -4px 0 10px; }
 .visited-map { height: 62vh; min-height: 320px; margin-top: 8px; }
 .pp-map { display: inline-flex; align-items: center; gap: 3px; padding: 3px 11px; border-radius: 999px; background: rgba(255, 255, 255, .18); color: #fff; font-size: 13px; font-weight: 800; }
@@ -613,9 +614,13 @@ const put = (path, value) => write([[path, value]]);
 let vacTimer = 0;
 function scheduleVac() { clearTimeout(vacTimer); vacTimer = setTimeout(() => { if (connected() && window.cloud.live && window.cloud.syncVacations) window.cloud.syncVacations(vacationsWanted()).catch((e) => console.warn('vacations', e)); }, 4000); }
 function vacationsWanted() {
-  const out = {}, now = today();
+  const out = {}, now = addDays(today(), -60); // wie 우리가족 aufräumt / 우리가족이 지우는 기준과 같게
   for (const tr of allTrips()) {
-    const spans = isDate(tr.start) ? [['', [tr.start, isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start]]] : groupsOf(tr).map((g) => [g, groupSpan(tr, g)]).filter(([, s]) => s);
+    // Reise mit Datum = ein Eintrag; ohne Datum je Gruppe (zwei Skireisen in einer Seite = zwei Einträge, ohne doppelten Gesamteintrag)
+    // 날짜 있는 여행은 한 개, 날짜 없는 여행은 묶음별로 (한 페이지에 스키 두 번이면 두 개, 전체 묶음과 겹치지 않게)
+    const named = groupsOf(tr).filter((g) => g).map((g) => [g, groupSpan(tr, g)]).filter(([, s]) => s);
+    const whole = isDate(tr.start) ? [tr.start, isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start] : groupSpan(tr, '');
+    const spans = isDate(tr.start) || !named.length ? (whole ? [['', whole]] : []) : named;
     for (const [g, [s, e]] of spans) {
       if (e < now) continue;
       const name = placeName(tr.title) + (g ? ' · ' + g : '');
@@ -725,7 +730,7 @@ function nightsLabel(tr) {
   if (!isDate(tr.start) || !isDate(tr.end) || tr.end <= tr.start) return '';
   return nightsText(diff(tr.start, tr.end));
 }
-const coverStyle = (tr) => (tr.cover && /^https:\/\//.test(tr.cover) ? ` style="background-image:url('${esc(tr.cover).replace(/'/g, '%27')}')"` : '');
+const coverStyle = (tr) => (tr.cover && /^https:\/\//.test(tr.cover) ? ` style="background-image:url('${esc(tr.cover.replace(/['"()\s\\]/g, encodeURIComponent))}')"` : '');
 
 // ---------- Flughafen-Codes / 공항 코드 ----------
 // Aus dem Namen der Reise erraten; in den Reise-Infos änderbar (apFrom / apTo).
@@ -1021,10 +1026,10 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
+Object.assign(T.ko, { dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
   todoUnbooked: '예약 전 {n}', todoChecks: '할 일·짐 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
 Object.assign(T.ko.tpl, { kidpack: '아이 짐' });
-Object.assign(T.de, { localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
+Object.assign(T.de, { dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
   todoUnbooked: '{n} nicht gebucht', todoChecks: '{n} offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
 Object.assign(T.de.tpl, { kidpack: 'Kindersachen' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
@@ -1207,7 +1212,7 @@ function loadGoogle() {
     window.__gmapsReady = () => ok(google.maps);
     // Schlüssel abgelehnt (falsche Adresse, Limit erreicht …) / 키 거부 (주소 제한, 상한 도달 등)
     // → für den Rest der Sitzung OpenStreetMap / 이번에는 기본 지도로 다시 그림
-    window.gm_authFailure = () => { ui.gmFailed = true; toast(t('gmFail')); if (ui.view === 'trip' && ui.tab === 'map') render(true); };
+    window.gm_authFailure = () => { ui.gmFailed = true; toast(t('gmFail')); dayMapCache = new Map(); if (ui.view === 'trip' && (ui.tab === 'map' || ui.tab === 'plan')) render(true); };
     const s = document.createElement('script');
     s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GM().key)}&v=weekly&loading=async&language=${ui.lang}&callback=__gmapsReady`;
     s.onerror = () => { gmapsP = null; no(new Error('google maps')); };
@@ -1299,7 +1304,7 @@ function popupHtml(x) {
 // ---------- Karten zeichnen (mehrere gleichzeitig) / 지도 그리기 (여러 개 동시에) ----------
 // pts: [{ lat, lng, label, cls, title, html, wide }]. Karten im Plan werden bei jedem Neuzeichnen ersetzt,
 // Karten in einem Blatt (opt.keep) leben mit dem Blatt. / 일정 안 지도는 다시 그릴 때마다 새로, 창 안 지도(keep)는 창과 함께.
-let maps = [];
+let maps = [], dayMapCache = new Map();
 function clearMaps() { for (const m of maps) { try { m.remove(); } catch {} } maps = []; }
 async function drawMap(box, pts, opt = {}) {
   if (useGoogle() && gmBudget('map', 100)) {
@@ -1882,7 +1887,19 @@ function afterRender() {
   if (ui.view === 'trip' && document.querySelector('.wx[data-day]')) fillWeather();
   // Geöffnete Tageskarten zeichnen / 펼친 날짜 지도 그리기
   clearMaps();
-  if (ui.view === 'trip' && ui.tab === 'plan') for (const box of document.querySelectorAll('.day-map')) drawMap(box, dayPoints(trips[ui.trip], box.dataset.day), { route: true });
+  // Unveränderte Karte wiederverwenden (spart Kartenladungen) / 그대로인 지도는 다시 씀 (지도 불러오기 절약)
+  const keepMaps = new Map();
+  if (ui.view === 'trip' && ui.tab === 'plan') for (const box of document.querySelectorAll('.day-map')) {
+    const pts = dayPoints(trips[ui.trip], box.dataset.day);
+    // Ohne Orte keine Weltkarte zeigen / 위치가 없으면 엉뚱한 지도 대신 안내
+    if (!pts.length) { box.classList.add('nomap'); box.textContent = t('dayNoLoc'); continue; }
+    const key = [ui.trip, ui.lang, box.dataset.day, JSON.stringify(pts.map((p) => [p.lat, p.lng, p.label, p.title, p.cls]))].join('|');
+    const old = dayMapCache.get(key);
+    if (old && !keepMaps.has(key)) { box.replaceWith(old); keepMaps.set(key, old); continue; }
+    drawMap(box, pts, { route: true, keep: true });
+    keepMaps.set(key, box);
+  }
+  dayMapCache = keepMaps;
   const conv = $('#conv');
   if (conv) conv.addEventListener('input', () => {
     const tr = trips[ui.trip], v = parseFloat(conv.value.replace(/[^\d.,]/g, '').replace(',', '.'));
@@ -1901,7 +1918,7 @@ function route(hash) {
   const m = (typeof hash === 'string' ? hash : location.hash).match(/^#\/t\/([^/]+)(?:\/(\w+))?/);
   if (m && valid(trips[m[1]])) {
     ui.view = 'trip';
-    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = undefined; ui.dayMaps = new Set(); if (window.notionSync) window.notionSync.opened(m[1]); }
+    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = undefined; ui.who = ''; ui.dayMaps = new Set(); if (window.notionSync) window.notionSync.opened(m[1]); }
     ui.trip = m[1]; ui.tab = m[2] || (status(trips[m[1]]) === 'now' ? 'today' : 'plan');
   }
   else { ui.view = 'home'; ui.trip = null; ui.scrolled = ''; }
@@ -1990,7 +2007,7 @@ function itemSheet(tr, it, defaults = {}) {
       <div class="geo-res" id="geo-res"></div></div>
     <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
     ${it.body ? `<div class="fld"><span>${esc(t('nBody'))}</span><div class="memo card" style="font-size:15px">${linkify(it.body)}</div></div>` : ''}
-    <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ms('link')} ${esc(hostOf(u))}</a>`).join('')}
+    <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].filter((u) => /^https?:\/\//i.test(u)).map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ms('link')} ${esc(hostOf(u))}</a>`).join('')}
       ${inKorea(it) && naverUrl(it) ? `<a href="${esc(naverUrl(it))}" target="_blank" rel="noopener"><span class="nv" aria-hidden="true">N</span> ${esc(t('naver'))}</a>` : ''}${googleUrl(it) ? `<a href="${esc(googleUrl(it))}" target="_blank" rel="noopener">${ms('map')} ${esc(t('map'))}</a>` : ''}</div>
     <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-item" data-id="${it.id}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
   </form>`, (p) => {
@@ -2207,19 +2224,20 @@ const ACT = {
   'edit-item': (b) => itemSheet(cur(), cur().items[b.dataset.id]),
   'del-item': (b) => {
     const it = cur().items[b.dataset.id];
+    if (!it) { closeSheet(); return; }
     if (!confirm(t('delItemQ', { t: it.title }))) return;
     write([[['trips', ui.trip, 'items', it.id], null], touch(ui.trip)]); closeSheet();
   },
-  'toggle-book': (b) => { const it = cur().items[b.dataset.id]; write([[['trips', ui.trip, 'items', it.id, 'booked'], !it.booked], touch(ui.trip)]); },
+  'toggle-book': (b) => { const it = cur().items[b.dataset.id]; if (!it) return; write([[['trips', ui.trip, 'items', it.id, 'booked'], !it.booked], touch(ui.trip)]); },
   jump: (b) => { const el = document.getElementById('d-' + b.dataset.day); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   copy: async (b) => { try { await navigator.clipboard.writeText(b.dataset.v); toast(t('copied')); } catch {} },
   'fetch-rate': async () => {
     const tr = cur(), r = await fetchRate(tr.cur);
     if (r) { write([[['trips', tr.id, 'rate'], r], touch(tr.id)]); toast(t('rateOk')); } else toast(t('rateFail'));
   },
-  check: (b) => { const x = cur().checks[b.dataset.id]; write([[['trips', ui.trip, 'checks', x.id, 'done'], !x.done], touch(ui.trip)]); },
+  check: (b) => { const x = cur().checks[b.dataset.id]; if (!x) return; write([[['trips', ui.trip, 'checks', x.id, 'done'], !x.done], touch(ui.trip)]); },
   'rm-check': (b) => write([[['trips', ui.trip, 'checks', b.dataset.id], null], touch(ui.trip)]),
-  'toggle-done': (b) => { const it = cur().items[b.dataset.id]; write([[['trips', ui.trip, 'items', it.id, 'done'], !it.done], touch(ui.trip)]); },
+  'toggle-done': (b) => { const it = cur().items[b.dataset.id]; if (!it) return; write([[['trips', ui.trip, 'items', it.id, 'done'], !it.done], touch(ui.trip)]); },
   'new-spend': () => spendSheet(cur()),
   // Geplanten Betrag als bezahlt eintragen (zählt dann nur als Ausgabe) / 계획 금액을 지출로 (그러면 지출로만 셈)
   'plan-to-spend': (b) => {
@@ -2284,7 +2302,8 @@ const ACT = {
     toast(t('removedFromPlan'));
   },
   tpl: (b) => {
-    const tr = cur(), have = new Set(Object.values(tr.checks || {}).filter((x) => x && (x.who || '') === (KIDS.some(([k]) => k === ui.who) ? ui.who : '')).map((x) => x.text));
+    const kid = KIDS.some(([k]) => k === ui.who) ? ui.who : '', g = ui.grp && ui.grp !== '*' ? ui.grp : '';
+    const tr = cur(), have = new Set(Object.values(tr.checks || {}).filter((x) => x && (x.who || '') === kid && (!x.grp || x.grp === g)).map((x) => x.text));
     const add = TPL[b.dataset.k][ui.lang].filter((s) => !have.has(s));
     const base = Date.now() / 1000;
     write([...add.map((text, i) => { const id = uid('c'); return [['trips', tr.id, 'checks', id], { id, text, done: false, order: base + i, ...(ui.grp && { grp: ui.grp }), ...(KIDS.some(([k]) => k === ui.who) && { who: ui.who }) }]; }), touch(tr.id)]);
@@ -2302,7 +2321,8 @@ document.addEventListener('click', (e) => {
   if (!b || !ACT[b.dataset.act]) return;
   if (b.tagName === 'BUTTON' && b.type === 'submit' && b.form) return;
   e.preventDefault();
-  ACT[b.dataset.act](b, e);
+  // Ein Knopf auf einem veralteten Bildschirm (Eintrag inzwischen gelöscht): neu zeichnen statt Fehler / 이미 지워진 항목의 버튼이면 오류 대신 화면 새로
+  try { ACT[b.dataset.act](b, e); } catch (err) { console.warn(err); render(true); }
 });
 document.addEventListener('submit', async (e) => {
   const f = e.target, kind = f.dataset.form;
@@ -2429,7 +2449,8 @@ if (cfg && APP) {
     cloud.syncVacations = async (want) => {
       const ref = F.doc(db, 'households', cloud.house), snap = await F.getDoc(ref);
       const cur = (snap.exists() && snap.data().vacations) || {}, args = [];
-      for (const [id, v] of Object.entries(want)) if (JSON.stringify(cur[id]) !== JSON.stringify(v)) args.push(new F.FieldPath('vacations', id), v);
+      const same = (a, b) => a && Object.keys(b).every((k) => a[k] === b[k]) && Object.keys(a).every((k) => k in b);
+      for (const [id, v] of Object.entries(want)) if (!same(cur[id], v)) args.push(new F.FieldPath('vacations', id), v);
       for (const id of Object.keys(cur)) if (id.startsWith('trip-') && !want[id]) args.push(new F.FieldPath('vacations', id), F.deleteField());
       if (args.length) await F.updateDoc(ref, ...args);
     };

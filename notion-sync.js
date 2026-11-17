@@ -72,6 +72,8 @@
     const res = await many(ids.map((id) => ({ method: 'GET', path: `blocks/${id}/children?page_size=100` })));
     for (let i = 0; i < ids.length; i++) {
       const d = res[i] && res[i].status < 400 ? res[i].data : null;
+      // 404 = keine Inhalte; andere Fehler (429 …) → abbrechen statt leer lesen / 404만 빈 내용, 다른 오류는 중단
+      if (!d && res[i] && res[i].status !== 404) throw new NErr('notion', res[i].data);
       if (!d) { out[ids[i]] = []; continue; }
       const list = d.results.slice();
       let c = d.has_more ? d.next_cursor : null;
@@ -125,11 +127,12 @@
       booked: !!(v(s.book) || {}).checkbox, dn: [], links: [], num: null,
     };
     const d = v(s.date);
-    if (d && d.type === 'multi_select') for (const o of d.multi_select) f.dn.push({ name: o.name, iso: parseKo(o.name, year) });
+    if (d && d.type === 'multi_select') for (const o of d.multi_select) f.dn.push({ name: o.name, iso: parseKo(o.name, year), ko: /월/.test(o.name) });
     else if (d && d.type === 'date' && d.date) { f.dn.push({ name: '', iso: d.date.start.slice(0, 10) }); if (d.date.end) f.dn.push({ name: '', iso: d.date.end.slice(0, 10) }); }
     // Notion-eigene Dateien haben ablaufende Links → nur externe Links / 노션에 올린 파일 주소는 곧 만료돼서 외부 링크만
     if (v(s.files)) for (const x of v(s.files).files || []) if (x.type === 'external') f.links.push(x.external.url);
     if (v(s.url) && v(s.url).url) f.links.push(v(s.url).url);
+    f.links = f.links.filter((u) => /^https?:\/\//i.test(u));
     const num = v(s.num);
     if (num && num.number != null) f.num = num.number;
     return f;
@@ -146,6 +149,16 @@
       default: return null;
     }
   }
+  // "M월 D일" kennt kein Jahr: liegen Dezember- und Januar-Tage zusammen, bekommt die kleinere Seite das Nachbarjahr
+  // 'M월 D일'에는 연도가 없음: 12월과 1월이 같이 있으면 개수가 적은 쪽을 옆 해로 ('12월 29일'~'1월 2일' → 1월은 다음 해)
+  function fixNewYear(out) {
+    const ko = out.items.flatMap((x) => x.dn.filter((d) => d.ko && d.iso));
+    const mo = (d) => +d.iso.slice(5, 7);
+    const late = ko.filter((d) => mo(d) >= 11), early = ko.filter((d) => mo(d) <= 2);
+    if (!late.length || !early.length) return;
+    const shift = (d, k) => { d.iso = (+d.iso.slice(0, 4) + k) + d.iso.slice(4); };
+    if (late.length >= early.length) early.forEach((d) => shift(d, 1)); else late.forEach((d) => shift(d, -1));
+  }
   async function readTrip(page, year) {
     const p = await call('GET', `pages/${page}`);
     if (p.archived || p.in_trash) return { gone: true, page };
@@ -157,7 +170,10 @@
       year: year || +((title.match(/(20\d\d)/) || [])[1] || 0) || +String(p.created_time).slice(0, 4),
       edited: p.last_edited_time, dbs: {}, db: null, pages: [p.id], grpPages: {}, memo: [], gmemo: {}, items: [], checks: [],
     };
-    await walk(p.id, '', 0, out);
+    // Nur die Reiseseite selbst darf "gelöscht" heißen; 404 weiter innen = diese Reise diesmal überspringen
+    // 여행 페이지 자체만 '삭제됨'으로 봄. 안쪽 블록의 404는 이번에 이 여행만 건너뜀
+    try { await walk(p.id, '', 0, out); } catch (e) { if (e.code === 'gone') throw new NErr('notion', e.detail); throw e; }
+    fixNewYear(out);
     if (!out.db) out.db = Object.keys(out.dbs)[0] || null;
     return out;
   }
@@ -199,7 +215,12 @@
   }
   async function readDb(id, grp, depth, out) {
     let db;
-    try { db = await call('GET', `databases/${id}`); } catch { return; } // verknüpfte Ansicht o. Ä. / 링크된 보기 등은 건너뜀
+    try { db = await call('GET', `databases/${id}`); } catch (e) {
+      // verknüpfte Ansicht o. Ä. (404/400) überspringen; 429 oder Netzfehler → ganze Reise diesmal auslassen, sonst würden ihre Zeilen gelöscht
+      // 링크된 보기(404/400)만 건너뜀. 429·네트워크 오류는 이 여행을 이번에 통째로 건너뜀 (안 그러면 그 표 일정이 지워짐)
+      if (e.code === 'gone' || (e.detail && e.detail.status === 400)) return;
+      throw e;
+    }
     const s = schemaOf(db, grp);
     out.dbs[id] = s;
     if (!grp && !out.db) out.db = id;
@@ -260,13 +281,16 @@
   const notionCat = (cat, ncat) => (ncat && CATMAP[ncat] === cat ? ncat : { move: '이동', stay: '숙소', food: '맛집', see: '관광', etc: '기타' }[cat] || '기타');
   // Tage außerhalb der Reise (z. B. Buchungsdatum) bleiben in Notion, aber nicht im Plan
   // 여행 기간 밖의 날짜(예약한 날 등)는 노션에 그대로 두고 일정에는 안 넣음
-  function appDates(r, cat, trip) {
+  function appDates(r, cat, trip, gr) {
     const all = r.dn.filter((x) => x.iso).map((x) => x.iso).sort();
     const xd = r.dn.filter((x) => !x.iso && x.name).map((x) => x.name);
     let keep = all;
-    if (isDate(trip.start)) {
+    if (!isDate(trip.start) && gr) {
+      keep = all.filter((d) => d >= addDays(gr[0], -1) && d <= addDays(gr[1], 1));
+      for (const x of r.dn) if (x.iso && !keep.includes(x.iso)) xd.push(x.name || x.iso);
+    } else if (isDate(trip.start)) {
       const s = addDays(trip.start, -1), e = addDays(isDate(trip.end) ? trip.end : trip.start, 1);
-      keep = all.filter((d) => d >= s && d <= e);
+      keep = all.filter((d) => (d >= s && d <= e) || (gr && d >= addDays(gr[0], -1) && d <= addDays(gr[1], 1)));
       for (const x of r.dn) if (x.iso && !keep.includes(x.iso)) xd.push(x.name || x.iso);
     }
     const date = keep[0] || '';
@@ -296,10 +320,18 @@
     const tid = tripIdOf(n.page) || tidOf(n.page);
     const local = trips[tid] && trips[tid].title ? trips[tid] : null;
     if (n.gone) { if (local) write([[['trips', tid], null]], { sync: true }); return; }
+    const grpRange = {};
+    for (const g of new Set(n.items.map((x) => x.grp).filter(Boolean))) {
+      const r = clusterRange(n.items.filter((x) => x.grp === g).flatMap((x) => x.dn.map((d) => d.iso)).filter(Boolean).sort());
+      if (r[0]) grpRange[g] = r;
+    }
     const notion = { page: n.page, db: n.db, dbs: n.dbs, pages: n.pages, grpPages: n.grpPages || {}, read: Date.now(), edited: n.edited };
     let trip = local;
     if (!trip) {
-      const [s, e] = clusterRange(n.items.flatMap((x) => x.dn.map((d) => d.iso)).filter(Boolean).sort());
+      let [s, e] = clusterRange(n.items.flatMap((x) => x.dn.map((d) => d.iso)).filter(Boolean).sort());
+      // Zwei Reisen in einer Seite (Unterseiten weit auseinander): kein gemeinsames Datum, jede Gruppe hat ihre Tage
+      // 한 페이지에 여행 두 개(멀리 떨어진 하위 페이지): 전체 날짜는 비우고 묶음마다 자기 날짜
+      if (s && Object.values(grpRange).some(([a, b]) => b < addDays(s, -1) || a > addDays(e, 1))) s = e = '';
       const firstCur = Object.values(n.dbs).map((x) => x.cur).find(Boolean);
       const cur = firstCur || ((FLAGS.find(([f]) => f === n.icon) || [])[1]) || 'EUR';
       const rate = cur === 'EUR' ? 1 : (Object.values(n.dbs).map((x) => x.rate).find(Boolean) || null);
@@ -315,14 +347,14 @@
     const byNid = new Map(old.filter((x) => x.nid).map((x) => [cid(x.nid), x]));
     const used = new Set(), next = {};
     for (const r of n.items) {
-      const id = 'n' + cid(r.nid);
+      let id = 'n' + cid(r.nid);
       // Frühere Kopie aus dem Import: am Namen erkennen (Ort, 다녀옴, Buchungsnummer bleiben erhalten)
       // 예전에 가져온 일정: 이름으로 찾아서 위치·다녀옴·예약번호를 이어받음
       const ex = byNid.get(cid(r.nid)) || old.find((x) => !x.nid && !used.has(x.id) && norm(x.title) === norm(r.title)) || null;
-      if (ex) used.add(ex.id);
+      if (ex) { used.add(ex.id); id = ex.id; } // gleiche ID behalten (Ausgaben, offene Fenster zeigen darauf) / 같은 id 유지 (지출·열린 창이 가리킴)
       if (ex && outboxHas('item', tid, ex.id)) { next[ex.id] = ex; continue; } // noch nicht gesendet: App-Stand behalten / 아직 노션에 안 보낸 변경
       const cat = appCat(r);
-      const { date, end, xd } = appDates(r, cat, ctx);
+      const { date, end, xd } = appDates(r, cat, ctx, grpRange[r.grp]);
       const x = { ...(ex || {}), id, nid: r.nid, ndb: r.ndb, grp: r.grp || '', ncat: r.ncat, cat, title: r.title, time: r.time, notes: r.notes, date, end, booked: r.booked, order: r.order, nt: r.nt };
       if (r.body) x.body = r.body; else delete x.body;
       if (r.links.length) x.links = r.links; else delete x.links;
@@ -343,9 +375,9 @@
     const byC = new Map(oldC.filter((x) => x.nid).map((x) => [cid(x.nid), x]));
     const usedC = new Set(), nextC = {};
     n.checks.forEach((c, i) => {
-      const id = 'n' + cid(c.nid);
+      let id = 'n' + cid(c.nid);
       const ex = byC.get(cid(c.nid)) || oldC.find((x) => !x.nid && !usedC.has(x.id) && norm(x.text) === norm(c.text)) || null;
-      if (ex) usedC.add(ex.id);
+      if (ex) { usedC.add(ex.id); id = ex.id; }
       if (ex && outboxHas('check', tid, ex.id)) { nextC[ex.id] = ex; return; }
       const x = { ...(ex || {}), id, nid: c.nid, text: c.text, done: c.done, order: i, grp: c.grp || '' };
       delete x.mt;
@@ -360,7 +392,12 @@
     const entries = [];
     if (!local) entries.push([['trips', tid], { ...trip, ...head, items: next, checks: nextC }]);
     else {
-      for (const [k, v] of Object.entries(head)) if (JSON.stringify(trip[k]) !== JSON.stringify(v)) entries.push([['trips', tid, k], v]);
+      const noRead = (o) => (o ? { ...o, read: 0 } : o);
+      for (const [k, v] of Object.entries(head)) {
+        const same = k === 'notion' ? JSON.stringify(noRead(trip[k])) === JSON.stringify(noRead(v)) : JSON.stringify(trip[k]) === JSON.stringify(v);
+        if (!same) entries.push([['trips', tid, k], v]);
+      }
+      if (trip.notion) trip.notion.read = notion.read; // nur lokal merken (2-Minuten-Regel) / 로컬에만 기억
       const oi = trip.items || {}, oc = trip.checks || {};
       for (const [id, x] of Object.entries(next)) if (JSON.stringify(oi[id]) !== JSON.stringify(x)) entries.push([['trips', tid, 'items', id], x]);
       for (const id of Object.keys(oi)) if (!next[id]) entries.push([['trips', tid, 'items', id], null]);
@@ -622,8 +659,10 @@
     const tr = trips[tid];
     if (S.state === 'ok' && tr && tr.notion && Date.now() - (tr.notion.read || 0) > 2 * 60 * 1000) pull({ trip: tr });
   }
-  setInterval(() => { if (document.visibilityState === 'visible' && S.state === 'ok') pull(); }, 3 * 60 * 1000);
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S.state === 'ok' && Date.now() - S.lastPull > 60 * 1000) pull(); });
+  // Nach einem Fehler beim Prüfen (Worker kurz weg) später von selbst neu starten / 확인이 한 번 실패해도 나중에 저절로 다시 시작
+  const retry = () => { if (S.state === 'error' && window.cloud && window.cloud.user) start(); };
+  setInterval(() => { if (document.visibilityState !== 'visible') return; if (S.state === 'ok') pull(); else retry(); }, 3 * 60 * 1000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'visible') return; if (S.state === 'ok') { if (Date.now() - S.lastPull > 60 * 1000) pull(); } else retry(); });
   window.addEventListener('online', () => { if (S.state === 'ok') { S.err = ''; flush(); } else if (window.cloud && window.cloud.user) start(); });
 
   const errText = (code) => { const m = t('nErr'); return (m && m[code]) || m.net; };
