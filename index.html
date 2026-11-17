@@ -359,6 +359,7 @@ input[type="date"].in { min-height: 46px; }
 .seg.bk input[value=need]:checked + span { color: var(--warn); }
 .seg.bk input[value=done]:checked + span { color: var(--ok); }
 .seg.bk input:focus-visible + span { outline: 2px solid var(--accent); }
+.bk-todo .ms { font-size: 15px; vertical-align: -.15em; }
 .nobk { margin: 18px 2px 0; }
 .nobk summary { cursor: pointer; color: var(--muted); font-weight: 700; font-size: 14px; padding: 6px 0; }
 .nobk .items { margin-top: 8px; opacity: .75; }
@@ -466,7 +467,7 @@ const T = {
     newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란', date: '날짜', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)',
     time: '시간', timePh: '예: 15:00-16:30', isBooked: '예약 완료', code: '예약번호', cost: '비용', notes: '메모', links: '링크 (한 줄에 하나)',
     save: '저장', cancel: '취소', del: '삭제', delItemQ: '"{t}" 일정을 지울까요?', map: '지도에서 찾기', copied: '복사했어요',
-    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '그 밖의 예약', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '숙소·이동 일정이 아직 없어요',
+    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '그 밖의 예약', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '예약할 일정이 없어요. 일정 창에서 ‘예약할 것’을 고르면 여기 모여요.',
     total: '총 비용', inLocal: '현지 통화로 {x}', budgetOf: '예산 {b}', left: '{x} 남음', over: '{x} 초과', byCat: '종류별', rate: '환율', fetchRate: '오늘 환율로', rateOk: '오늘 환율로 바꿨어요', rateFail: '환율을 불러오지 못했어요',
     noRate: '환율이 없어서 유로로 못 바꾼 비용이 있어요', conv: '바로 환산', costList: '비용 목록', noCosts: '비용을 넣은 일정이 없어요', setRate: '환율 넣기',
     addCheckPh: '준비물이나 할 일', add: '추가', tplTitle: '목록 넣기', addedN: '{n}개 넣었어요', noneAdded: '이미 다 들어 있어요', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요.',
@@ -490,7 +491,7 @@ const T = {
     newItem: 'Neuer Eintrag', editItem: 'Eintrag bearbeiten', title: 'Name', titlePh: 'z. B. Mittagessen – Ichiran', date: 'Datum', endStay: 'Abreise', endMove: 'Rückweg (bei Hin und Zurück)',
     time: 'Uhrzeit', timePh: 'z. B. 15:00-16:30', isBooked: 'gebucht', code: 'Buchungsnummer', cost: 'Kosten', notes: 'Notiz', links: 'Links (einer pro Zeile)',
     save: 'Speichern', cancel: 'Abbrechen', del: 'Löschen', delItemQ: '„{t}“ löschen?', map: 'In Karte suchen', copied: 'Kopiert',
-    bookDone: 'Gebucht', bookOf: '{a} von {b}', stays: 'Unterkünfte', moves: 'Fahrten', others: 'Weitere Buchungen', gaps: 'Nächte ohne Unterkunft', allNights: 'Jede Nacht hat eine Unterkunft', noBook: 'Noch keine Unterkünfte oder Fahrten',
+    bookDone: 'Gebucht', bookOf: '{a} von {b}', stays: 'Unterkünfte', moves: 'Fahrten', others: 'Weitere Buchungen', gaps: 'Nächte ohne Unterkunft', allNights: 'Jede Nacht hat eine Unterkunft', noBook: 'Nichts zu buchen. Wähle im Eintrag „zu buchen“, dann erscheint er hier.',
     total: 'Gesamt', inLocal: 'in Landeswährung {x}', budgetOf: 'Budget {b}', left: '{x} übrig', over: '{x} drüber', byCat: 'Nach Art', rate: 'Kurs', fetchRate: 'Heutiger Kurs', rateOk: 'Heutigen Kurs übernommen', rateFail: 'Kurs nicht abrufbar',
     noRate: 'Ohne Kurs konnten nicht alle Kosten in Euro umgerechnet werden', conv: 'Umrechner', costList: 'Alle Kosten', noCosts: 'Noch keine Kosten eingetragen', setRate: 'Kurs eintragen',
     addCheckPh: 'Mitnehmen oder erledigen', add: 'Hinzufügen', tplTitle: 'Liste einfügen', addedN: '{n} eingefügt', noneAdded: 'Schon alles drin', checkProg: '{a} von {b} erledigt', noChecks: 'Noch leer.',
@@ -933,6 +934,7 @@ function itemCard(it, tr, day) {
   if (it.cat === 'move' && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} · ${md(it.end)}`));
   if (!isOut) {
     if (it.booked) meta.push(`<span class="ok sr">✓ ${esc(t('booked'))}</span>`);
+    else if (it.need) meta.push(`<span class="todo bk-todo">${ms('pending')} ${esc(t('bkNeed'))}</span>`);
     if (it.cost && it.cost.amount) meta.push(esc(money(it.cost.amount, it.cost.cur)));
   }
   if ((it.links && it.links.length) || URL_RE.test(it.notes || '')) meta.push(ms('link'));
@@ -1018,8 +1020,7 @@ function planTab(tr) {
   return h;
 }
 
-const needDefault = (x) => x.cat === 'stay' || (x.cat === 'move' && !!((x.links && x.links.length) || (x.cost && x.cost.amount)));
-const needBook = (x) => !!x.booked || (x.need != null ? !!x.need : !x.noBook && needDefault(x));
+const needBook = (x) => !!x.booked || !!x.need;
 const bookState = (x) => (x.booked ? 'done' : needBook(x) ? 'need' : 'no');
 function bookTab(tr) {
   const all = itemsG(tr), sc = scopeOf(tr);
@@ -1027,7 +1028,6 @@ function bookTab(tr) {
   const allStays = all.filter((x) => x.cat === 'stay').sort(byDate);
   const stays = allStays.filter(needBook);
   const moves = all.filter((x) => x.cat === 'move' && needBook(x)).sort(byDate);
-  const skip = all.filter((x) => (x.cat === 'stay' || x.cat === 'move') && !needBook(x)).sort(byDate);
   const others = all.filter((x) => x.cat !== 'stay' && x.cat !== 'move' && needBook(x)).sort(byDate);
   const need = [...stays, ...moves, ...others];
   const done = need.filter((x) => x.booked).length;
@@ -1049,7 +1049,6 @@ function bookTab(tr) {
     <button class="tick${x.booked ? ' on' : ''}" data-act="toggle-book" data-id="${x.id}" aria-pressed="${!!x.booked}" aria-label="${esc(t('isBooked'))}"><span class="box">${x.booked ? '✓' : ''}</span></button></div>
     ${x.code ? `<div style="margin:-2px 0 4px 6px"><button class="code" data-act="copy" data-v="${esc(x.code)}">${esc(x.code)} ⧉</button></div>` : ''}`).join('')}</div>` : '');
   h += sec(t('stays'), stays) + sec(t('moves'), moves) + sec(t('others'), others);
-  if (skip.length) h += `<details class="nobk"><summary>${esc(t('noBookList', { n: skip.length }))}</summary><div class="items">${skip.map((x) => itemCard(x, tr)).join('')}</div></details>`;
   return h;
 }
 
@@ -2012,6 +2011,7 @@ function itemSheet(tr, it, defaults = {}) {
     <label class="fld" data-end><span data-endl>${esc(t(it.cat === 'stay' ? 'endStay' : 'endMove'))}</span><input class="in" type="date" name="end" value="${esc(it.end || '')}"></label></div>
     ${days.length ? `<div class="picks">${days.slice(0, 21).map((d) => `<button type="button" class="pill${d === it.date ? ' on' : ''}" data-pick="${d}">${esc(md(d))}</button>`).join('')}</div>` : ''}
     <label class="fld"><span>${esc(t('time'))}</span><textarea class="in" name="time" rows="${Math.min(4, (it.time || '').split('\n').length)}" style="min-height:46px" placeholder="${esc(t('timePh'))}">${esc(it.time || '')}</textarea></label>
+    <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
     <div class="fld"><span>${esc(t('bkLabel'))}</span><div class="seg bk">${[['no', 'bkNo'], ['need', 'bkNeed'], ['done', 'bkDone']].map(([v, k]) => `<label><input type="radio" name="bk" value="${v}" ${bookState(it) === v ? 'checked' : ''}><span>${esc(t(k))}</span></label>`).join('')}</div></div>
     <label class="fld" data-bklink ${it.booked ? 'hidden' : ''}><span>${esc(t('bookLink'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px" placeholder="https://…">${esc(links)}</textarea></label>
     <div class="fld"><span>${esc(t('cost'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="amount" inputmode="decimal" value="${cost.amount ?? ''}" aria-label="${esc(t('cost'))}">
@@ -2023,7 +2023,6 @@ function itemSheet(tr, it, defaults = {}) {
         <button type="button" class="btn small ghost" data-loc="search">${esc(t('locSearch'))}</button></div>
       <input class="in" name="locpaste" placeholder="${esc(t('locPaste'))}" style="margin-top:8px" autocomplete="off">
       <div class="geo-res" id="geo-res"></div></div>
-    <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
     ${it.body ? `<div class="fld"><span>${esc(t('nBody'))}</span><div class="memo card" style="font-size:15px">${linkify(it.body)}</div></div>` : ''}
     <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].filter((u) => /^https?:\/\//i.test(u)).map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ms('link')} ${esc(hostOf(u))}</a>`).join('')}
       ${inKorea(it) && naverUrl(it) ? `<a href="${esc(naverUrl(it))}" target="_blank" rel="noopener"><span class="nv" aria-hidden="true">N</span> ${esc(t('naver'))}</a>` : ''}${googleUrl(it) ? `<a href="${esc(googleUrl(it))}" target="_blank" rel="noopener">${ms('map')} ${esc(t('map'))}</a>` : ''}</div>
@@ -2036,15 +2035,9 @@ function itemSheet(tr, it, defaults = {}) {
       p.querySelector('[data-endl]').textContent = t(c === 'stay' ? 'endStay' : 'endMove');
     };
     syncEnd();
-    // Solange die Buchung nicht selbst gewählt ist, folgt sie Art, Preis und Link / 예약 칸을 직접 안 골랐으면 종류·비용·링크에 따라 바뀜
-    f.addEventListener('input', (e) => {
-      if (!['cat', 'amount', 'links'].includes(e.target.name) || f.dataset.bkTouched || it.need != null || it.noBook || it.booked) return;
-      const d = needDefault({ cat: f.cat.value, links: f.links.value.trim() ? [1] : [], cost: { amount: parseAmount(f.amount.value) || 0 } });
-      f.querySelector(`input[name=bk][value=${d ? 'need' : 'no'}]`).checked = true;
-    });
     f.addEventListener('change', (e) => {
       if (e.target.name === 'cat') syncEnd();
-      if (e.target.name === 'bk') { f.dataset.bkTouched = '1'; p.querySelector('[data-bklink]').hidden = f.bk.value === 'done'; } // gebucht → Link-Feld weg / 예약 완료면 링크 칸 숨김
+      if (e.target.name === 'bk') { p.querySelector('[data-bklink]').hidden = f.bk.value === 'done'; } // gebucht → Link-Feld weg / 예약 완료면 링크 칸 숨김
     });
     p.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
       f.date.value = b.dataset.pick;
@@ -2089,10 +2082,9 @@ function itemSheet(tr, it, defaults = {}) {
         order: it.order ?? Date.now() / 1000,
       };
       if (!isNaN(amount) && amount) x.cost = { amount, cur: f.cur.value }; else delete x.cost;
-      // Nur eine selbst gewählte Stufe speichern, sonst gilt die Vorgabe (z. B. Flug mit Preis) / 직접 고른 것만 저장, 아니면 기본 규칙
+      // 예약 완료도 need를 켜 둠 (완료를 풀면 '예약할 것'으로 돌아가게) / gebucht behält need, falls die Buchung aufgehoben wird
       delete x.noBook;
-      if (f.bk.value === 'done') x.need = true; // bleibt "zu buchen", falls die Buchung wieder aufgehoben wird / 예약 완료를 풀어도 예약할 것으로 남게
-      else if (f.dataset.bkTouched || it.need != null || it.noBook) x.need = f.bk.value === 'need';
+      x.need = f.bk.value !== 'no';
       if (!x.code) delete x.code;
       if (!x.links.length) delete x.links;
       if (loc) x.loc = loc; else delete x.loc;
@@ -2256,7 +2248,7 @@ const ACT = {
     if (!confirm(t('delItemQ', { t: it.title }))) return;
     write([[['trips', ui.trip, 'items', it.id], null], touch(ui.trip)]); closeSheet();
   },
-  'toggle-book': (b) => { const it = cur().items[b.dataset.id]; if (!it) return; write([[['trips', ui.trip, 'items', it.id, 'booked'], !it.booked], touch(ui.trip)]); },
+  'toggle-book': (b) => { const it = cur().items[b.dataset.id]; if (!it) return; write([[['trips', ui.trip, 'items', it.id, 'booked'], !it.booked], [['trips', ui.trip, 'items', it.id, 'need'], true], touch(ui.trip)]); },
   jump: (b) => { const el = document.getElementById('d-' + b.dataset.day); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
   copy: async (b) => { try { await navigator.clipboard.writeText(b.dataset.v); toast(t('copied')); } catch {} },
   'fetch-rate': async () => {
