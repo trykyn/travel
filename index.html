@@ -2054,12 +2054,16 @@ const FLAGS = [['🇰🇷', 'KRW'], ['🇯🇵', 'JPY'], ['🇫🇷', 'EUR'], ['
 
 function itemSheet(tr, it, defaults = {}) {
   const isNew = !it;
-  it = it || { id: uid('i'), cat: defaults.cat || 'see', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false, ...(defaults.need && { need: true, bookOnly: true }) };
+  it = it || { id: uid('i'), cat: defaults.cat || '', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false, ...(defaults.need && { need: true, bookOnly: true }) };
   // Neuer Eintrag in einer Notion-Reise mit mehreren Tabellen: in welche? / 노션에 표가 여러 개면 어느 표에 넣을지
   const dbs = tr.notion && tr.notion.dbs ? Object.entries(tr.notion.dbs) : [];
   const dbPick = isNew && dbs.length > 1
     ? `<label class="fld"><span>${esc(t('whichTable'))}</span><select class="in" name="ndb">${dbs.map(([id, s]) => `<option value="${esc(id)}" ${(ui.grp != null ? (s.grp || '') === ui.grp : id === tr.notion.db) ? 'selected' : ''}>${esc(s.grp || t('grpMain'))}</option>`).join('')}</select></label>` : '';
-  const days = tripDays(tr);
+  // Tage zum Antippen: die der Gruppe (Notion-Unterseite) dieses Eintrags bzw. der gewählten Gruppe, nicht die ganze Seite
+  // 날짜 버튼: 이 일정의 묶음(또는 지금 고른 묶음) 날짜만 — 한 페이지에 스키 여행이 두 번이면 다른 여행 날짜가 섞이지 않게
+  const gsp = it.grp ? groupSpan(tr, it.grp) : null;
+  const sd = gsp ? spanDays(gsp[0], gsp[1]) : scopeDays(tr);
+  const days = sd.length ? sd : tripDays(tr);
   const cost = it.cost || {};
   const curOpts = [...new Set([tr.cur || 'EUR', 'EUR', cost.cur].filter(Boolean))];
   const links = (it.links || []).join('\n');
@@ -2140,7 +2144,7 @@ function itemSheet(tr, it, defaults = {}) {
       e.preventDefault();
       const amount = parseAmount(f.amount.value);
       const x = {
-        ...it, cat: f.cat.value, title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
+        ...it, cat: f.cat.value || 'etc', title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
         time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.booked.checked, code: it.code || '',
         links: f.links.value.split(/\s+/).map((s) => s.trim()).filter((s) => /^https?:\/\//.test(s)),
         order: it.order ?? Date.now() / 1000,
