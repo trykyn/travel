@@ -15,7 +15,7 @@
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=attractions,backpack,beach_access,bed,bedtime,castle,check,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=attractions,backpack,beach_access,bed,bedtime,castle,check,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_cafe,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
 <title>여행</title>
 <style>
 /* Aussehen „Bordkarte“: hellblauer Himmel, weiße Tickets mit Abrisskante und Strichcode, Navy-Schrift, Koralle als Akzent.
@@ -26,8 +26,8 @@
   --bg: #e7f2ff; --bg-top: #cfe6ff; --brand: #13294b; --brand-2: #0c1c36; --on-brand: #fff; --sheet: #fff; --ink: #13294b; --muted: #687a94; --line: #dbe5f2;
   --field: #f0f5fb; --soft: #e4eefb; --accent: #2a5db0; --sun: #ff6b4a; --sun-ink: #fff; --coral: #ff6b4a; --mint: #13946f; --rail: #b8cbe6;
   --ok: #138a63; --ok-bg: #e0f5ec; --warn: #c2541a; --warn-bg: #fff0e6; --bad: #d23a2c;
-  --move: #7a5cd3; --stay: #2f72d6; --food: #e3702f; --see: #1d9a64; --etc: #7b8aa0;
-  --move-bg: #efeafc; --stay-bg: #e7f0fd; --food-bg: #fdeee4; --see-bg: #e2f5ec; --etc-bg: #eef2f7;
+  --move: #7a5cd3; --stay: #2f72d6; --food: #e3702f; --cafe: #9a6534; --see: #1d9a64; --shop: #d4457f; --etc: #7b8aa0;
+  --move-bg: #efeafc; --stay-bg: #e7f0fd; --food-bg: #fdeee4; --cafe-bg: #f6ece2; --see-bg: #e2f5ec; --shop-bg: #fde8f0; --etc-bg: #eef2f7;
   --shadow: 0 1px 2px rgba(19, 41, 75, .05), 0 6px 18px rgba(19, 41, 75, .08);
   --paper: #fbfdff; --paper-line: #dbe5f2; --paper-ink: #687a94; --paper-head: #13294b;
   --sans: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
@@ -38,8 +38,8 @@
     --bg: #0b1730; --bg-top: #102449; --brand: #3d6fd6; --brand-2: #2a56b3; --sheet: #14264a; --ink: #e8eefb; --muted: #9fb0cc; --line: #26395f;
     --field: #1b2f58; --soft: #1a3160; --accent: #93b6ff; --sun: #ff7a5c; --coral: #ff7a5c; --mint: #4fd1a5; --rail: #34507f;
     --ok: #6fdca4; --ok-bg: #173526; --warn: #ffb070; --warn-bg: #3a2818; --bad: #ff7a6b;
-    --move: #a68cf0; --stay: #6ea4f5; --food: #f59a5e; --see: #4fcf94; --etc: #a2b0c4;
-    --move-bg: #262040; --stay-bg: #182a44; --food-bg: #3a2416; --see-bg: #14322a; --etc-bg: #1f2a3d;
+    --move: #a68cf0; --stay: #6ea4f5; --food: #f59a5e; --cafe: #d6a676; --see: #4fcf94; --shop: #f07aa8; --etc: #a2b0c4;
+    --move-bg: #262040; --stay-bg: #182a44; --food-bg: #3a2416; --cafe-bg: #33261a; --see-bg: #14322a; --shop-bg: #3a1a28; --etc-bg: #1f2a3d;
     --shadow: 0 1px 2px rgba(0, 0, 0, .35);
     --paper: #14264a; --paper-line: #26395f; --paper-ink: #9fb0cc; --paper-head: #1d3a73;
   }
@@ -255,7 +255,7 @@ h2:first-child { margin-top: 2px; }
 .ok { color: var(--ok); font-weight: 700; }
 .todo { color: var(--warn); font-weight: 700; }
 .c-move { --c: var(--move); --cbg: var(--move-bg); } .c-stay { --c: var(--stay); --cbg: var(--stay-bg); }
-.c-food { --c: var(--food); --cbg: var(--food-bg); } .c-see { --c: var(--see); --cbg: var(--see-bg); } .c-etc { --c: var(--etc); --cbg: var(--etc-bg); }
+.c-food { --c: var(--food); --cbg: var(--food-bg); } .c-see { --c: var(--see); --cbg: var(--see-bg); } .c-cafe { --c: var(--cafe); --cbg: var(--cafe-bg); } .c-etc { --c: var(--etc); --cbg: var(--etc-bg); }
 .add-day { width: 100%; margin-top: 8px; padding: 9px; border-radius: 12px; border: 1.5px dashed var(--line); color: var(--muted); font-size: 15px; font-weight: 600; text-align: center; }
 
 /* Buchungen / 예약 */
@@ -376,8 +376,7 @@ body.dnd-on, body.dnd-on * { -webkit-user-select: none; user-select: none; curso
 .set-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
 /* 2단계: 오늘, 지도, 비교 / Heute, Karte, Vergleich */
-.c-shop { --c: #d4457f; --cbg: #fde8f0; }
-@media (prefers-color-scheme: dark) { .c-shop { --c: #f07aa8; --cbg: #3a1a28; } }
+.c-shop { --c: var(--shop); --cbg: var(--shop-bg); }
 .next { display: block; padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #24467d, #13294b); color: #fff; box-shadow: var(--shadow); }
 .next .lb { font-size: 14px; font-weight: 700; opacity: .9; }
 .next .nt-title { display: block; margin-top: 4px; font-size: 23px; font-weight: 800; letter-spacing: -.02em; line-height: 1.25; overflow-wrap: anywhere; }
@@ -454,7 +453,7 @@ const T = {
     app: '여행', upcoming: '다가오는 여행', past: '지난 여행', newTrip: '+ 새 여행', noTrips: '아직 여행이 없어요. 아래 버튼으로 첫 여행을 만들어 보세요.',
     undated: '날짜 미정', ongoing: '여행 중', dayN: '{n}일째', nights: '{n}박', next: '다음 여행', back: '여행',
     tabs: { plan: '일정', book: '예약', money: '돈', check: '할 일·짐', memo: '메모' },
-    cats: { move: '이동', stay: '숙소', food: '맛집', see: '관광', etc: '기타' },
+    cats: { move: '이동', stay: '숙소', food: '맛집', cafe: '카페', see: '관광', shop: '쇼핑', etc: '기타' },
     dayNo: '{n}일차', today: '오늘', cand: '날짜 미정 · 후보', addHere: '+ 추가', addItem: '+ 일정', noItems: '아직 일정이 없어요',
     night: '숙박 {a}/{b}박', checkout: '체크아웃', booked: '예약완료', notBooked: '예약 전', items: '일정 {n}',
     newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란', date: '날짜', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)',
@@ -478,7 +477,7 @@ const T = {
     app: 'Reisen', upcoming: 'Kommende Reisen', past: 'Vergangene Reisen', newTrip: '+ Neue Reise', noTrips: 'Noch keine Reisen. Leg unten die erste an.',
     undated: 'ohne Datum', ongoing: 'Unterwegs', dayN: 'Tag {n}', nights: '{n} Nächte', next: 'Nächste Reise', back: 'Reisen',
     tabs: { plan: 'Plan', book: 'Buchungen', money: 'Kosten', check: 'To-do & Packen', memo: 'Notizen' },
-    cats: { move: 'Fahrt', stay: 'Unterkunft', food: 'Essen', see: 'Ausflug', etc: 'Sonstiges' },
+    cats: { move: 'Fahrt', stay: 'Unterkunft', food: 'Essen', cafe: 'Café', see: 'Ausflug', shop: 'Einkaufen', etc: 'Sonstiges' },
     dayNo: 'Tag {n}', today: 'Heute', cand: 'Ohne Datum · Ideen', addHere: '+ Hinzufügen', addItem: '+ Eintrag', noItems: 'Noch keine Einträge',
     night: 'Nacht {a}/{b}', checkout: 'Check-out', booked: 'gebucht', notBooked: 'nicht gebucht', items: '{n} Einträge',
     newItem: 'Neuer Eintrag', editItem: 'Eintrag bearbeiten', title: 'Name', titlePh: 'z. B. Mittagessen – Ichiran', date: 'Datum', endStay: 'Abreise', endMove: 'Rückweg (bei Hin und Zurück)',
@@ -684,7 +683,7 @@ const eurOf = (cost, tr) => {
   if (cost.cur === tr.cur && tr.rate) return cost.amount * tr.rate;
   return null;
 };
-const CAT_ORDER = ['move', 'stay', 'food', 'see', 'etc'];
+const CAT_ORDER = ['move', 'stay', 'food', 'cafe', 'see', 'shop', 'etc'];
 function icon(it) {
   if (it.cat === 'move') {
     const s = (it.title + ' ' + (it.notes || '')).toLowerCase();
@@ -696,7 +695,7 @@ function icon(it) {
     if (/로프웨이|케이블|gondel|seilbahn/.test(s)) return 'gondola_lift';
     return 'directions_car';
   }
-  return { stay: 'bed', food: 'restaurant', see: 'location_on', etc: 'sticky_note_2' }[it.cat] || 'sticky_note_2';
+  return { stay: 'bed', food: 'restaurant', cafe: 'local_cafe', see: 'location_on', shop: 'shopping_bag', etc: 'sticky_note_2' }[it.cat] || 'sticky_note_2';
 }
 // Sortierschlüssel im Tag: erste Uhrzeit; Mahlzeiten ohne Uhrzeit nach Tageszeit; sonst bleibt es hinter dem vorigen Eintrag.
 // 하루 안의 순서: 적힌 시간 → 시간 없으면 아침/점심/저녁 → 그것도 없으면 앞 일정 바로 뒤.
@@ -1654,7 +1653,7 @@ function moneyTab(tr) {
   }
   const max = Math.max(1, ...Object.values(by));
   if (Object.keys(by).length) {
-    h += `<div class="card"><b>${esc(t('byCat'))}</b><div class="bars">${[...CAT_ORDER, 'shop'].filter((c) => by[c]).map((c) => `<div class="row c-${c}">
+    h += `<div class="card"><b>${esc(t('byCat'))}</b><div class="bars">${CAT_ORDER.filter((c) => by[c]).map((c) => `<div class="row c-${c}">
       <span>${esc(t('cats.' + c))}</span><i style="width:${Math.round((by[c] / max) * 100)}%"></i><b>${esc(money(by[c], 'EUR'))}</b></div>`).join('')}</div></div>`;
   }
   if (tr.cur && tr.cur !== 'EUR') {
@@ -2255,7 +2254,7 @@ const ACT = {
   'plan-to-spend': (b) => {
     const tr = cur(), x = tr.items[b.dataset.id];
     if (!x || !x.cost) return;
-    spendSheet(tr, null, { date: isDate(x.date) ? x.date : today(), amount: x.cost.amount, cur: x.cost.cur, cat: ['move', 'stay', 'food', 'see'].includes(x.cat) ? x.cat : 'etc', title: x.title, item: x.id });
+    spendSheet(tr, null, { date: isDate(x.date) ? x.date : today(), amount: x.cost.amount, cur: x.cost.cur, cat: x.cat === 'cafe' ? 'food' : ['move', 'stay', 'food', 'see', 'shop'].includes(x.cat) ? x.cat : 'etc', title: x.title, item: x.id });
   },
   'edit-spend': (b) => spendSheet(cur(), cur().spend[b.dataset.id]),
   'del-spendx': (b) => { if (!confirm(t('spendDelQ'))) return; write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); closeSheet(); },

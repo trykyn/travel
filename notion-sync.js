@@ -269,16 +269,16 @@
   }
 
   // ---------- Notion → App ----------
-  const CATMAP = { 이동: 'move', 교통: 'move', 숙소: 'stay', 숙박: 'stay', 맛집: 'food', 끼니: 'food', 식사: 'food', 카페: 'food', 관광: 'see', 쇼핑: 'see', 체험: 'see', 놀거리: 'see' };
+  const CATMAP = { 이동: 'move', 교통: 'move', 숙소: 'stay', 숙박: 'stay', 맛집: 'food', 끼니: 'food', 식사: 'food', 카페: 'cafe', 관광: 'see', 쇼핑: 'shop', 장보기: 'shop', 체험: 'see', 놀거리: 'see' };
   const STAYRE = /(호텔|hotel|resort|리조트|숙소|agroturismo|airbnb|에어비앤비|宿|yado|료칸|ryokan|apartment|아파트|체크인|check-in|글램핑|펜션|콘도)/i;
   function appCat(r) {
     let c = CATMAP[r.ncat];
-    if (!c) c = /^(점심|저녁|아침|카페|조식)/.test(r.title) ? 'food' : r.ncat ? 'see' : 'etc';
+    if (!c) c = /^(카페|cafe|café)/i.test(r.title) ? 'cafe' : /^(점심|저녁|아침|조식)/.test(r.title) ? 'food' : r.ncat ? 'see' : 'etc';
     // Hotels stehen in Notion oft als "이동" / 노션에는 호텔이 '이동'으로 적힌 경우가 많음
     if (c === 'move' && !/\S\s*(-|→|–)\s*\S/.test(r.title) && (STAYRE.test(r.title + ' ' + r.time) || (r.dn.length > 1 && /체크인|체크아웃|조식|check/i.test(r.time + r.notes)))) c = 'stay';
     return c;
   }
-  const notionCat = (cat, ncat) => (ncat && CATMAP[ncat] === cat ? ncat : { move: '이동', stay: '숙소', food: '맛집', see: '관광', etc: '기타' }[cat] || '기타');
+  const notionCat = (cat, ncat) => (ncat && CATMAP[ncat] === cat ? ncat : { move: '이동', stay: '숙소', food: '맛집', cafe: '카페', see: '관광', shop: '쇼핑', etc: '기타' }[cat] || '기타');
   // Tage außerhalb der Reise (z. B. Buchungsdatum) bleiben in Notion, aber nicht im Plan
   // 여행 기간 밖의 날짜(예약한 날 등)는 노션에 그대로 두고 일정에는 안 넣음
   function appDates(r, cat, trip, gr) {
@@ -554,7 +554,7 @@
     const [numName, fmt] = { JPY: ['엔', 'yen'], KRW: ['원', 'won'], EUR: ['Euro', 'euro'], USD: ['달러', 'dollar'], GBP: ['파운드', 'pound'], CHF: ['프랑', 'franc'], CZK: ['코루나', 'koruna'] }[c] || [c, 'number'];
     const props = {
       Name: { title: {} },
-      구분: { select: { options: [{ name: '이동', color: 'purple' }, { name: '숙소', color: 'brown' }, { name: '맛집', color: 'blue' }, { name: '관광', color: 'orange' }] } },
+      구분: { select: { options: [{ name: '이동', color: 'purple' }, { name: '숙소', color: 'brown' }, { name: '맛집', color: 'blue' }, { name: '카페', color: 'yellow' }, { name: '관광', color: 'orange' }, { name: '쇼핑', color: 'pink' }] } },
       시간: { rich_text: {} }, 주요내용: { rich_text: {} }, 일정: { multi_select: { options: [] } }, 예약: { checkbox: {} },
       'Dateien und Medien': { files: {} }, [numName]: { number: { format: fmt } },
     };
