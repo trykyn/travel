@@ -352,6 +352,13 @@ input[type="date"].in { min-height: 46px; }
 .cats label > span { display: inline-flex; gap: 5px; align-items: center; padding: 7px 13px; border-radius: 999px; background: var(--field); font-size: 15px; font-weight: 600; }
 .cats input:checked + span { background: var(--c); color: #fff; }
 .cats input:focus-visible + span { outline: 2px solid var(--accent); }
+.seg.bk label { flex: 1; position: relative; }
+.seg.bk input { position: absolute; opacity: 0; pointer-events: none; }
+.seg.bk label > span { display: block; padding: 9px 4px; border-radius: 11px; text-align: center; font-size: 14.5px; font-weight: 800; color: var(--muted); }
+.seg.bk input:checked + span { background: var(--sheet); color: var(--ink); box-shadow: var(--shadow); }
+.seg.bk input[value=need]:checked + span { color: var(--warn); }
+.seg.bk input[value=done]:checked + span { color: var(--ok); }
+.seg.bk input:focus-visible + span { outline: 2px solid var(--accent); }
 .nobk { margin: 18px 2px 0; }
 .nobk summary { cursor: pointer; color: var(--muted); font-weight: 700; font-size: 14px; padding: 6px 0; }
 .nobk .items { margin-top: 8px; opacity: .75; }
@@ -459,7 +466,7 @@ const T = {
     newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란', date: '날짜', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)',
     time: '시간', timePh: '예: 15:00-16:30', isBooked: '예약 완료', code: '예약번호', cost: '비용', notes: '메모', links: '링크 (한 줄에 하나)',
     save: '저장', cancel: '취소', del: '삭제', delItemQ: '"{t}" 일정을 지울까요?', map: '지도에서 찾기', copied: '복사했어요',
-    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '예약한 일정', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '숙소·이동 일정이 아직 없어요',
+    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '그 밖의 예약', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '숙소·이동 일정이 아직 없어요',
     total: '총 비용', inLocal: '현지 통화로 {x}', budgetOf: '예산 {b}', left: '{x} 남음', over: '{x} 초과', byCat: '종류별', rate: '환율', fetchRate: '오늘 환율로', rateOk: '오늘 환율로 바꿨어요', rateFail: '환율을 불러오지 못했어요',
     noRate: '환율이 없어서 유로로 못 바꾼 비용이 있어요', conv: '바로 환산', costList: '비용 목록', noCosts: '비용을 넣은 일정이 없어요', setRate: '환율 넣기',
     addCheckPh: '준비물이나 할 일', add: '추가', tplTitle: '목록 넣기', addedN: '{n}개 넣었어요', noneAdded: '이미 다 들어 있어요', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요.',
@@ -1011,7 +1018,9 @@ function planTab(tr) {
   return h;
 }
 
-const needBook = (x) => !!x.booked || (!x.noBook && (x.cat === 'stay' || (x.cat === 'move' && !!((x.links && x.links.length) || (x.cost && x.cost.amount)))));
+const needDefault = (x) => x.cat === 'stay' || (x.cat === 'move' && !!((x.links && x.links.length) || (x.cost && x.cost.amount)));
+const needBook = (x) => !!x.booked || (x.need != null ? !!x.need : !x.noBook && needDefault(x));
+const bookState = (x) => (x.booked ? 'done' : needBook(x) ? 'need' : 'no');
 function bookTab(tr) {
   const all = itemsG(tr), sc = scopeOf(tr);
   const byDate = (a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0);
@@ -1019,7 +1028,7 @@ function bookTab(tr) {
   const stays = allStays.filter(needBook);
   const moves = all.filter((x) => x.cat === 'move' && needBook(x)).sort(byDate);
   const skip = all.filter((x) => (x.cat === 'stay' || x.cat === 'move') && !needBook(x)).sort(byDate);
-  const others = all.filter((x) => x.booked && x.cat !== 'stay' && x.cat !== 'move').sort(byDate);
+  const others = all.filter((x) => x.cat !== 'stay' && x.cat !== 'move' && needBook(x)).sort(byDate);
   const need = [...stays, ...moves, ...others];
   const done = need.filter((x) => x.booked).length;
   let h = '';
@@ -1047,9 +1056,9 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', noBookOpt: '예약 필요 없음', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
+Object.assign(T.ko, { movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkLabel: '예약', bkNo: '필요 없음', bkNeed: '예약할 것', bkDone: '예약 완료', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
   todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
-Object.assign(T.de, { movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', noBookOpt: 'Keine Buchung nötig', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
+Object.assign(T.de, { movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', bkLabel: 'Buchung', bkNo: 'nicht nötig', bkNeed: 'zu buchen', bkDone: 'gebucht', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
   todoN: '{n} Aufgaben offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
 Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
@@ -2003,8 +2012,7 @@ function itemSheet(tr, it, defaults = {}) {
     <label class="fld" data-end><span data-endl>${esc(t(it.cat === 'stay' ? 'endStay' : 'endMove'))}</span><input class="in" type="date" name="end" value="${esc(it.end || '')}"></label></div>
     ${days.length ? `<div class="picks">${days.slice(0, 21).map((d) => `<button type="button" class="pill${d === it.date ? ' on' : ''}" data-pick="${d}">${esc(md(d))}</button>`).join('')}</div>` : ''}
     <label class="fld"><span>${esc(t('time'))}</span><textarea class="in" name="time" rows="${Math.min(4, (it.time || '').split('\n').length)}" style="min-height:46px" placeholder="${esc(t('timePh'))}">${esc(it.time || '')}</textarea></label>
-    <div class="two"><label class="toggle"><input type="checkbox" name="booked" ${it.booked ? 'checked' : ''}>${esc(t('isBooked'))}</label>
-    <label class="toggle"><input type="checkbox" name="noBook" ${it.noBook ? 'checked' : ''}>${esc(t('noBookOpt'))}</label></div>
+    <div class="fld"><span>${esc(t('bkLabel'))}</span><div class="seg bk">${[['no', 'bkNo'], ['need', 'bkNeed'], ['done', 'bkDone']].map(([v, k]) => `<label><input type="radio" name="bk" value="${v}" ${bookState(it) === v ? 'checked' : ''}><span>${esc(t(k))}</span></label>`).join('')}</div></div>
     <label class="fld" data-bklink ${it.booked ? 'hidden' : ''}><span>${esc(t('bookLink'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px" placeholder="https://…">${esc(links)}</textarea></label>
     <div class="fld"><span>${esc(t('cost'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="amount" inputmode="decimal" value="${cost.amount ?? ''}" aria-label="${esc(t('cost'))}">
       <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curOpts.map((c) => `<option ${c === (cost.cur || tr.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div>
@@ -2028,10 +2036,15 @@ function itemSheet(tr, it, defaults = {}) {
       p.querySelector('[data-endl]').textContent = t(c === 'stay' ? 'endStay' : 'endMove');
     };
     syncEnd();
+    // Solange die Buchung nicht selbst gewählt ist, folgt sie Art, Preis und Link / 예약 칸을 직접 안 골랐으면 종류·비용·링크에 따라 바뀜
+    f.addEventListener('input', (e) => {
+      if (!['cat', 'amount', 'links'].includes(e.target.name) || f.dataset.bkTouched || it.need != null || it.noBook || it.booked) return;
+      const d = needDefault({ cat: f.cat.value, links: f.links.value.trim() ? [1] : [], cost: { amount: parseAmount(f.amount.value) || 0 } });
+      f.querySelector(`input[name=bk][value=${d ? 'need' : 'no'}]`).checked = true;
+    });
     f.addEventListener('change', (e) => {
       if (e.target.name === 'cat') syncEnd();
-      if (e.target.name === 'booked') { p.querySelector('[data-bklink]').hidden = f.booked.checked; if (f.booked.checked) f.noBook.checked = false; }
-      if (e.target.name === 'noBook' && f.noBook.checked) { f.booked.checked = false; p.querySelector('[data-bklink]').hidden = false; } // gebucht → Link-Feld weg / 예약 완료면 링크 칸 숨김
+      if (e.target.name === 'bk') { f.dataset.bkTouched = '1'; p.querySelector('[data-bklink]').hidden = f.bk.value === 'done'; } // gebucht → Link-Feld weg / 예약 완료면 링크 칸 숨김
     });
     p.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
       f.date.value = b.dataset.pick;
@@ -2071,11 +2084,15 @@ function itemSheet(tr, it, defaults = {}) {
       const amount = parseAmount(f.amount.value);
       const x = {
         ...it, cat: f.cat.value, title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
-        time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.booked.checked, noBook: !f.booked.checked && f.noBook.checked, code: it.code || '',
+        time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.bk.value === 'done', code: it.code || '',
         links: f.links.value.split(/\s+/).map((s) => s.trim()).filter((s) => /^https?:\/\//.test(s)),
         order: it.order ?? Date.now() / 1000,
       };
       if (!isNaN(amount) && amount) x.cost = { amount, cur: f.cur.value }; else delete x.cost;
+      // Nur eine selbst gewählte Stufe speichern, sonst gilt die Vorgabe (z. B. Flug mit Preis) / 직접 고른 것만 저장, 아니면 기본 규칙
+      delete x.noBook;
+      if (f.bk.value === 'done') x.need = true; // bleibt "zu buchen", falls die Buchung wieder aufgehoben wird / 예약 완료를 풀어도 예약할 것으로 남게
+      else if (f.dataset.bkTouched || it.need != null || it.noBook) x.need = f.bk.value === 'need';
       if (!x.code) delete x.code;
       if (!x.links.length) delete x.links;
       if (loc) x.loc = loc; else delete x.loc;
