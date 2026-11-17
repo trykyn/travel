@@ -353,7 +353,7 @@ Object.assign(T.ko, {
   tonight: '오늘 밤 숙소', checkinAt: '체크인', checkoutToday: '오늘 체크아웃', tomorrow: '내일', dir: '길찾기', todayPlan: '오늘 일정', dayOfTrip: '{n}일째',
   spendT: '지출 기록', spendPh: '무엇에? (선택)', spendAdd: '기록', spendToday: '오늘 쓴 돈 {x}', spendDelQ: '이 지출을 지울까요?',
   sp: { food: '식비', move: '교통', shop: '쇼핑', see: '입장료', etc: '기타' }, planned: '계획한 비용', spent: '여행 중 지출',
-  mapAll: '전체', noLoc: '위치가 없는 일정 {n}개', findAll: '이름으로 위치 찾기', finding: '찾는 중… {a}/{b}', found: '{a}개 찾았어요 · 못 찾은 {b}개는 일정을 눌러 현지 이름으로 찾아 주세요', locQPh: '찾을 이름 (현지 이름이 잘 찾아져요)',
+  foundAll: '{a}개 모두 찾았어요', mapAll: '전체', noLoc: '위치가 없는 일정 {n}개', findAll: '이름으로 위치 찾기', finding: '찾는 중… {a}/{b}', found: '{a}개 찾았어요 · 못 찾은 {b}개는 일정을 눌러 현지 이름으로 찾아 주세요', locQPh: '찾을 이름 (현지 이름이 잘 찾아져요)',
   geoNote: '장소 이름으로 OpenStreetMap에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.', geoNoteG: '장소 이름으로 구글 지도에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.',  gmFail: '구글 지도를 쓸 수 없어서 기본 지도로 보여 줘요 (오늘 사용 상한에 닿았을 수 있어요)', mapFail: '지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요', noPins: '아직 지도에 표시할 곳이 없어요',
   loc: '위치', locNone: '위치 없음', locSearch: '이름으로 찾기', locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요',
   locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치', pickOne: '맞는 곳을 고르세요',
@@ -367,7 +367,7 @@ Object.assign(T.de, {
   tonight: 'Heute Nacht', checkinAt: 'Check-in', checkoutToday: 'Heute Check-out', tomorrow: 'Morgen', dir: 'Route', todayPlan: 'Heute', dayOfTrip: 'Tag {n}',
   spendT: 'Ausgabe eintragen', spendPh: 'Wofür? (optional)', spendAdd: 'Eintragen', spendToday: 'Heute ausgegeben {x}', spendDelQ: 'Diese Ausgabe löschen?',
   sp: { food: 'Essen', move: 'Verkehr', shop: 'Einkauf', see: 'Eintritt', etc: 'Sonstiges' }, planned: 'Geplante Kosten', spent: 'Ausgaben unterwegs',
-  mapAll: 'Alle', noLoc: '{n} Einträge ohne Ort', findAll: 'Orte nach Namen suchen', finding: 'Suche … {a}/{b}', found: '{a} gefunden · {b} fehlen: im Eintrag mit dem Namen in Landessprache suchen', locQPh: 'Suchbegriff (Name in Landessprache klappt am besten)',
+  foundAll: 'Alle {a} gefunden', mapAll: 'Alle', noLoc: '{n} Einträge ohne Ort', findAll: 'Orte nach Namen suchen', finding: 'Suche … {a}/{b}', found: '{a} gefunden · {b} fehlen: im Eintrag mit dem Namen in Landessprache suchen', locQPh: 'Suchbegriff (Name in Landessprache klappt am besten)',
   geoNote: 'Sucht die Namen bei OpenStreetMap. Falsche Orte kannst du im Eintrag ändern.', geoNoteG: 'Sucht die Namen bei Google Maps. Falsche Orte kannst du im Eintrag ändern.', gmFail: 'Google Maps nicht verfügbar – zeige die einfache Karte (vielleicht ist das Tageslimit erreicht)', mapFail: 'Karte nicht ladbar. Bitte Internet prüfen', noPins: 'Noch keine Orte auf der Karte',
   loc: 'Ort', locNone: 'Kein Ort', locSearch: 'Nach Namen suchen', locPaste: 'Google-Maps-Link oder Koordinaten einfügen', locBad: 'Keine Koordinaten im Link. Kurze Teilen-Links gehen nicht – such lieber nach dem Namen',
   locClear: 'Entfernen', locNoRes: 'Nichts gefunden. Versuch einen anderen Namen', locAuto: 'Automatisch gefundener Ort', pickOne: 'Richtigen Ort wählen',
@@ -974,7 +974,7 @@ async function initGoogleMap(tr, box, list, day, days) {
     path.push(pos);
   });
   if (day && path.length > 1) new Polyline({ map, path, strokeColor: '#11777c', strokeOpacity: 0.7, strokeWeight: 3 });
-  const key = tr.id + '|' + day;
+  const key = tr.id + '|' + day + '|' + list.length; // neue Pins → neu einpassen / 핀이 늘면 다시 맞춤
   if (ui.mapView && ui.mapView.key === key) { map.setCenter(ui.mapView.c); map.setZoom(ui.mapView.z); }
   else if (path.length > 1) { const b = new gm.LatLngBounds(); path.forEach((p) => b.extend(p)); map.fitBounds(b, 40); }
   else if (path.length) { map.setCenter(path[0]); map.setZoom(15); }
@@ -1003,7 +1003,7 @@ async function initMap(tr) {
     pts.push([x.loc.lat, x.loc.lng]);
   });
   if (day && pts.length > 1) L.polyline(pts, { color: '#11777c', weight: 3, opacity: 0.7, dashArray: '6 7' }).addTo(map);
-  const key = tr.id + '|' + day;
+  const key = tr.id + '|' + day + '|' + list.length;
   const place = () => {
     if (ui.mapView && ui.mapView.key === key) map.setView(ui.mapView.c, ui.mapView.z);
     else if (pts.length) map.fitBounds(pts, { padding: [36, 36], maxZoom: 15 });
@@ -1038,7 +1038,7 @@ async function findAll() {
   }
   ui.finding = false;
   if (found.length) write([...found, touch(tr.id)]); else render(true);
-  toast(t('found', { a: found.length, b: miss }));
+  toast(miss ? t('found', { a: found.length, b: miss }) : t('foundAll', { a: found.length }));
 }
 
 // ---------- 비교 / Vergleich ----------
