@@ -355,6 +355,13 @@ input[type="date"].in { min-height: 46px; }
 .nobk { margin: 18px 2px 0; }
 .nobk summary { cursor: pointer; color: var(--muted); font-weight: 700; font-size: 14px; padding: 6px 0; }
 .nobk .items { margin-top: 8px; opacity: .75; }
+.items[data-dnd] > .it { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.cand-drop { display: none; }
+body.dnd-on .cand-drop { display: block; }
+.items.cand:empty { min-height: 54px; border: 2px dashed var(--line); border-radius: 14px; }
+.it.dnd-src { opacity: .35; }
+.dnd-ghost { position: fixed; z-index: 1000; margin: 0; pointer-events: none; transform: scale(1.03) rotate(-.6deg); box-shadow: 0 14px 34px rgba(19, 41, 75, .28); opacity: .96; }
+body.dnd-on, body.dnd-on * { -webkit-user-select: none; user-select: none; cursor: grabbing; }
 .toggle { display: flex; align-items: center; gap: 12px; padding: 10px 2px; font-weight: 600; }
 .toggle input { width: 24px; height: 24px; accent-color: var(--brand); }
 .acts { display: flex; gap: 8px; margin-top: 18px; }
@@ -718,6 +725,7 @@ let pending = false;
 function render(force) {
   const a = document.activeElement;
   if (!force && a && app.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { pending = true; return; }
+  if (window.__dnd) { pending = true; return; }
   pending = false;
   document.documentElement.lang = ui.lang;
   document.title = ui.view === 'trip' && trips[ui.trip] ? trips[ui.trip].title : t('app');
@@ -994,12 +1002,13 @@ function planTab(tr) {
       h += `<div class="map day-map" data-day="${d}"></div>${noLoc.length ? `<button class="btn small ghost find-day" data-act="find-day" data-day="${d}">${ms('location_on')} ${esc(t('findDay', { n: noLoc.length }))}</button>` : ''}`;
     }
     for (const s of mid) h += `<div class="night">${ms('bed')}<span>${esc(t('night', { a: diff(s.date, d) + 1, b: diff(s.date, s.end) }))} · ${esc(s.title)}</span></div>`;
-    h += `<div class="items">${outs.map((s) => itemCard(s, tr, d)).join('')}${list.map((x) => itemCard(x, tr, d)).join('')}</div>
+    h += `<div class="items" data-dnd="${d}">${orderDay([...outs, ...list], d).map((x) => itemCard(x, tr, d)).join('')}</div>
       ${d <= now ? recordHtml(tr, d) : ''}<button class="add-day" data-act="new-item" data-day="${d}">${esc(t('addHere'))}</button></div>`;
   });
   const set = new Set(days);
   const cand = all.filter((x) => !set.has(x.date) && !(x.cat === 'move' && set.has(x.end))).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  if (cand.length) h += `<h2>${esc(t('cand'))}</h2><div class="items">${cand.map((x) => itemCard(x, tr)).join('')}</div>`;
+  // Leere 날짜 미정-Fläche nur beim Ziehen zeigen / 비어 있는 날짜 미정 칸은 끄는 동안만 보임
+  if (cand.length || all.some(canChangeDay)) h += `<div class="${cand.length ? '' : 'cand-drop'}"><h2>${esc(t('cand'))}</h2><div class="items cand" data-dnd="cand">${cand.map((x) => itemCard(x, tr)).join('')}</div></div>`;
   return h;
 }
 
@@ -1039,9 +1048,9 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { noBookOpt: '예약 필요 없음', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
+Object.assign(T.ko, { movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', noBookOpt: '예약 필요 없음', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
   todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
-Object.assign(T.de, { noBookOpt: 'Keine Buchung nötig', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
+Object.assign(T.de, { movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', noBookOpt: 'Keine Buchung nötig', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
   todoN: '{n} Aufgaben offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
 Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
@@ -1885,6 +1894,7 @@ function afterRender() {
     if (el) setTimeout(() => el.scrollIntoView({ block: 'start' }), 50);
   }
   if (ui.view === 'trip' && document.querySelector('.wx[data-day]')) fillWeather();
+  if (ui.view === 'trip' && ui.tab === 'plan' && document.querySelector('.items[data-dnd] > .it') && !store.get('dragHint', false)) { store.put('dragHint', true); setTimeout(() => toast(t('dragHint')), 600); }
   // Geöffnete Tageskarten zeichnen / 펼친 날짜 지도 그리기
   clearMaps();
   // Unveränderte Karte wiederverwenden (spart Kartenladungen) / 그대로인 지도는 다시 씀 (지도 불러오기 절약)
@@ -2311,6 +2321,129 @@ const ACT = {
   signout: async () => { await window.cloud.signOut(); window.refreshSettings(); render(true); },
   'create-house': async () => { const c = window.cloud; c.note = ''; try { await c.create(); } catch (e) { console.warn(e); c.note = t('joinFail'); } window.refreshSettings(); },
 };
+// ---------- Karten im Tagesplan verschieben (lange drücken, ziehen) / 일정 카드 꾹 눌러서 끌어 옮기기 ----------
+// Reihenfolge je Tag in item.pos[Tag] (nur in der App; Notion kennt keine Reihenfolge per API).
+// Andere Tage oder 날짜 미정: nur einfache Einträge (keine Unterkunft, keine mehrtägige Fahrt) – dann ändert sich das Datum, auch in Notion.
+// 순서는 날마다 item.pos[날짜]에 (앱에만; 노션 API로는 순서를 못 바꿈).
+// 다른 날이나 날짜 미정으로 옮기기는 숙소·여러 날 이동이 아닌 일정만 — 날짜가 바뀌고 노션에도 반영돼요.
+function orderDay(list, day) {
+  const fixed = list.filter((x) => x.pos && x.pos[day] != null).sort((a, b) => a.pos[day] - b.pos[day]);
+  if (!fixed.length) return list;
+  let k = 0;
+  return list.map((x) => (x.pos && x.pos[day] != null ? fixed[k++] : x));
+}
+const canChangeDay = (it) => it && it.cat !== 'stay' && !(it.cat === 'move' && isDate(it.end) && it.end !== it.date);
+(function dragCards() {
+  let st = null, suppressUntil = 0, raf = 0;
+  const SEL = '.items[data-dnd] > .it';
+  const pt = (e) => (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e;
+  function start(e, card) {
+    const p = pt(e);
+    st = { card, x: p.clientX, y: p.clientY, dragging: false, from: card.parentElement.dataset.dnd, mouse: !e.touches };
+    if (!st.mouse) st.timer = setTimeout(lift, 380);
+  }
+  function lift() {
+    if (!st) return;
+    const card = st.card, r = card.getBoundingClientRect();
+    const it = (trips[ui.trip] && trips[ui.trip].items || {})[card.dataset.id];
+    if (!it) { st = null; return; }
+    st.it = it;
+    st.out = card.parentElement.dataset.dnd !== it.date && it.cat === 'stay'; // Check-out-Karte / 체크아웃 카드
+    st.dragging = true; window.__dnd = true;
+    st.offY = st.y - r.top; st.offX = st.x - r.left;
+    const g = card.cloneNode(true);
+    g.classList.add('dnd-ghost');
+    Object.assign(g.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px' });
+    document.body.appendChild(g);
+    st.ghost = g;
+    card.classList.add('dnd-src');
+    document.body.classList.add('dnd-on');
+    if (navigator.vibrate) navigator.vibrate(12);
+    const loop = () => { if (!st || !st.dragging) return; const y = st.y; if (y < 90) scrollBy(0, -10); else if (y > innerHeight - 90) scrollBy(0, 10); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+  }
+  function move(e) {
+    const p = pt(e);
+    st.x = p.clientX; st.y = p.clientY;
+    st.ghost.style.top = (st.y - st.offY) + 'px';
+    st.ghost.style.left = (st.x - st.offX) + 'px';
+    const el = document.elementFromPoint(st.x, st.y);
+    let box = el && el.closest('.items[data-dnd]');
+    if (!box && el) { const day = el.closest('.day'); box = day && day.querySelector('.items[data-dnd]'); }
+    if (!box) return;
+    if (box.dataset.dnd !== st.from && (st.out || !canChangeDay(st.it))) return; // darf nicht den Tag wechseln / 날짜를 바꿀 수 없는 일정
+    const cards = [...box.querySelectorAll(':scope > .it')].filter((c) => c !== st.card);
+    const before = cards.find((c) => { const r = c.getBoundingClientRect(); return st.y < r.top + r.height / 2; });
+    if (before) { if (before.previousElementSibling !== st.card) box.insertBefore(st.card, before); }
+    else if (box.lastElementChild !== st.card) box.appendChild(st.card);
+  }
+  function drop() {
+    const { card, from, it } = st;
+    const box = card.parentElement, to = box.dataset.dnd;
+    const entries = [];
+    const tid = ui.trip, tr = trips[tid];
+    const setPos = (container, day) => {
+      if (day === 'cand') return;
+      [...container.querySelectorAll(':scope > .it')].forEach((c, i) => {
+        const x = tr.items[c.dataset.id];
+        if (x && (!x.pos || x.pos[day] !== i)) entries.push([['trips', tid, 'items', x.id, 'pos'], { ...(x.pos || {}), [day]: i }]);
+      });
+    };
+    if (to !== from) {
+      // anderer Tag oder 날짜 미정 / 다른 날 또는 날짜 미정으로
+      entries.push([['trips', tid, 'items', it.id, 'date'], to === 'cand' ? '' : to]);
+      if (it.cat === 'move' && it.end) entries.push([['trips', tid, 'items', it.id, 'end'], '']);
+      const pos = { ...(it.pos || {}) }; delete pos[from];
+      entries.push([['trips', tid, 'items', it.id, 'pos'], Object.keys(pos).length ? pos : null]);
+    }
+    setPos(box, to);
+    // Doppelte Pfade zusammenfassen (pos des verschobenen Eintrags) / 같은 경로는 마지막 값만
+    const merged = new Map();
+    for (const [p, v] of entries) { const k = p.join('/'); if (merged.has(k) && p[4] === 'pos' && v && merged.get(k)[1]) merged.set(k, [p, { ...merged.get(k)[1], ...v }]); else merged.set(k, [p, v]); }
+    const list = [...merged.values()];
+    if (to !== from) { const k = ['trips', tid, 'items', it.id, 'pos'].join('/'); const v = merged.get(k); if (v && v[1]) delete v[1][from]; }
+    end();
+    if (list.length) { write([...list, touch(tid)]); if (to !== from) toast(to === 'cand' ? t('movedCand') : t('movedTo', { d: dayName(to, { month: 'long', day: 'numeric', weekday: 'short' }) })); }
+    else render(true);
+  }
+  function end() {
+    if (!st) return;
+    clearTimeout(st.timer); cancelAnimationFrame(raf);
+    if (st.ghost) st.ghost.remove();
+    if (st.card) st.card.classList.remove('dnd-src');
+    if (st.dragging) suppressUntil = Date.now() + 500;
+    document.body.classList.remove('dnd-on');
+    st = null; window.__dnd = false;
+  }
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1 || ui.view !== 'trip' || ui.tab !== 'plan') return;
+    const card = e.target.closest(SEL);
+    if (card) start(e, card);
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!st) return;
+    if (!st.dragging) { const p = pt(e); if (Math.hypot(p.clientX - st.x, p.clientY - st.y) > 8) { clearTimeout(st.timer); st = null; } return; }
+    e.preventDefault(); move(e);
+  }, { passive: false });
+  document.addEventListener('touchend', () => { if (st && st.dragging) drop(); else end(); });
+  document.addEventListener('touchcancel', () => { if (st && st.dragging) drop(); else end(); });
+  // Maus (Computer): drücken und ziehen / 컴퓨터 마우스: 누르고 끌기
+  document.addEventListener('mousedown', (e) => {
+    if (e.button !== 0 || ui.view !== 'trip' || ui.tab !== 'plan') return;
+    const card = e.target.closest(SEL);
+    if (card) start(e, card);
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!st || !st.mouse) return;
+    if (!st.dragging) { if (Math.hypot(e.clientX - st.x, e.clientY - st.y) > 6) lift(); else return; }
+    if (st && st.dragging) { e.preventDefault(); move(e); }
+  });
+  document.addEventListener('mouseup', () => { if (st && st.mouse) { if (st.dragging) drop(); else end(); } });
+  // Nach dem Ziehen keinen Klick (öffnet sonst den Eintrag) / 끈 다음엔 클릭 무시 (일정 창이 열리지 않게)
+  document.addEventListener('click', (e) => { if (Date.now() < suppressUntil) { e.stopPropagation(); e.preventDefault(); } }, true);
+  document.addEventListener('contextmenu', (e) => { if (st && e.target.closest(SEL)) e.preventDefault(); });
+})();
+
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-act]');
   if (!b || !ACT[b.dataset.act]) return;
