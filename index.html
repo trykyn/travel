@@ -124,6 +124,18 @@ h2:first-child { margin-top: 2px; }
 .st.add { --stamp: var(--muted); border-style: dashed; border-width: 2px; mix-blend-mode: normal; font: 700 12px/1.3 var(--sans); letter-spacing: 0; }
 .st.add b { font: 900 26px/1 var(--sans); }
 .add-row { margin-top: 12px; }
+.people { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.person { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 5px; border-radius: 999px; background: var(--sheet); box-shadow: var(--shadow); font-size: 15px; font-weight: 700; }
+.person small { color: var(--muted); font-weight: 600; font-size: 12.5px; }
+.person .av { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 800; }
+.person.add { padding: 7px 14px; color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent); background: none; }
+.lines li .x small { display: block; font-size: 12.5px; color: var(--muted); font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
+.lines.bal li { align-items: center; }
+.lines.bal li > span:last-child { font-weight: 800; white-space: nowrap; }
+.settle { display: grid; grid-template-columns: auto auto auto 1fr; gap: 8px; align-items: center; padding: 6px 0; font-size: 16px; }
+.settle span[aria-hidden] { color: var(--coral); font-weight: 900; }
+.settle .amt { justify-self: end; font-weight: 900; font-size: 17px; }
+.c-pp { --c: var(--brand); }
 .st .stm { display: block; width: 17px; height: 17px; margin: 0 auto 2px; }
 .plane svg { display: block; width: 24px; height: 24px; }
 .modes span { gap: 5px; }
@@ -407,7 +419,7 @@ Object.assign(T.ko, {
   nextUp: '다음 일정', allDone: '오늘 남은 일정이 없어요', noToday: '오늘은 정해진 일정이 없어요', inHM: '{h}시간 {m}분 후', inM: '{m}분 후', nowish: '곧',
   tonight: '오늘 밤 숙소', checkinAt: '체크인', checkoutToday: '오늘 체크아웃', tomorrow: '내일', dir: '길찾기', todayPlan: '오늘 일정', dayOfTrip: '{n}일째',
   spendT: '지출 기록', spendPh: '무엇에? (선택)', spendAdd: '기록', spendToday: '오늘 쓴 돈 {x}', spendDelQ: '이 지출을 지울까요?',
-  sp: { food: '식비', move: '교통', shop: '쇼핑', see: '입장료', etc: '기타' }, planned: '계획한 비용', spent: '여행 중 지출',
+  sp: { food: '식비', move: '교통', stay: '숙박', shop: '쇼핑', see: '입장료', etc: '기타' }, planned: '계획한 비용', spent: '여행 중 지출',
   foundAll: '{a}개 모두 찾았어요', mapAll: '전체', noLoc: '위치가 없는 일정 {n}개', findAll: '이름으로 위치 찾기', finding: '찾는 중… {a}/{b}', found: '{a}개 찾았어요 · 못 찾은 {b}개는 일정을 눌러 현지 이름으로 찾아 주세요', locQPh: '찾을 이름 (현지 이름이 잘 찾아져요)',
   geoNote: '장소 이름으로 OpenStreetMap에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.', geoNoteG: '장소 이름으로 구글 지도에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.',  gmFail: '구글 지도를 쓸 수 없어서 기본 지도로 보여 줘요 (오늘 사용 상한에 닿았을 수 있어요)', mapFail: '지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요', noPins: '아직 지도에 표시할 곳이 없어요',
   loc: '위치', locNone: '위치 없음', locSearch: '이름으로 찾기', locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요',
@@ -421,7 +433,7 @@ Object.assign(T.de, {
   nextUp: 'Als Nächstes', allDone: 'Heute steht nichts mehr an', noToday: 'Heute ist nichts geplant', inHM: 'in {h} Std. {m} Min.', inM: 'in {m} Min.', nowish: 'gleich',
   tonight: 'Heute Nacht', checkinAt: 'Check-in', checkoutToday: 'Heute Check-out', tomorrow: 'Morgen', dir: 'Route', todayPlan: 'Heute', dayOfTrip: 'Tag {n}',
   spendT: 'Ausgabe eintragen', spendPh: 'Wofür? (optional)', spendAdd: 'Eintragen', spendToday: 'Heute ausgegeben {x}', spendDelQ: 'Diese Ausgabe löschen?',
-  sp: { food: 'Essen', move: 'Verkehr', shop: 'Einkauf', see: 'Eintritt', etc: 'Sonstiges' }, planned: 'Geplante Kosten', spent: 'Ausgaben unterwegs',
+  sp: { food: 'Essen', move: 'Verkehr', stay: 'Unterkunft', shop: 'Einkauf', see: 'Eintritt', etc: 'Sonstiges' }, planned: 'Geplante Kosten', spent: 'Ausgaben unterwegs',
   foundAll: 'Alle {a} gefunden', mapAll: 'Alle', noLoc: '{n} Einträge ohne Ort', findAll: 'Orte nach Namen suchen', finding: 'Suche … {a}/{b}', found: '{a} gefunden · {b} fehlen: im Eintrag mit dem Namen in Landessprache suchen', locQPh: 'Suchbegriff (Name in Landessprache klappt am besten)',
   geoNote: 'Sucht die Namen bei OpenStreetMap. Falsche Orte kannst du im Eintrag ändern.', geoNoteG: 'Sucht die Namen bei Google Maps. Falsche Orte kannst du im Eintrag ändern.', gmFail: 'Google Maps nicht verfügbar – zeige die einfache Karte (vielleicht ist das Tageslimit erreicht)', mapFail: 'Karte nicht ladbar. Bitte Internet prüfen', noPins: 'Noch keine Orte auf der Karte',
   loc: 'Ort', locNone: 'Kein Ort', locSearch: 'Nach Namen suchen', locPaste: 'Google-Maps-Link oder Koordinaten einfügen', locBad: 'Keine Koordinaten im Link. Kurze Teilen-Links gehen nicht – such lieber nach dem Namen',
@@ -772,15 +784,16 @@ function tripView(tr) {
     </header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
   if (window.notionSync) h += window.notionSync.bannerHtml();
-  h += { today: todayTab, plan: planTab, book: bookTab, cmp: cmpTab, map: mapTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
+  h += { today: todayTab, plan: planTab, book: bookTab, cmp: cmpTab, map: mapTab, money: moneyTab, ledger: ledgerTab, check: checkTab, memo: memoTab }[ui.tab](tr);
   h += '</section>';
   if (ui.tab === 'plan') h += `<button class="fab" data-act="new-item">${esc(t('addItem'))}</button>`;
   if (ui.tab === 'book') h += `<button class="fab" data-act="new-item" data-cat="stay">${esc(t('addItem'))}</button>`;
   if (ui.tab === 'cmp') h += `<button class="fab" data-act="new-opt">${esc(t('addOpt'))}</button>`;
+  if (ui.tab === 'ledger') h += `<button class="fab" data-act="new-spend">${esc(t('addSpend'))}</button>`;
   return h;
 }
 // "오늘" gibt es nur während der Reise / '오늘' 탭은 여행 중에만
-const tabsOf = (tr) => [...(status(tr) === 'now' ? ['today'] : []), 'plan', 'book', 'cmp', 'map', 'money', 'check', 'memo'];
+const tabsOf = (tr) => [...(status(tr) === 'now' ? ['today'] : []), 'plan', 'book', 'cmp', 'map', 'money', 'ledger', 'check', 'memo'];
 
 function itemCard(it, tr, day) {
   const meta = [];
@@ -956,6 +969,16 @@ function moneyTab(tr) {
 }
 
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
+Object.assign(T.ko.tabs, { ledger: '가계부' });
+Object.assign(T.de.tabs, { ledger: 'Abrechnung' });
+Object.assign(T.ko, { us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수', personNote: '나눌 때 인원 수만큼 몫을 가져요. 예: 우리 가족 4명, 지민네 2명이면 4:2로 나눠요.',
+  personDelQ: '"{n}"을(를) 일행에서 뺄까요?', personUsed: '이 일행이 들어간 지출이 있어서 뺄 수 없어요', ledgerTotal: '총 지출', paid: '낸 돈', share: '몫', gets: '받을 돈 {x}', owes: '낼 돈 {x}',
+  settle: '정산', settleNone: '정산할 게 없어요 👍', copySettle: '정산 내용 복사', settleCopied: '복사했어요. 메신저에 붙여 보내세요', addSpend: '+ 지출', spendNew: '지출 기록', spendEdit: '지출 고치기',
+  payer: '낸 사람', splitWith: '나눌 사람', spendTitle: '내용', spendDate: '날짜', spendList: '지출 목록', noSpends: '아직 지출이 없어요. 쓴 돈을 적으면 일행끼리 누가 얼마 보내면 되는지 계산해 줘요.' });
+Object.assign(T.de, { us: 'Wir', ppl: ' P.', addPerson: '+ Mitreisende', personT: 'Mitreisende', personName: 'Name', personPh: 'z. B. Familie Kim', personN: 'Personen', personNote: 'Beim Teilen zählt jede Person einen Anteil. Wir 4 und Familie Kim 2 → 4:2.',
+  personDelQ: '„{n}“ entfernen?', personUsed: 'Kommt in Ausgaben vor – kann nicht entfernt werden', ledgerTotal: 'Ausgaben gesamt', paid: 'bezahlt', share: 'Anteil', gets: 'bekommt {x}', owes: 'zahlt {x}',
+  settle: 'Ausgleich', settleNone: 'Alles ausgeglichen 👍', copySettle: 'Abrechnung kopieren', settleCopied: 'Kopiert – im Messenger einfügen', addSpend: '+ Ausgabe', spendNew: 'Ausgabe eintragen', spendEdit: 'Ausgabe bearbeiten',
+  payer: 'Bezahlt von', splitWith: 'Geteilt mit', spendTitle: 'Wofür', spendDate: 'Datum', spendList: 'Alle Ausgaben', noSpends: 'Noch keine Ausgaben. Trag sie ein, dann rechnet die App aus, wer wem was überweist.' });
 Object.assign(T.ko, { mode: '이동 수단', modeAuto: '자동', modes: { plane: '비행기', car: '자동차', train: '기차', ship: '배' }, passHead: { plane: 'BOARDING PASS · 탑승권', car: 'ROAD TRIP · 자동차 여행', train: 'TRAIN TICKET · 승차권', ship: 'BOARDING PASS · 승선권' } });
 Object.assign(T.de, { mode: 'Reisemittel', modeAuto: 'Automatisch', modes: { plane: 'Flugzeug', car: 'Auto', train: 'Zug', ship: 'Schiff' }, passHead: { plane: 'BOARDING PASS · Bordkarte', car: 'ROAD TRIP · Autoreise', train: 'TRAIN TICKET · Fahrkarte', ship: 'BOARDING PASS · Schiff' } });
 Object.assign(T.ko, { addRecord: '지난 여행', recordT: '지난 여행 기록', recordNote: '짧은 기록', recordPh: '어땠는지 한두 줄 (선택)', toNotion: '노션에도 페이지 만들기', recorded: '여권에 도장을 찍었어요' });
@@ -986,7 +1009,7 @@ const notionUrl = (id) => 'https://www.notion.so/' + String(id || '').replace(/-
 const parseAmount = (v) => parseFloat(String(v).replace(/\s/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.'));
 const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
 const spendsOf = (tr) => Object.values(tr.spend || {}).filter((s) => s && s.id && s.amount);
-const SP_ICON = { food: '🍽️', move: '🚕', shop: '🛍️', see: '🎟️', etc: '💳' };
+const SP_ICON = { food: '🍽️', move: '🚕', stay: '🛏️', shop: '🛍️', see: '🎟️', etc: '💳' };
 function spendLine(s, tr, withDate) {
   const e = eurOf(s, tr);
   return `<li>${withDate ? `<span class="dt">${s.date ? esc(md(s.date)) : '–'}</span>` : ''}<span class="x">${SP_ICON[s.cat] || '💳'} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}</span>
@@ -1377,6 +1400,151 @@ function optSheet(tr, o) {
   });
 }
 
+// ---------- Kasse mit Abrechnung / 가계부와 정산 ----------
+// Mitreisende (trip.people) mit Personenzahl als Gewicht; Ausgaben (trip.spend) mit Zahler und Teilnehmern.
+// Alles in Euro über den Kurs der Reise; nur in der App (nicht in Notion).
+// 일행(trip.people)은 인원 수를 몫의 비율로, 지출(trip.spend)은 낸 사람과 나눌 사람. 유로로 계산, 앱에만 저장.
+const peopleOf = (tr) => {
+  const p = Object.values(tr.people || {}).filter((x) => x && x.id).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  return p.length ? p : [{ id: 'me', name: t('us'), n: 1, order: 0 }];
+};
+const pName = (tr, id) => (peopleOf(tr).find((p) => p.id === id) || { name: id === 'me' ? t('us') : '?' }).name;
+const P_COLORS = ['#13294b', '#ff6b4a', '#13946f', '#7a5cd3', '#c27a12', '#2a5db0'];
+// Gewählte Gruppe: nur Ausgaben in deren Zeitraum / 묶음을 고르면 그 기간 지출만
+function ledgerSpends(tr) {
+  const scm = ui.grp != null ? groupSpan(tr, ui.grp) : null;
+  return spendsOf(tr).filter((s) => !scm || (s.date >= scm[0] && s.date <= scm[1]));
+}
+function balances(tr, spends) {
+  const ppl = peopleOf(tr), w = (id) => ((ppl.find((p) => p.id === id) || {}).n || 1);
+  const bal = Object.fromEntries(ppl.map((p) => [p.id, { paid: 0, share: 0 }]));
+  let total = 0, skipped = 0;
+  for (const s of spends) {
+    const e = eurOf(s, tr);
+    if (e == null) { skipped++; continue; }
+    total += e;
+    const payer = bal[s.payer || 'me'] ? (s.payer || 'me') : ppl[0].id;
+    bal[payer].paid += e;
+    const split = (s.split && s.split.length ? s.split : [payer]).filter((id) => bal[id]);
+    const sum = split.reduce((a, id) => a + w(id), 0) || 1;
+    for (const id of split) bal[id].share += (e * w(id)) / sum;
+  }
+  return { bal, total, skipped };
+}
+// Möglichst wenige Überweisungen: größte Schuld an größtes Guthaben / 송금 횟수가 적게: 가장 많이 낼 사람 → 가장 많이 받을 사람
+function settle(bal) {
+  const cr = [], db = [];
+  for (const [id, b] of Object.entries(bal)) {
+    const v = Math.round((b.paid - b.share) * 100) / 100;
+    if (v > 0.009) cr.push([id, v]); else if (v < -0.009) db.push([id, -v]);
+  }
+  cr.sort((a, b) => b[1] - a[1]); db.sort((a, b) => b[1] - a[1]);
+  const out = [];
+  let i = 0, j = 0;
+  while (i < db.length && j < cr.length) {
+    const x = Math.min(db[i][1], cr[j][1]);
+    out.push([db[i][0], cr[j][0], Math.round(x * 100) / 100]);
+    db[i][1] -= x; cr[j][1] -= x;
+    if (db[i][1] < 0.01) i++;
+    if (cr[j][1] < 0.01) j++;
+  }
+  return out;
+}
+function ledgerTab(tr) {
+  const ppl = peopleOf(tr);
+  const spends = ledgerSpends(tr).sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.t || 0) - (a.t || 0));
+  const { bal, total, skipped } = balances(tr, spends);
+  let h = `<div class="people">${ppl.map((p, i) => `<button class="person" data-act="edit-person" data-id="${esc(p.id)}"><span class="av" style="background:${P_COLORS[i % P_COLORS.length]}">${esc([...p.name][0] || '?')}</span>${esc(p.name)}${(p.n || 1) > 1 ? `<small>${p.n}${esc(t('ppl'))}</small>` : ''}</button>`).join('')}
+    <button class="person add" data-act="add-person">${esc(t('addPerson'))}</button></div>`;
+  if (!spends.length) return h + `<p class="empty">${esc(t('noSpends'))}</p>`;
+  h += `<div class="card"><div class="stat"><span>${esc(t('ledgerTotal'))}</span><b>${esc(money(total, 'EUR'))}</b></div>`;
+  if (ppl.length > 1) {
+    h += `<ul class="lines bal">${ppl.map((p) => {
+      const b = bal[p.id], v = b.paid - b.share;
+      return `<li><span class="x">${esc(p.name)}<small>${esc(t('paid'))} ${esc(money(b.paid, 'EUR'))} · ${esc(t('share'))} ${esc(money(b.share, 'EUR'))}</small></span>
+        <span class="${v >= 0 ? 'ok' : 'todo'}">${esc(v >= 0.005 ? t('gets', { x: money(v, 'EUR') }) : v <= -0.005 ? t('owes', { x: money(-v, 'EUR') }) : '±0')}</span></li>`;
+    }).join('')}</ul>`;
+  }
+  if (skipped) h += `<p class="note">${esc(t('noRate'))}</p>`;
+  h += '</div>';
+  if (ppl.length > 1) {
+    const tx = settle(bal);
+    h += `<h2>${esc(t('settle'))}</h2><div class="card">${tx.length
+      ? tx.map(([a, b, x]) => `<div class="settle"><b>${esc(pName(tr, a))}</b><span aria-hidden="true">→</span><b>${esc(pName(tr, b))}</b><span class="amt">${esc(money(x, 'EUR'))}</span></div>`).join('')
+        + `<div class="set-row" style="margin-top:10px"><button class="btn small ghost" data-act="copy-settle">${esc(t('copySettle'))}</button></div>`
+      : esc(t('settleNone'))}</div>`;
+  }
+  h += `<h2>${esc(t('spendList'))}</h2><ul class="lines">${spends.map((s) => {
+    const e = eurOf(s, tr), split = (s.split || []).map((id) => pName(tr, id));
+    return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${SP_ICON[s.cat] || '💳'} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}
+      ${ppl.length > 1 ? `<small>💳 ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ' · 👥 ' + esc(split.join(', ')) : ''}</small>` : ''}</button>
+      <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
+  }).join('')}</ul>`;
+  return h;
+}
+function settleText(tr) {
+  const spends = ledgerSpends(tr), { bal, total } = balances(tr, spends);
+  const lines = [`${tr.icon || ''} ${placeName(tr.title)}${ui.grp ? ' · ' + ui.grp : ''} — ${t('settle')}`, `${t('ledgerTotal')}: ${money(total, 'EUR')}`];
+  for (const p of peopleOf(tr)) lines.push(`· ${p.name}: ${t('paid')} ${money(bal[p.id].paid, 'EUR')} / ${t('share')} ${money(bal[p.id].share, 'EUR')}`);
+  for (const [a, b, x] of settle(bal)) lines.push(`→ ${pName(tr, a)} ➜ ${pName(tr, b)}: ${money(x, 'EUR')}`);
+  return lines.join('\n');
+}
+function spendSheet(tr, s) {
+  const isNew = !s, ppl = peopleOf(tr), sc = scopeOf(tr), now = today();
+  const def = isDate(sc.start) && now >= sc.start && now <= (sc.end || sc.start) ? now : isDate(sc.start) ? sc.start : now;
+  s = s || { id: uid('s'), date: def, amount: '', cur: tr.cur || 'EUR', cat: 'food', title: '', payer: ppl[0].id, split: ppl.map((p) => p.id) };
+  const curs = [...new Set([tr.cur || 'EUR', 'EUR', s.cur || 'EUR'])];
+  const split = s.split && s.split.length ? s.split : [s.payer || 'me'];
+  openSheet(`<h3>${esc(t(isNew ? 'spendNew' : 'spendEdit'))}</h3><form data-form="spendx">
+    <div class="fld"><span>${esc(t('cost'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="amount" inputmode="decimal" value="${s.amount ?? ''}" style="font-size:22px;font-weight:800" aria-label="${esc(t('cost'))}">
+      <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curs.map((c) => `<option ${c === (s.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div>
+    <div class="cats">${['food', 'move', 'stay', 'shop', 'see', 'etc'].map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${(s.cat || 'etc') === c ? 'checked' : ''}><span>${SP_ICON[c]} ${esc(t('sp.' + c))}</span></label>`).join('')}</div>
+    <label class="fld"><span>${esc(t('spendTitle'))}</span><input class="in" name="title" value="${esc(s.title || '')}" placeholder="${esc(t('spendPh'))}" autocomplete="off"></label>
+    <label class="fld"><span>${esc(t('spendDate'))}</span><input class="in" type="date" name="date" value="${esc(s.date || '')}"></label>
+    ${ppl.length > 1 ? `<div class="fld"><span>${esc(t('payer'))}</span><div class="cats">${ppl.map((p) => `<label class="c-pp"><input type="radio" name="payer" value="${esc(p.id)}" ${(s.payer || 'me') === p.id ? 'checked' : ''}><span>${esc(p.name)}</span></label>`).join('')}</div></div>
+      <div class="fld"><span>${esc(t('splitWith'))}</span><div class="cats">${ppl.map((p) => `<label class="c-pp"><input type="checkbox" name="split" value="${esc(p.id)}" ${split.includes(p.id) ? 'checked' : ''}><span>${esc(p.name)}${(p.n || 1) > 1 ? ` · ${p.n}${esc(t('ppl'))}` : ''}</span></label>`).join('')}</div></div>` : ''}
+    <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-spendx" data-id="${s.id}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
+  </form>`, (p) => {
+    const f = p.querySelector('form');
+    if (isNew) setTimeout(() => f.amount.focus(), 250);
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const amount = parseAmount(f.amount.value);
+      if (!amount || isNaN(amount)) { f.amount.focus(); return; }
+      const payer = f.payer ? f.payer.value : ppl[0].id;
+      let sp = f.split ? [...f.querySelectorAll('[name=split]:checked')].map((x) => x.value) : [payer];
+      if (!sp.length) sp = [payer];
+      write([[['trips', tr.id, 'spend', s.id], { ...s, amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), date: f.date.value || def, payer, split: sp, t: s.t || Date.now() }], touch(tr.id)]);
+      closeSheet();
+    });
+  });
+}
+function personSheet(tr, person) {
+  const isNew = !person, isMe = person && person.id === 'me';
+  person = person || { id: uid('p'), name: '', n: 1 };
+  openSheet(`<h3>${esc(t('personT'))}</h3><form data-form="person">
+    <label class="fld"><span>${esc(t('personName'))}</span><input class="in" name="name" value="${esc(person.name)}" placeholder="${esc(t('personPh'))}" autocomplete="off"></label>
+    <label class="fld"><span>${esc(t('personN'))}</span><input class="in" name="n" inputmode="numeric" value="${person.n || 1}" style="width:110px"></label>
+    <p class="note">${esc(t('personNote'))}</p>
+    <div class="acts">${isNew || isMe ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-person" data-id="${esc(person.id)}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
+  </form>`, (p) => {
+    const f = p.querySelector('form');
+    if (isNew) setTimeout(() => f.name.focus(), 250);
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = f.name.value.trim();
+      if (!name) { f.name.focus(); return; }
+      const n = Math.max(1, Math.min(20, parseInt(f.n.value, 10) || 1));
+      const entries = [];
+      // Beim ersten Mitreisenden auch "우리 가족" speichern / 첫 일행을 넣을 때 '우리 가족'도 저장
+      if (!Object.keys(tr.people || {}).length && person.id !== 'me') entries.push([['trips', tr.id, 'people', 'me'], { id: 'me', name: t('us'), n: 1, order: 0 }]);
+      entries.push([['trips', tr.id, 'people', person.id], { ...person, name, n, order: person.order ?? Date.now() / 1000 }], touch(tr.id));
+      write(entries);
+      closeSheet();
+    });
+  });
+}
+
 const TPL = {
   basic: { ko: ['여권', '신분증·운전면허증', '충전기·보조배터리', '여행자 보험', '상비약', '현금·카드', '멀티 어댑터'], de: ['Reisepass', 'Ausweis·Führerschein', 'Ladegerät·Powerbank', 'Reiseversicherung', 'Reiseapotheke', 'Bargeld·Karten', 'Reiseadapter'] },
   kids: { ko: ['아이 여권', '카시트', '간식', '장난감·색칠놀이', '아이 상비약 (해열제)', '여벌 옷', '물티슈'], de: ['Kinderreisepass', 'Kindersitz', 'Snacks', 'Spielzeug·Malbuch', 'Kinderapotheke (Fiebersaft)', 'Wechselkleidung', 'Feuchttücher'] },
@@ -1456,7 +1624,7 @@ function openSheet(html, mount) {
   // Kopfzeile "Abbrechen · Titel · Speichern" bleibt beim Scrollen oben → kein Runterscrollen zum Speichern
   // 맨 위 '취소 · 제목 · 저장' 줄은 스크롤해도 고정 → 저장하려고 끝까지 내려갈 필요 없음
   const h3 = panel.querySelector('h3'), row = panel.querySelector('.sbar-row');
-  const form = panel.querySelector('form[data-form=item], form[data-form=trip], form[data-form=opt]');
+  const form = panel.querySelector('form[data-form=item], form[data-form=trip], form[data-form=opt], form[data-form=spendx], form[data-form=person]');
   row.innerHTML = `<button type="button" class="sb-l" data-act="close">${esc(form ? t('cancel') : t('close'))}</button><b class="sb-t"></b>${form ? `<button type="button" class="sb-r">${esc(t('save'))}</button>` : '<span></span>'}`;
   row.querySelector('.sb-t').textContent = h3 ? h3.textContent : '';
   if (h3) h3.remove();
@@ -1754,6 +1922,18 @@ const ACT = {
   check: (b) => { const x = cur().checks[b.dataset.id]; write([[['trips', ui.trip, 'checks', x.id, 'done'], !x.done], touch(ui.trip)]); },
   'rm-check': (b) => write([[['trips', ui.trip, 'checks', b.dataset.id], null], touch(ui.trip)]),
   'toggle-done': (b) => { const it = cur().items[b.dataset.id]; write([[['trips', ui.trip, 'items', it.id, 'done'], !it.done], touch(ui.trip)]); },
+  'new-spend': () => spendSheet(cur()),
+  'edit-spend': (b) => spendSheet(cur(), cur().spend[b.dataset.id]),
+  'del-spendx': (b) => { if (!confirm(t('spendDelQ'))) return; write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); closeSheet(); },
+  'add-person': () => personSheet(cur()),
+  'edit-person': (b) => personSheet(cur(), peopleOf(cur()).find((p) => p.id === b.dataset.id)),
+  'del-person': (b) => {
+    const tr = cur(), id = b.dataset.id;
+    if (spendsOf(tr).some((s) => s.payer === id || (s.split || []).includes(id))) { toast(t('personUsed')); return; }
+    if (!confirm(t('personDelQ', { n: pName(tr, id) }))) return;
+    write([[['trips', tr.id, 'people', id], null], touch(tr.id)]); closeSheet();
+  },
+  'copy-settle': async () => { try { await navigator.clipboard.writeText(settleText(cur())); toast(t('settleCopied')); } catch { toast(t('copied')); } },
   'del-spend': (b) => { if (confirm(t('spendDelQ'))) write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); },
   'map-day': (b) => { ui.mapDay = b.dataset.day; render(true); },
   'find-all': () => findAll(),
@@ -1829,7 +2009,8 @@ document.addEventListener('submit', async (e) => {
     if (!amount || isNaN(amount)) { f.amount.focus(); return; }
     ui.spendCur = f.cur.value; ui.spendCat = f.cat.value;
     const id = uid('s');
-    write([[['trips', ui.trip, 'spend', id], { id, date: today(), amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), t: Date.now() }], touch(ui.trip)]);
+    const ppl = peopleOf(trips[ui.trip]);
+    write([[['trips', ui.trip, 'spend', id], { id, date: today(), amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), payer: ppl[0].id, split: ppl.map((p) => p.id), t: Date.now() }], touch(ui.trip)]);
   } else if (kind === 'memo') {
     e.preventDefault();
     ui.memoEdit = false;
