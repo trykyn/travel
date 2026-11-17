@@ -338,7 +338,8 @@
       trip = { id: tid, title: n.title, icon: n.icon || '✈️', year: n.year, start: s, end: e, cur, rate, cover: '', memo: '', items: {}, checks: {}, created: Date.now(), from: 'notion' };
     }
     const head = {
-      title: n.title || trip.title, icon: n.icon || trip.icon || '✈️', cover: n.cover || trip.cover || '', year: n.year || trip.year || 0,
+      // In der App umbenannt: App-Titel behalten, Notion-Titel bleibt / 앱에서 바꾼 제목은 앱에만, 노션 제목은 그대로
+      title: trip.titleLocal ? trip.title : n.title || trip.title, icon: n.icon || trip.icon || '✈️', cover: n.cover || trip.cover || '', year: n.year || trip.year || 0,
       memo: tidy(n.memo, 15000), gmemo: Object.fromEntries(Object.entries(n.gmemo || {}).map(([g, l]) => [g, tidy(l, 8000)]).filter(([, v]) => v)), notion,
     };
     const ctx = { ...trip, ...head };
@@ -497,7 +498,7 @@
         const kind = p[2] === 'items' ? 'item' : 'check';
         if (p.length === 4 && v == null) { if (old && old.nid) queue({ k: kind === 'item' ? 'delItem' : 'delCheck', tid, nid: old.nid }); }
         else if (p[4] !== 'mt') queue({ k: kind, tid, id: p[3] });
-      } else if (p[2] === 'title' || p[2] === 'icon') queue({ k: 'trip', tid });
+      } else if (p[2] === 'icon') queue({ k: 'trip', tid }); // Titel bleibt in Notion wie er ist / 여행 제목은 노션에 안 보냄
     });
   }
   function notionDates(it, s) {
@@ -591,8 +592,8 @@
     if (!tr) return false;
     if (!tr.notion) return S.outbox.some((o) => o.k === 'newTrip' && o.tid === op.tid); // auf die neue Seite warten / 새 페이지를 기다림
     if (op.k === 'trip') {
-      try { await call('PATCH', `pages/${tr.notion.page}`, { icon: { type: 'emoji', emoji: tr.icon || '✈️' }, properties: { title: { title: rt(tr.title) } } }); }
-      catch (e) { if (e.code !== 'notion') throw e; await call('PATCH', `pages/${tr.notion.page}`, { properties: { title: { title: rt(tr.title) } } }); }
+      try { await call('PATCH', `pages/${tr.notion.page}`, { icon: { type: 'emoji', emoji: tr.icon || '✈️' } }); }
+      catch (e) { if (e.code !== 'notion') throw e; }
       return false;
     }
     if (op.k === 'item') {

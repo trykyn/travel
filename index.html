@@ -2228,6 +2228,8 @@ function tripSheet(tr, opt = {}) {
         closeSheet();
         if (record) toast(t('recorded')); else go(`#/t/${tr.id}/plan`);
       } else {
+        // Notion-Reise umbenannt: nur in der App (Notion-Seitentitel bleibt) / 노션 여행 제목을 바꾸면 앱에서만
+        if (tr.notion && title !== tr.title) fields.titleLocal = true;
         write(Object.entries(fields).map(([k, v]) => [['trips', tr.id, k], v]));
         closeSheet();
       }
