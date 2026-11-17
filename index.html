@@ -15,7 +15,7 @@
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=bed,check,confirmation_number,credit_card,directions_boat,directions_bus,directions_car,edit,flight,gondola_lift,group,link,local_taxi,location_on,luggage,map,near_me,payments,public,push_pin,restaurant,route,settings,shopping_bag,sticky_note_2,train&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=attractions,backpack,beach_access,bed,bedtime,castle,check,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
 <title>여행</title>
 <style>
 /* Aussehen „Bordkarte“: hellblauer Himmel, weiße Tickets mit Abrisskante und Strichcode, Navy-Schrift, Koralle als Akzent.
@@ -148,6 +148,44 @@ h2:first-child { margin-top: 2px; }
 .settle span[aria-hidden] { color: var(--coral); font-weight: 900; }
 .settle .amt { justify-self: end; font-weight: 900; font-size: 17px; }
 .c-pp { --c: var(--brand); }
+.wx { display: inline-flex; align-items: center; gap: 2px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.wx b { color: var(--ink); font-weight: 800; }
+.wx .wx-i { font-size: 18px; color: #f2a900; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; vertical-align: 0; }
+.wx .wx-cloud, .wx .wx-foggy { color: #8a9bb0; } .wx .wx-rainy, .wx .wx-thunderstorm { color: #4f8fe6; } .wx .wx-weather_snowy { color: #7fb3e8; }
+.wx .rain { margin-left: 4px; color: var(--accent); }
+.wx .rain .ms { font-size: 14px; vertical-align: -.1em; }
+.today-strip { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin: 0 2px 10px; font-size: 14px; color: var(--muted); }
+.today-strip b { color: var(--ink); }
+.todo-line { display: flex; flex-wrap: wrap; gap: 2px 6px; align-items: center; margin-top: 8px; font-size: 12.5px; font-weight: 700; color: var(--warn); }
+.todo-line i { font-style: normal; color: var(--muted); }
+.todo-line .ms { font-size: 15px; vertical-align: -.15em; }
+.stubc b .todo-line { margin-top: 2px; font-weight: 700; }
+.nst { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; }
+.nst .ms { font-size: 19px; vertical-align: 0; }
+.nst.ok { color: var(--mint); } .nst.busy { color: var(--accent); } .nst.bad { color: var(--bad); }
+.rec-add { display: inline-flex; align-items: center; gap: 4px; margin: 8px 0 0 22px; padding: 4px 12px; border-radius: 999px; font-size: 13.5px; font-weight: 700; color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--line); }
+.rec { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; width: calc(100% - 22px); margin: 8px 0 0 22px; padding: 10px 12px; border-radius: 14px; background: var(--sheet); box-shadow: var(--shadow); border-left: 4px solid var(--coral); text-align: left; }
+.rec .rec-i { color: var(--coral); }
+.rec-t { flex: 1 1 60%; font-size: 15px; line-height: 1.4; }
+.rec-k { display: inline-flex; gap: 8px; }
+.rec-kid { display: inline-flex; align-items: center; gap: 2px; }
+.face { display: inline-block; width: 30px; height: 30px; vertical-align: middle; }
+.face svg { width: 100%; height: 100%; display: block; }
+.kid-dot { display: inline-grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; color: #fff; font-weight: 800; font-size: 13px; }
+.kst { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--k); color: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .15); }
+.kst .ms { font-size: 20px; vertical-align: 0; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+.kst.none { background: var(--field); color: var(--muted); box-shadow: none; font-weight: 800; }
+.kid-h { display: flex !important; align-items: center; gap: 6px; }
+.kst-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.kst-grid label { position: relative; }
+.kst-grid input { position: absolute; opacity: 0; pointer-events: none; }
+.kst-grid .kst { width: 46px; height: 46px; opacity: .5; transform: scale(.9); transition: transform .12s, opacity .12s; }
+.kst-grid .kst .ms { font-size: 26px; }
+.kst-grid input:checked + .kst { opacity: 1; transform: scale(1.08); box-shadow: 0 0 0 3px var(--sheet), 0 0 0 5px var(--k, var(--muted)); }
+.who .face { width: 22px; height: 22px; margin: -3px 4px -3px -4px; }
+.pk { flex: none; display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--k); color: #fff; }
+.pk .ms { font-size: 19px; vertical-align: 0; font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+.checks .tx small { color: var(--muted); font-size: 12.5px; }
 .dh { flex-wrap: wrap; }
 .dh-act { margin-left: auto; display: inline-flex; gap: 6px; }
 .dh .now + .dh-act { margin-left: 8px; }
@@ -377,6 +415,7 @@ a.btn { text-decoration: none; }
 <div id="sheet-root" hidden></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="maps-config.js"></script>
+<script src="../our-family/stickers-shared.js" async onload="window.render && render()"></script>
 <script>
 'use strict';
 // ---------- Speicher / 저장 ----------
@@ -565,9 +604,26 @@ function write(entries, opts = {}) {
   if (connected()) window.cloud.write(entries);
   else { for (const [path] of entries) unsynced.add(path[1]); store.put('unsynced', [...unsynced]); }
   if (!opts.sync && window.notionSync) window.notionSync.changed(entries, before);
+  scheduleVac();
   render(!opts.sync);
 }
 const put = (path, value) => write([[path, value]]);
+// Reisen erscheinen im Familienkalender (우리가족) als Urlaub vacations['trip-…'] – nur eigene Einträge werden geändert
+// 여행을 우리가족 앱 캘린더에 가족 휴가로 표시 (vacations['trip-…']) — 이 앱이 넣은 것만 고치고 지움
+let vacTimer = 0;
+function scheduleVac() { clearTimeout(vacTimer); vacTimer = setTimeout(() => { if (connected() && window.cloud.live && window.cloud.syncVacations) window.cloud.syncVacations(vacationsWanted()).catch((e) => console.warn('vacations', e)); }, 4000); }
+function vacationsWanted() {
+  const out = {}, now = today();
+  for (const tr of allTrips()) {
+    const spans = isDate(tr.start) ? [['', [tr.start, isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start]]] : groupsOf(tr).map((g) => [g, groupSpan(tr, g)]).filter(([, s]) => s);
+    for (const [g, [s, e]] of spans) {
+      if (e < now) continue;
+      const name = placeName(tr.title) + (g ? ' · ' + g : '');
+      out['trip-' + tr.id + (g ? '-' + hashId(g) : '')] = { s, e, name, src: /[가-힣]/.test(name) ? 'ko' : 'de', by: 'travel' };
+    }
+  }
+  return out;
+}
 function touch(tid) { return [['trips', tid, 'mt'], Date.now()]; }
 
 // ---------- Reisen einordnen / 여행 분류 ----------
@@ -727,7 +783,7 @@ function homeView() {
   const past = list.filter((x) => status(x) === 'past').sort((a, b) => byStart(b, a));
   const hero = now[0] || up.find((x) => isDate(x.start));
   let h = `<header class="top"><div class="bar"><h1>${esc(t('app'))}</h1>
-    <span class="set-row">${langSwitch()}<button class="icon-btn" data-act="settings" aria-label="${esc(t('settings'))}">${ms('settings')}</button></span></div></header><section class="sheet">`;
+    <span class="set-row">${window.notionSync ? window.notionSync.statusHtml() : ''}${langSwitch()}<button class="icon-btn" data-act="settings" aria-label="${esc(t('settings'))}">${ms('settings')}</button></span></div></header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
   if (window.notionSync) h += window.notionSync.bannerHtml();
   if (!list.length) h += `<p class="empty">${esc(t('noTrips'))}</p>`;
@@ -749,7 +805,8 @@ function ticket(tr) {
     <span class="tk-main">
       <span class="air"><span>${esc(t('passHead.' + modeOf(tr)))}</span><b>${esc(st === 'now' ? t('ongoing') : t('next'))}</b></span>
       <span class="route"><span class="apc">${esc(codeFrom(tr))}<small>${esc(cityFrom(tr))}</small></span><span class="plane">${modeSvg(modeOf(tr))}</span>
-        <span class="apc r">${esc(codeTo(tr))}<small>${esc(tr.icon || '')} ${esc(tr.title)}</small></span></span>
+        <span class="apc r">${esc(codeTo(tr))}<small>${esc(tr.icon || '')} ${esc(placeName(tr.title))}</small></span></span>
+      ${todoLine(tr)}
     </span>
     <span class="stub"><span class="grid"><span><small>DATE</small>${esc(mmdd(tr.start))}</span><span><small>RETURN</small>${esc(mmdd(tr.end))}</span>
       <span><small>STAY</small>${esc(n ? nightsText(n) : '—')}</span></span><span class="bar" aria-hidden="true"></span></span></button>`;
@@ -757,7 +814,7 @@ function ticket(tr) {
 // Kleiner Abschnitt für weitere kommende Reisen / 다가오는 여행은 작은 탑승권 조각
 function stubCard(tr) {
   return `<button class="stubc" data-act="open" data-id="${tr.id}"><span class="c">${esc(codeTo(tr))}<small>${esc(mmdd(tr.start) === '—' ? String(tr.year || '') : mmdd(tr.start))}</small></span>
-    <b>${esc(tr.icon || '✈️')} ${esc(tr.title)}<small>${esc([fmtRange(tr), nightsLabel(tr)].filter(Boolean).join(' · '))}</small></b>
+    <b>${esc(tr.icon || '✈️')} ${esc(placeName(tr.title))}<small>${esc([fmtRange(tr), nightsLabel(tr)].filter(Boolean).join(' · '))}</small>${todoLine(tr)}</b>
     <span class="d">${esc(dLabel(tr) || t('undated'))}</span></button>`;
 }
 // Nur der Ortsname für Stempel: Daten/Jahre am Anfang oder Ende des Notion-Titels weg ("2026.09.04-06 스트라스부르" → "스트라스부르")
@@ -808,10 +865,10 @@ function tripView(tr) {
   const tm = (s) => (isDate(s) ? dayName(s, { month: 'numeric', day: 'numeric', weekday: 'short' }) : t('undated'));
   let h = `<header class="top"><div class="bar">
     <button class="back" data-act="home">‹ ${esc(t('back'))}</button>
-    <span class="set-row">${tr.notion ? `<a class="icon-btn nbtn" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener" aria-label="${esc(t('nOpen'))}">N</a>` : ''}
+    <span class="set-row">${window.notionSync ? window.notionSync.statusHtml() : ''}${tr.album ? `<a class="icon-btn" href="${esc(tr.album)}" target="_blank" rel="noopener" aria-label="${esc(t('photos'))}">${ms('photo_library')}</a>` : ''}${tr.notion ? `<a class="icon-btn nbtn" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener" aria-label="${esc(t('nOpen'))}">N</a>` : ''}
     <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">${ms('edit')}</button></span></div>
     <div class="tk tk-head">${tr.cover ? `<span class="tk-img"${coverStyle(tr)}></span>` : ''}${d ? `<span class="dday">${esc(d)}</span>` : ''}
-      <div class="tk-main"><div class="air"><span>${esc(tr.icon || '✈️')} ${esc(tr.title)}${ui.grp != null ? ' · ' + esc(ui.grp || t('grpMain')) : ''}</span><b>${esc(nightsLabel(v))}</b></div>
+      <div class="tk-main"><div class="air"><span>${esc(tr.icon || '✈️')} ${esc(placeName(tr.title))}${ui.grp != null ? ' · ' + esc(ui.grp || t('grpMain')) : ''}</span><b>${esc(nightsLabel(v))}</b></div>
       <div class="route"><span class="apc">${esc(codeFrom(tr))}<small>${esc(tm(v.start))}</small></span><span class="plane">${modeSvg(modeOf(tr))}</span>
         <span class="apc r">${esc(codeTo(tr))}<small>${esc(isDate(v.end) && v.end !== v.start ? tm(v.end) : String(tr.year || ''))}</small></span></div></div></div>
     ${grpBar}<nav class="tabs">${tabs.map((k) => `<button class="tab${ui.tab === k ? ' on' : ''}" data-act="tab" data-tab="${k}">${esc(t('tabs.' + k))}</button>`).join('')}</nav>
@@ -916,7 +973,7 @@ function planTab(tr) {
     const mid = stays.filter((s) => s.date < d && d < s.end);
     const outs = stays.filter((s) => s.end === d);
     h += `<div class="day" id="d-${d}"><div class="dh"><span class="n">${esc(t('dayNo', { n: i + 1 }))}</span>
-      <span class="d">${esc(dayName(d, { month: 'long', day: 'numeric', weekday: 'short' }))}</span>${d === now ? `<span class="now">${esc(t('today'))}</span>` : ''}
+      <span class="d">${esc(dayName(d, { month: 'long', day: 'numeric', weekday: 'short' }))}</span>${wxSoon(d) ? `<span class="wx" data-day="${d}" hidden></span>` : ''}${d === now ? `<span class="now">${esc(t('today'))}</span>` : ''}
       <span class="dh-act"><button class="dbtn${ui.dayMaps && ui.dayMaps.has(d) ? ' on' : ''}" data-act="day-map" data-day="${d}">${ms('map')} ${esc(t('mapShort'))}</button>${routeUrl(tr, d) ? `<a class="dbtn" href="${esc(routeUrl(tr, d))}" target="_blank" rel="noopener">${ms('route')} ${esc(t('route'))}</a>` : ''}</span></div>`;
     if (ui.dayMaps && ui.dayMaps.has(d)) {
       const noLoc = dayStops(tr, d).filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title));
@@ -924,7 +981,7 @@ function planTab(tr) {
     }
     for (const s of mid) h += `<div class="night">${ms('bed')}<span>${esc(t('night', { a: diff(s.date, d) + 1, b: diff(s.date, s.end) }))} · ${esc(s.title)}</span></div>`;
     h += `<div class="items">${outs.map((s) => itemCard(s, tr, d)).join('')}${list.map((x) => itemCard(x, tr, d)).join('')}</div>
-      <button class="add-day" data-act="new-item" data-day="${d}">${esc(t('addHere'))}</button></div>`;
+      ${d <= now ? recordHtml(tr, d) : ''}<button class="add-day" data-act="new-item" data-day="${d}">${esc(t('addHere'))}</button></div>`;
   });
   const set = new Set(days);
   const cand = all.filter((x) => !set.has(x.date) && !(x.cat === 'move' && set.has(x.end))).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -964,6 +1021,12 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
+Object.assign(T.ko, { localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
+  todoUnbooked: '예약 전 {n}', todoChecks: '할 일·짐 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
+Object.assign(T.ko.tpl, { kidpack: '아이 짐' });
+Object.assign(T.de, { localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
+  todoUnbooked: '{n} nicht gebucht', todoChecks: '{n} offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
+Object.assign(T.de.tpl, { kidpack: 'Kindersachen' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
 Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
 Object.assign(T.ko, { bookLink: '예약 링크 (한 줄에 하나)' });
@@ -1053,7 +1116,7 @@ function todayTab(tr) {
     const k = timeKey(x, d);
     if (k == null || k + 30 >= nowMin) { next = x; nextK = k; break; }
   }
-  let h = '';
+  let h = `<div class="today-strip"><span data-lt hidden></span><span class="wx" data-day="${d}" hidden></span></div>`;
   if (next) {
     let cd = '';
     if (nextK != null) {
@@ -1656,8 +1719,120 @@ function personSheet(tr, person) {
   });
 }
 
+// ---------- Wetter und Ortszeit (Open-Meteo, frei, ohne Schlüssel) / 날씨와 현지 시각 ----------
+// Vorhersage für 16 Tage am Ort des Tages; die Antwort nennt auch die Zeitzone des Ortes.
+// 그 날 장소의 16일 예보. 응답에 그 장소의 시간대도 들어 있어서 현지 시각에 씀.
+const WX_ICON = (c) => (c === 0 ? 'sunny' : c <= 2 ? 'partly_cloudy_day' : c === 3 ? 'cloud' : c <= 48 ? 'foggy'
+  : c <= 67 || (c >= 80 && c <= 82) ? 'rainy' : c <= 77 || c === 85 || c === 86 ? 'weather_snowy' : 'thunderstorm');
+const wxMem = {};
+async function weatherAt(lat, lng) {
+  const k = `${lat.toFixed(2)},${lng.toFixed(2)}`;
+  if (wxMem[k] && wxMem[k].p) return wxMem[k].p;
+  const c = wxMem[k] || store.get('wx:' + k, null);
+  if (c && c.at && Date.now() - c.at < 3 * 3600e3) return (wxMem[k] = c);
+  const p = (async () => {
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lng.toFixed(3)}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`);
+    if (!r.ok) throw new Error('weather ' + r.status);
+    const j = await r.json(), days = {}, D = j.daily || {};
+    (D.time || []).forEach((d, i) => { days[d] = [D.weather_code[i], Math.round(D.temperature_2m_max[i]), Math.round(D.temperature_2m_min[i]), D.precipitation_probability_max ? D.precipitation_probability_max[i] : null]; });
+    const v = { at: Date.now(), tz: j.timezone, days };
+    store.put('wx:' + k, v);
+    return v;
+  })();
+  wxMem[k] = { p };
+  try { const v = await p; wxMem[k] = v; return v; } catch (e) { delete wxMem[k]; throw e; }
+}
+// Ort eines Tages: erster Ort des Tages, sonst Mitte der Reise / 그 날 첫 장소, 없으면 여행 가운데
+function dayLoc(tr, d) {
+  const s = dayStops(tr, d).find((x) => x.loc && isFinite(x.loc.lat));
+  return s ? s.loc : tripPoint(tr);
+}
+const wxSoon = (d) => d >= today() && diff(today(), d) <= 15;
+const wxHtml = (w) => `${ms(WX_ICON(w[0]), 'wx-i wx-' + WX_ICON(w[0]))}<b>${w[1]}°</b><span>/${w[2]}°</span>${w[3] != null && w[3] >= 30 ? `<span class="rain">${ms('umbrella')}${w[3]}%</span>` : ''}`;
+const clock = (tz) => new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: tz }).format(new Date());
+// Nach dem Zeichnen füllen (ohne die Seite neu zu zeichnen) / 그린 뒤 채우기 (다시 그리지 않음)
+async function fillWeather() {
+  const tr = trips[ui.trip];
+  if (!tr) return;
+  for (const el of document.querySelectorAll('.wx[data-day]')) {
+    const d = el.dataset.day, loc = dayLoc(tr, d);
+    if (!loc) continue;
+    try {
+      const v = await weatherAt(loc.lat, loc.lng);
+      if (v.days[d] && document.body.contains(el)) { el.innerHTML = wxHtml(v.days[d]); el.hidden = false; }
+      const lt = document.querySelector('[data-lt]');
+      if (lt && d === today() && v.tz) {
+        const here = clock(v.tz), home = clock('Europe/Berlin');
+        lt.innerHTML = `${ms('schedule')} ${esc(t('localTime'))} <b>${esc(here)}</b>${here !== home ? ` · ${esc(t('homeTime'))} ${esc(home)}` : ''}`;
+        lt.hidden = false;
+      }
+    } catch (e) { console.warn(e); }
+  }
+}
+
+// ---------- Reisetagebuch: eine Zeile, Fotoalbum, Sticker der Kinder / 여행 기록: 한 줄, 사진 앨범, 아이들 스티커 ----------
+// trip.log[Datum] = { text, davin, arin } (nur in der App). Gesichter der Kinder aus den Familien-Stickern (우리가족 앱).
+// trip.log[날짜] = { text, davin, arin } (앱에만). 아이 얼굴은 우리가족 앱 칭찬 스티커와 같은 그림.
+const KIDS = [['davin', '다빈', 'Davin', '#ffc93c'], ['arin', '아린', 'Arin', '#ff8fc8']];
+const KID_ST = [['beach', 'beach_access', '#2f9fd6'], ['pool', 'pool', '#1fb3c4'], ['fun', 'attractions', '#ff6b4a'], ['animal', 'pets', '#c27a12'],
+  ['food', 'icecream', '#ff7eb6'], ['castle', 'castle', '#7a5cd3'], ['snow', 'downhill_skiing', '#4f8fe6'], ['ride', 'train', '#13946f'],
+  ['toy', 'toys', '#f2a900'], ['nature', 'park', '#43a047'], ['boat', 'sailing', '#2a5db0']];
+const kidName = (k) => { const x = KIDS.find((y) => y[0] === k); return x ? (ui.lang === 'de' ? x[2] : x[1]) : ''; };
+function kidFace(k) {
+  const F = window.FamilyStickers, x = KIDS.find((y) => y[0] === k) || KIDS[0];
+  if (!F) return `<span class="kid-dot" style="background:${x[3]}">${esc(kidName(k)[0] || '?')}</span>`;
+  return k === 'arin' ? F.fairySVG(0) : F.monsterSVG(1);
+}
+const kidSticker = (id) => { const s = KID_ST.find((x) => x[0] === id); return s ? `<span class="kst" style="--k:${s[2]}">${ms(s[1])}</span>` : ''; };
+function recordHtml(tr, d) {
+  const r = (tr.log || {})[d];
+  if (!r || (!r.text && !r.davin && !r.arin)) return `<button class="rec-add" data-act="rec" data-day="${d}">${ms('edit_note')} ${esc(t('recAdd'))}</button>`;
+  return `<button class="rec" data-act="rec" data-day="${d}">${ms('edit_note', 'rec-i')}${r.text ? `<span class="rec-t">${esc(r.text)}</span>` : ''}
+    <span class="rec-k">${KIDS.filter(([k]) => r[k]).map(([k]) => `<span class="rec-kid"><span class="face">${kidFace(k)}</span>${kidSticker(r[k])}</span>`).join('')}</span></button>`;
+}
+function recordSheet(tr, d) {
+  const r = (tr.log || {})[d] || {};
+  openSheet(`<h3>${esc(t('recT'))}</h3><form data-form="rec"><p class="note" style="margin:0 2px 10px">${esc(dayName(d, { month: 'long', day: 'numeric', weekday: 'long' }))}</p>
+    <label class="fld"><span>${esc(t('recText'))}</span><textarea class="in" name="text" rows="3" placeholder="${esc(t('recPh'))}">${esc(r.text || '')}</textarea></label>
+    ${KIDS.map(([k]) => `<div class="fld"><span class="kid-h"><span class="face">${kidFace(k)}</span>${esc(kidName(k))} · ${esc(t('recKid'))}</span>
+      <div class="kst-grid">${KID_ST.map(([id, icn, c]) => `<label><input type="radio" name="${k}" value="${id}" ${r[k] === id ? 'checked' : ''}><span class="kst" style="--k:${c}">${ms(icn)}</span></label>`).join('')}
+      <label><input type="radio" name="${k}" value="" ${!r[k] ? 'checked' : ''}><span class="kst none">–</span></label></div></div>`).join('')}
+    <div class="acts"><button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button><button class="btn">${esc(t('save'))}</button></div></form>`, (p) => {
+    const f = p.querySelector('form');
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = { text: f.text.value.trim(), davin: f.davin.value || '', arin: f.arin.value || '' };
+      write([[['trips', tr.id, 'log', d], v.text || v.davin || v.arin ? v : null], touch(tr.id)]);
+      closeSheet();
+    });
+  });
+}
+
+// ---------- Was vor der Abreise noch offen ist (Startseite) / 출발 전 남은 일 (홈) ----------
+function todoCounts(tr) {
+  return {
+    unbooked: items(tr).filter((x) => (x.cat === 'stay' || x.cat === 'move') && !x.booked).length,
+    checks: Object.values(tr.checks || {}).filter((c) => c && c.id && !c.done).length,
+  };
+}
+function todoLine(tr) {
+  if (status(tr) !== 'up') return '';
+  const c = todoCounts(tr), parts = [];
+  if (c.unbooked) parts.push(`${ms('pending')} ${esc(t('todoUnbooked', { n: c.unbooked }))}`);
+  if (c.checks) parts.push(`${ms('checklist')} ${esc(t('todoChecks', { n: c.checks }))}`);
+  return parts.length ? `<span class="todo-line">${parts.join('<i>·</i>')}</span>` : '';
+}
+
+// ---------- Packlisten der Kinder (mit Bildern) / 아이별 짐 목록 (그림과 함께) ----------
+const PACK_ICON = [[/잠옷|schlafanzug|pyjama/i, 'bedtime'], [/수영|bade/i, 'pool'], [/신발|schuh/i, 'hiking'], [/장난감|인형|spielzeug/i, 'toys'], [/책|buch/i, 'menu_book'],
+  [/간식|snack/i, 'cookie'], [/물병|trinkflasche|flasche/i, 'local_drink'], [/헤드폰|kopfhörer/i, 'headphones'], [/모자|mütze|hut/i, 'face'], [/옷|kleidung|anzieh/i, 'checkroom'],
+  [/선크림|sonnencreme/i, 'sunny'], [/우산|regen/i, 'umbrella'], [/가방|rucksack/i, 'backpack']];
+const packIcon = (text) => (PACK_ICON.find(([re]) => re.test(text)) || [, 'backpack'])[1];
+const kidColor = (k) => (KIDS.find((x) => x[0] === k) || [])[3] || 'var(--muted)';
+
 const TPL = {
   basic: { ko: ['여권', '신분증·운전면허증', '충전기·보조배터리', '여행자 보험', '상비약', '현금·카드', '멀티 어댑터'], de: ['Reisepass', 'Ausweis·Führerschein', 'Ladegerät·Powerbank', 'Reiseversicherung', 'Reiseapotheke', 'Bargeld·Karten', 'Reiseadapter'] },
+  kidpack: { ko: ['내일 입을 옷', '잠옷', '수영복', '신발', '좋아하는 장난감', '책', '간식', '물병', '헤드폰', '모자'], de: ['Kleidung für morgen', 'Schlafanzug', 'Badesachen', 'Schuhe', 'Lieblingsspielzeug', 'Buch', 'Snack', 'Trinkflasche', 'Kopfhörer', 'Mütze'] },
   kids: { ko: ['아이 여권', '카시트', '간식', '장난감·색칠놀이', '아이 상비약 (해열제)', '여벌 옷', '물티슈'], de: ['Kinderreisepass', 'Kindersitz', 'Snacks', 'Spielzeug·Malbuch', 'Kinderapotheke (Fiebersaft)', 'Wechselkleidung', 'Feuchttücher'] },
   flight: { ko: ['온라인 체크인', '좌석 지정', '수하물 무게 확인', '헤드폰', '목베개'], de: ['Online-Check-in', 'Sitzplätze reservieren', 'Gepäckgewicht prüfen', 'Kopfhörer', 'Nackenkissen'] },
   beach: { ko: ['수영복', '선크림', '래시가드', '모자·선글라스', '비치타월', '물놀이 장난감', 'Strandmuschel'], de: ['Badesachen', 'Sonnencreme', 'UV-Shirt', 'Hut·Sonnenbrille', 'Strandtuch', 'Wasserspielzeug', 'Strandmuschel'] },
@@ -1665,14 +1840,16 @@ const TPL = {
   before: { ko: ['숙소 예약 확인', '렌트카 예약', '여행자 보험 가입', '환전·카드 해외결제 확인', '유치원·학교에 알리기', '우편물·화분 부탁하기', '주차 예약'], de: ['Unterkünfte prüfen', 'Mietwagen buchen', 'Reiseversicherung abschließen', 'Geld wechseln·Karte freischalten', 'Kita·Schule Bescheid sagen', 'Post·Pflanzen organisieren', 'Parkplatz reservieren'] },
 };
 function checkTab(tr) {
-  const list = Object.values(tr.checks || {}).filter((x) => x && x.id && (ui.grp == null || !x.grp || x.grp === ui.grp)).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
+  const who = ui.who || '';
+  const list = Object.values(tr.checks || {}).filter((x) => x && x.id && (ui.grp == null || !x.grp || x.grp === ui.grp) && (!who || (who === 'fam' ? !x.who : x.who === who))).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
   const done = list.filter((x) => x.done).length;
-  let h = `<form class="add" data-form="add-check"><input name="text" placeholder="${esc(t('addCheckPh'))}" autocomplete="off" enterkeyhint="done"><button class="btn sun">${esc(t('add'))}</button></form>
+  let h = `<div class="tpl who">${[['', t('whoAll')], ['fam', t('whoFam')], ...KIDS.map(([k]) => [k, kidName(k)])].map(([k, l]) => `<button class="pill${who === k ? ' on' : ''}" data-act="who" data-k="${k}">${KIDS.some(([x]) => x === k) ? `<span class="face">${kidFace(k)}</span>` : ''}${esc(l)}</button>`).join('')}</div>`;
+  h += `<form class="add" data-form="add-check"><input name="text" placeholder="${esc(t('addCheckPh'))}" autocomplete="off" enterkeyhint="done"><button class="btn sun">${esc(t('add'))}</button></form>
     <div class="tpl"><span class="note" style="margin:6px 4px 0 2px">${esc(t('tplTitle'))}</span>${Object.keys(TPL).map((k) => `<button class="pill" data-act="tpl" data-k="${k}">${esc(t('tpl.' + k))}</button>`).join('')}</div>`;
   if (!list.length) return h + `<p class="empty">${esc(t('noChecks'))}</p>`;
   h += `<div class="stat" style="margin:0 2px"><span>${esc(t('checkProg', { a: done, b: list.length }))}</span></div><div class="progress"><span style="width:${Math.round((done / list.length) * 100)}%"></span></div>`;
   h += `<ul class="checks">${list.map((x) => `<li class="${x.done ? 'done' : ''}"><button class="cb" data-act="check" data-id="${x.id}" role="checkbox" aria-checked="${!!x.done}">
-    <span class="box">${x.done ? '✓' : ''}</span><span class="tx">${esc(x.text)}</span></button>
+    <span class="box">${x.done ? '✓' : ''}</span>${x.who ? `<span class="pk" style="--k:${kidColor(x.who)}">${ms(packIcon(x.text))}</span>` : ''}<span class="tx">${esc(x.text)}${x.who && !who ? `<small> · ${esc(kidName(x.who))}</small>` : ''}</span></button>
     <button class="rm" data-act="rm-check" data-id="${x.id}" aria-label="${esc(t('del'))}">×</button></li>`).join('')}</ul>`;
   return h;
 }
@@ -1702,6 +1879,7 @@ function afterRender() {
     const el = document.getElementById('d-' + today());
     if (el) setTimeout(() => el.scrollIntoView({ block: 'start' }), 50);
   }
+  if (ui.view === 'trip' && document.querySelector('.wx[data-day]')) fillWeather();
   // Geöffnete Tageskarten zeichnen / 펼친 날짜 지도 그리기
   clearMaps();
   if (ui.view === 'trip' && ui.tab === 'plan') for (const box of document.querySelectorAll('.day-map')) drawMap(box, dayPoints(trips[ui.trip], box.dataset.day), { route: true });
@@ -1741,7 +1919,7 @@ function openSheet(html, mount) {
   // Kopfzeile "Abbrechen · Titel · Speichern" bleibt beim Scrollen oben → kein Runterscrollen zum Speichern
   // 맨 위 '취소 · 제목 · 저장' 줄은 스크롤해도 고정 → 저장하려고 끝까지 내려갈 필요 없음
   const h3 = panel.querySelector('h3'), row = panel.querySelector('.sbar-row');
-  const form = panel.querySelector('form[data-form=item], form[data-form=trip], form[data-form=opt], form[data-form=spendx], form[data-form=person]');
+  const form = panel.querySelector('form[data-form=item], form[data-form=trip], form[data-form=opt], form[data-form=spendx], form[data-form=person], form[data-form=rec]');
   row.innerHTML = `<button type="button" class="sb-l" data-act="close">${esc(form ? t('cancel') : t('close'))}</button><b class="sb-t"></b>${form ? `<button type="button" class="sb-r">${esc(t('save'))}</button>` : '<span></span>'}`;
   row.querySelector('.sb-t').textContent = h3 ? h3.textContent : '';
   if (h3) h3.remove();
@@ -1901,6 +2079,7 @@ function tripSheet(tr, opt = {}) {
     <div class="fld"><span>${esc(t('mode'))}</span><div class="cats modes">${['', 'plane', 'car', 'train', 'ship'].map((m) => `<label><input type="radio" name="mode" value="${m}" ${(tr.mode || '') === m ? 'checked' : ''}><span>${m ? modeSvg(m) : ''}${esc(m ? t('modes.' + m) : t('modeAuto'))}</span></label>`).join('')}</div></div>
     ${record ? `<label class="fld"><span>${esc(t('recordNote'))}</span><textarea class="in" name="memo" rows="3" placeholder="${esc(t('recordPh'))}"></textarea></label>` : ''}
     <label class="fld" ${record ? 'hidden' : ''}><span>${esc(t('budget'))}</span><input class="in" name="budget" inputmode="decimal" value="${tr.budget ?? ''}"></label>
+    <label class="fld"><span>${esc(t('album'))}</span><input class="in" name="album" value="${esc(tr.album || '')}" placeholder="https://photos.app.goo.gl/…" autocomplete="off"></label>
     <label class="fld" ${record ? 'hidden' : ''}><span>${esc(t('cover'))}</span><input class="in" name="cover" value="${esc(tr.cover || '')}" placeholder="https://…" autocomplete="off"></label>
     ${isNew && window.notionSync ? `<label class="toggle"><input type="checkbox" name="toNotion" ${record ? '' : 'checked'}>${esc(t('toNotion'))}</label>` : ''}
     <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-trip">${esc(t('delTrip'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
@@ -1935,7 +2114,7 @@ function tripSheet(tr, opt = {}) {
       const start = f.start.value, end = f.end.value && f.end.value >= start ? f.end.value : start;
       const fields = {
         title, icon: f.icon.value.trim() || '✈️', start, end: start ? end : '', year: start ? +start.slice(0, 4) : (parseInt(f.year.value, 10) || new Date().getFullYear()),
-        cur: f.cur.value, rate: f.cur.value === 'EUR' ? 1 : num(f.rate.value), budget: num(f.budget.value), cover: f.cover.value.trim(), apFrom: f.apFrom.value.trim().toUpperCase(), apTo: f.apTo.value.trim().toUpperCase(), mode: f.mode.value || '', mt: Date.now(),
+        cur: f.cur.value, rate: f.cur.value === 'EUR' ? 1 : num(f.rate.value), budget: num(f.budget.value), cover: f.cover.value.trim(), album: /^https?:\/\//.test(f.album.value.trim()) ? f.album.value.trim() : '', apFrom: f.apFrom.value.trim().toUpperCase(), apTo: f.apTo.value.trim().toUpperCase(), mode: f.mode.value || '', mt: Date.now(),
       };
       if (isNew) {
         // Ohne Häkchen "auch in Notion" nur in der App (local) / 노션 체크를 끄면 앱에만 (local)
@@ -2062,6 +2241,8 @@ const ACT = {
   'del-spend': (b) => { if (confirm(t('spendDelQ'))) write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); },
   'map-day': (b) => { ui.mapDay = b.dataset.day; render(true); },
   'find-all': () => findAll(),
+  rec: (b) => recordSheet(cur(), b.dataset.day),
+  who: (b) => { ui.who = b.dataset.k; render(true); },
   'day-map': (b) => { const d = b.dataset.day; ui.dayMaps = ui.dayMaps || new Set(); if (ui.dayMaps.has(d)) ui.dayMaps.delete(d); else ui.dayMaps.add(d); render(true); },
   'find-day': (b) => { const tr = cur(); findAll(dayStops(tr, b.dataset.day).filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title)), b); },
   'visited-map': () => visitedSheet(),
@@ -2103,10 +2284,10 @@ const ACT = {
     toast(t('removedFromPlan'));
   },
   tpl: (b) => {
-    const tr = cur(), have = new Set(Object.values(tr.checks || {}).map((x) => x.text));
+    const tr = cur(), have = new Set(Object.values(tr.checks || {}).filter((x) => x && (x.who || '') === (KIDS.some(([k]) => k === ui.who) ? ui.who : '')).map((x) => x.text));
     const add = TPL[b.dataset.k][ui.lang].filter((s) => !have.has(s));
     const base = Date.now() / 1000;
-    write([...add.map((text, i) => { const id = uid('c'); return [['trips', tr.id, 'checks', id], { id, text, done: false, order: base + i, ...(ui.grp && { grp: ui.grp }) }]; }), touch(tr.id)]);
+    write([...add.map((text, i) => { const id = uid('c'); return [['trips', tr.id, 'checks', id], { id, text, done: false, order: base + i, ...(ui.grp && { grp: ui.grp }), ...(KIDS.some(([k]) => k === ui.who) && { who: ui.who }) }]; }), touch(tr.id)]);
     toast(add.length ? t('addedN', { n: add.length }) : t('noneAdded'));
   },
   'memo-edit': () => { ui.memoEdit = true; render(true); const ta = $('textarea[name=memo]'); if (ta) ta.focus(); },
@@ -2130,7 +2311,7 @@ document.addEventListener('submit', async (e) => {
     const text = f.text.value.trim();
     if (!text) return;
     const id = uid('c');
-    write([[['trips', ui.trip, 'checks', id], { id, text, done: false, order: Date.now() / 1000, ...(ui.grp && { grp: ui.grp }) }], touch(ui.trip)]);
+    write([[['trips', ui.trip, 'checks', id], { id, text, done: false, order: Date.now() / 1000, ...(ui.grp && { grp: ui.grp }), ...(KIDS.some(([k]) => k === ui.who) && { who: ui.who }) }], touch(ui.trip)]);
     const input = $('form[data-form=add-check] input'); if (input) input.focus();
   } else if (kind === 'spend') {
     e.preventDefault();
@@ -2157,6 +2338,7 @@ document.addEventListener('gesturestart', (e) => e.preventDefault());
 // ---------- Schnittstelle für die Synchronisierung / 동기화 연결부 ----------
 window.travel = {
   trips: () => trips,
+  vacSync() { scheduleVac(); },
   setTrips(remote) { trips = remote || {}; persist(); if (ui.view === 'trip' && !valid(trips[ui.trip])) go('#/'); else render(); window.refreshSettings(); },
   unsynced: () => unsynced,
   clearUnsynced() { unsynced = new Set(); store.put('unsynced', []); },
@@ -2228,6 +2410,7 @@ if (cfg && APP) {
           APP.clearUnsynced(); APP.setSyncedHouse(cloud.house);
           if (entries.length) cloud.write(entries);
           cloud.live = true;
+          APP.vacSync();
           if (window.notionSync) setTimeout(() => window.notionSync.start(), 500);
         }
         APP.setTrips(remote);
@@ -2243,6 +2426,13 @@ if (cfg && APP) {
       listen(); APP.refresh();
     }
     cloud.idToken = () => auth.currentUser.getIdToken();
+    cloud.syncVacations = async (want) => {
+      const ref = F.doc(db, 'households', cloud.house), snap = await F.getDoc(ref);
+      const cur = (snap.exists() && snap.data().vacations) || {}, args = [];
+      for (const [id, v] of Object.entries(want)) if (JSON.stringify(cur[id]) !== JSON.stringify(v)) args.push(new F.FieldPath('vacations', id), v);
+      for (const id of Object.keys(cur)) if (id.startsWith('trip-') && !want[id]) args.push(new F.FieldPath('vacations', id), F.deleteField());
+      if (args.length) await F.updateDoc(ref, ...args);
+    };
     cloud.signIn = () => A.signInWithPopup(auth, new A.GoogleAuthProvider());
     cloud.signOut = async () => { clearTimeout(retryTimer); stop(); cloud.house = null; await A.signOut(auth); APP.refresh(); };
     cloud.create = async () => {

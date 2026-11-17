@@ -655,5 +655,15 @@
     return h;
   }
 
-  window.notionSync = { start, pull, changed, opened, bannerHtml, settingsHtml, _S: S, _readTrip: readTrip, _readRoot: readRoot };
+  // Kleines Wolken-Symbol oben: gespeichert / läuft / wartet / Problem — Tippen öffnet die Einstellungen
+  // 위쪽 작은 구름 아이콘: 저장됨 / 맞추는 중 / 보낼 것 있음 / 문제 — 누르면 설정
+  function statusHtml() {
+    if (S.state === 'off' || S.state === 'checking') return '';
+    let icn = 'cloud_done', cls = 'ok', label = t('nSaved');
+    if (S.state === 'error' || S.err) { icn = 'cloud_off'; cls = 'bad'; label = t('nProblem'); }
+    else if (S.pulling || S.pushing) { icn = 'cloud_sync'; cls = 'busy'; label = t('nSyncing'); }
+    else if (S.outbox.length) { icn = 'cloud_upload'; cls = 'busy'; label = t('nWaiting', { n: S.outbox.length }); }
+    return `<button class="nst ${cls}" data-act="settings" aria-label="${esc(label)}" title="${esc(label)}">${ms(icn)}</button>`;
+  }
+  window.notionSync = { start, pull, changed, opened, bannerHtml, settingsHtml, statusHtml, _S: S, _readTrip: readTrip, _readRoot: readRoot };
 })();
