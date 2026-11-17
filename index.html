@@ -916,7 +916,6 @@ function itemCard(it, tr, day) {
   if (it.cat === 'move' && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} · ${md(it.end)}`));
   if (!isOut) {
     if (it.booked) meta.push(`<span class="ok sr">✓ ${esc(t('booked'))}</span>`);
-    else if (it.cat === 'stay' || it.cat === 'move') meta.push(`<span class="todo">${esc(t('notBooked'))}</span>`);
     if (it.cost && it.cost.amount) meta.push(esc(money(it.cost.amount, it.cost.cur)));
   }
   if ((it.links && it.links.length) || URL_RE.test(it.notes || '')) meta.push(ms('link'));
