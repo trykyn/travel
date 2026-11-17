@@ -155,13 +155,17 @@
       page: p.id, title, icon: p.icon && p.icon.type === 'emoji' ? p.icon.emoji : '',
       cover: p.cover && p.cover.type === 'external' ? p.cover.external.url : '',
       year: year || +((title.match(/(20\d\d)/) || [])[1] || 0) || +String(p.created_time).slice(0, 4),
-      edited: p.last_edited_time, dbs: {}, db: null, pages: [p.id], grpPages: {}, memo: [], items: [], checks: [],
+      edited: p.last_edited_time, dbs: {}, db: null, pages: [p.id], grpPages: {}, memo: [], gmemo: {}, items: [], checks: [],
     };
     await walk(p.id, '', 0, out);
     if (!out.db) out.db = Object.keys(out.dbs)[0] || null;
     return out;
   }
+  // Memo je Seite: Text der Reiseseite → memo, Text einer Unterseite mit Tabelle → gmemo[Unterseite]
+  // 메모는 페이지별: 여행 페이지 글 → memo, 표가 있는 하위 페이지 글 → gmemo[하위 페이지 이름]
+  const memoOf = (out, grp) => (grp ? (out.gmemo[grp] = out.gmemo[grp] || []) : out.memo);
   async function walk(parent, grp, depth, out) {
+    const mem = memoOf(out, grp);
     for (const b of await children(parent)) {
       if (b.type === 'child_database') { await readDb(b.id, grp, depth, out); continue; }
       if (b.type === 'child_page') {
@@ -171,19 +175,25 @@
         const name = b.child_page.title || '';
         out.pages.push(b.id);
         out.grpPages[name] = b.id;
-        const m0 = out.memo.length, n0 = out.items.length;
-        out.memo.push('', '■ ' + name);
+        const n0 = out.items.length;
         await walk(b.id, name, depth + 1, out);
-        if (out.memo.length === m0 + 2) out.memo.splice(m0, 2, ...(out.items.length === n0 ? [name] : []));
+        // Ohne Tabelle ist es keine eigene Reise: Text mit Überschrift ins Memo der Elternseite
+        // 표가 없는 하위 페이지는 여행 묶음이 아님 → 글을 위 페이지 메모에 제목과 함께
+        if (out.items.length === n0 && !out.items.some((x) => x.grp === name)) {
+          const lines = out.gmemo[name] || [];
+          delete out.gmemo[name]; delete out.grpPages[name];
+          mem.push('', '■ ' + name, ...lines);
+          for (const c of out.checks) if (c.grp === name) c.grp = grp; // Checkliste gehört dann zur Elternseite / 체크도 위 페이지로
+        }
         continue;
       }
       if (b.type === 'to_do') { out.checks.push({ nid: b.id, text: plain(b.to_do.rich_text), done: !!b.to_do.checked, grp }); continue; }
       if (b.type === 'table') {
-        for (const r of await children(b.id)) if (r.type === 'table_row') out.memo.push(r.table_row.cells.map((c) => plain(c).replace(/\n/g, ' ')).join(' | '));
+        for (const r of await children(b.id)) if (r.type === 'table_row') mem.push(r.table_row.cells.map((c) => plain(c).replace(/\n/g, ' ')).join(' | '));
         continue;
       }
       const line = lineOf(b);
-      if (line != null) out.memo.push(line);
+      if (line != null) mem.push(line);
       if (b.has_children && b.type !== 'link_to_page') await walk(b.id, grp, depth, out);
     }
   }
@@ -207,6 +217,7 @@
         else { const l = lineOf(k); if (l) body.push(l); }
       }
       out.items.push({ nid: row.id, ndb: id, grp, order: i, nt: row.last_edited_time, ...f, body: body.join('\n').trim().slice(0, 3000) });
+      if ((bodies[row.id] || []).some((k) => k.type === 'child_database') && body.length) out.gmemo[f.title] = body.slice();
       if ((bodies[row.id] || []).length) out.pages.push(row.id);
     });
     for (const [nid, name] of nested) if (depth < 2) await readDb(nid, name, depth + 1, out);
@@ -274,6 +285,7 @@
     const keep = dates.filter((d) => Math.abs(diff(mid, d)) <= 30);
     return [keep[0], keep[keep.length - 1]];
   }
+  const tidy = (lines, max) => lines.join('\n').replace(/^\n+/, '').replace(/\n{3,}/g, '\n\n').trim().slice(0, max);
   const outboxHas = (k, tid, id) => S.outbox.some((o) => o.k === k && o.tid === tid && o.id === id);
   function tripIdOf(page) {
     const c = cid(page);
@@ -295,7 +307,7 @@
     }
     const head = {
       title: n.title || trip.title, icon: n.icon || trip.icon || '✈️', cover: n.cover || trip.cover || '', year: n.year || trip.year || 0,
-      memo: n.memo.join('\n').replace(/^\n+/, '').replace(/\n{3,}/g, '\n\n').trim().slice(0, 15000), notion,
+      memo: tidy(n.memo, 15000), gmemo: Object.fromEntries(Object.entries(n.gmemo || {}).map(([g, l]) => [g, tidy(l, 8000)]).filter(([, v]) => v)), notion,
     };
     const ctx = { ...trip, ...head };
     // Einträge / 일정

@@ -1598,12 +1598,17 @@ function memoTab(tr) {
     return `<form data-form="memo"><textarea class="in" name="memo" rows="16" placeholder="${esc(t('memoPh'))}" style="min-height:50vh">${esc(tr.memo || '')}</textarea>
       <div class="acts"><button type="button" class="btn ghost" data-act="memo-cancel">${esc(t('cancel'))}</button><button class="btn">${esc(t('save'))}</button></div></form>`;
   }
-  // Mit Notion verbunden: der Text der Notion-Seite, bearbeitet wird in Notion / 노션 여행: 메모는 노션 페이지 글, 노션에서 고침
+  // Mit Notion verbunden: der Text der Notion-Seite, bearbeitet wird in Notion. Gewählte Gruppe → Text ihrer Unterseite,
+  // "전체"/Haupttabelle → Text der Reiseseite selbst.
+  // 노션 여행: 메모는 노션 페이지 글이고 노션에서 고침. 묶음을 고르면 그 하위 페이지 글, 전체·기본 표는 여행 페이지 앞부분 글.
+  resolveGroup(tr);
+  const g = ui.grp || '', memo = tr.notion && g ? ((tr.gmemo || {})[g] || '') : (tr.memo || '');
+  const page = tr.notion ? ((g && (tr.notion.grpPages || {})[g]) || tr.notion.page) : '';
   const btn = tr.notion
-    ? `<a class="btn small ghost" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener">${esc(t('nEditMemo'))}</a>`
+    ? `<a class="btn small ghost" href="${esc(notionUrl(page))}" target="_blank" rel="noopener">${esc(t('nEditMemo'))}</a>`
     : `<button class="btn small ghost" data-act="memo-edit">${esc(t('edit'))}</button>`;
   return `<div class="set-row" style="justify-content:flex-end;margin-bottom:8px">${btn}</div>
-    ${tr.memo ? `<div class="memo">${linkify(tr.memo)}</div>` : `<p class="empty">${esc(t('memoEmpty'))}</p>`}`;
+    ${memo ? `<div class="memo">${linkify(memo)}</div>` : `<p class="empty">${esc(t('memoEmpty'))}</p>`}`;
 }
 
 function afterRender() {
