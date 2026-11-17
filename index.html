@@ -202,6 +202,8 @@ h2:first-child { margin-top: 2px; }
 .tpl { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; }
 .pill { padding: 6px 12px; border-radius: 999px; background: var(--field); font-size: 14px; font-weight: 600; }
 .pill.on { background: var(--brand); color: #fff; }
+.grps .pill { text-align: center; line-height: 1.25; }
+.grps .pill small { display: block; font-size: 11.5px; font-weight: 600; opacity: .75; }
 .checks { list-style: none; margin: 0; padding: 0; }
 .checks li { display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--line); }
 .checks .cb { flex: 1; display: flex; align-items: center; gap: 12px; padding: 12px 2px; min-width: 0; }
@@ -742,13 +744,33 @@ function itemCard(it, tr, day) {
 // Notion-Unterseiten als Gruppen / 노션 하위 페이지 = 묶음
 const groupsOf = (tr) => [...new Set(items(tr).map((x) => x.grp || ''))];
 const inGrp = (x) => ui.grp == null || ui.grp === '*' || (x.grp || '') === ui.grp;
+// Zeitraum einer Gruppe aus ihren Einträgen (zwei Skireisen in einer Notion-Seite = zwei Gruppen mit eigenen Tagen)
+// 묶음의 기간은 그 묶음 일정들의 날짜로 (노션 한 페이지에 스키 여행 두 번 = 묶음 두 개, 날짜·일차도 따로)
+function groupSpan(tr, g) {
+  const ds = items(tr).filter((x) => (x.grp || '') === g).flatMap((x) => [x.date, x.end]).filter(isDate).sort();
+  return ds.length ? [ds[0], ds[ds.length - 1]] : null;
+}
+const spanDays = (s, e) => { const out = []; for (let d = s; d <= e && out.length < 60; d = addDays(d, 1)) out.push(d); return out; };
+// Beim Öffnen: die Gruppe, die gerade läuft oder als nächste kommt; sonst alle / 처음 열 때: 진행 중이거나 다음 묶음, 없으면 전체
+function autoGroup(tr, groups) {
+  const now = today(), spans = groups.map((g) => [g, groupSpan(tr, g)]).filter(([, s]) => s);
+  if (spans.length < 2) return null;
+  const cur = spans.find(([, [s, e]]) => s <= now && now <= e);
+  if (cur) return cur[0];
+  const next = spans.filter(([, [s]]) => s > now).sort((a, b) => a[1][0].localeCompare(b[1][0]))[0];
+  return next ? next[0] : null;
+}
 function planTab(tr) {
-  const days = tripDays(tr), now = today(), groups = groupsOf(tr);
+  const now = today(), groups = groupsOf(tr);
   if (groups.length < 2) ui.grp = null;
+  else if (ui.grp === undefined) ui.grp = autoGroup(tr, groups);
+  const span = ui.grp != null ? groupSpan(tr, ui.grp) : null;
+  const days = span ? spanDays(span[0], span[1]) : ui.grp != null ? [] : tripDays(tr);
   const all = items(tr).filter(inGrp);
   let h = '';
   if (groups.length > 1) {
-    h += `<div class="tpl">${[null, ...groups].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${esc(g == null ? t('mapAll') : g || t('grpMain'))}</button>`).join('')}</div>`;
+    const label = (g) => { const s = groupSpan(tr, g); return esc(g || t('grpMain')) + (s ? `<small>${esc(md(s[0]))}${s[1] !== s[0] ? '–' + esc(md(s[1])) : ''}</small>` : ''); };
+    h += `<div class="tpl grps">${[null, ...groups].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${g == null ? esc(t('mapAll')) : label(g)}</button>`).join('')}</div>`;
   }
   if (days.length > 1) {
     h += `<nav class="days">${days.map((d, i) => `<button data-act="jump" data-day="${d}" class="${d === now ? 'today' : ''}">
@@ -758,7 +780,6 @@ function planTab(tr) {
   const stays = all.filter((x) => x.cat === 'stay' && isDate(x.date) && isDate(x.end));
   days.forEach((d, i) => {
     const list = dayItems(tr, d).filter(inGrp);
-    if (ui.grp != null && !list.length && !all.some((s) => s.cat === 'stay' && s.date <= d && d <= (s.end || s.date))) return; // leere Tage einer Gruppe weglassen / 묶음에 없는 날은 숨김
     // Nächte mitten im Aufenthalt und der Abreisetag / 숙박 중간 밤과 체크아웃 날
     const mid = stays.filter((s) => s.date < d && d < s.end);
     const outs = stays.filter((s) => s.end === d);
@@ -1334,7 +1355,7 @@ function route(hash) {
   const m = (typeof hash === 'string' ? hash : location.hash).match(/^#\/t\/([^/]+)(?:\/(\w+))?/);
   if (m && valid(trips[m[1]])) {
     ui.view = 'trip';
-    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = null; if (window.notionSync) window.notionSync.opened(m[1]); }
+    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = undefined; if (window.notionSync) window.notionSync.opened(m[1]); }
     ui.trip = m[1]; ui.tab = m[2] || (status(trips[m[1]]) === 'now' ? 'today' : 'plan');
   }
   else { ui.view = 'home'; ui.trip = null; ui.scrolled = ''; }
