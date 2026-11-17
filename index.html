@@ -684,6 +684,15 @@ function stubCard(tr) {
     <b>${esc(tr.icon || '✈️')} ${esc(tr.title)}<small>${esc([fmtRange(tr), nightsLabel(tr)].filter(Boolean).join(' · '))}</small></b>
     <span class="d">${esc(dLabel(tr) || t('undated'))}</span></button>`;
 }
+// Nur der Ortsname für Stempel: Daten/Jahre am Anfang oder Ende des Notion-Titels weg ("2026.09.04-06 스트라스부르" → "스트라스부르")
+// 도장용 여행지 이름: 노션 제목 앞뒤의 날짜·연도 빼기
+const DATE_TOKEN = /^(\d{4}(\.\d{1,2}){0,2}|\d{1,2}\.\d{1,2})\.?(\s*[-–~]\s*(\d{1,2}\.)?\d{1,2}\.?)?/;
+function placeName(title) {
+  let s = String(title || '').trim(), prev;
+  do { prev = s; s = s.replace(DATE_TOKEN, '').replace(/^[\s·.,:|/-]+/, ''); } while (s && s !== prev);
+  s = s.replace(/[\s·,:|/-]+(\d{4}(\.\d{1,2}){0,2}|\d{1,2}\.\d{1,2}(\s*[-–~]\s*(\d{1,2}\.)?\d{1,2})?)\.?$/, '').trim();
+  return s || String(title || '').trim();
+}
 // Vergangene Reisen als Einreisestempel im Pass / 지난 여행은 여권 입국 도장
 const STAMP_INK = ['#e8553a', '#2a5db0', '#13946f', '#7a5cd3', '#c27a12'];
 function passport(past) {
@@ -697,7 +706,7 @@ function passport(past) {
     const ink = STAMP_INK[i++ % STAMP_INK.length];
     const d = isDate(x.start) ? `${x.start.slice(2, 4)}.${x.start.slice(5, 7)}.${x.start.slice(8)}` : String(x.year || '');
     h += `<button class="st ${shape}" style="--stamp:${ink};transform:rotate(${rot}deg)" data-act="open" data-id="${x.id}">
-      <span><b>${esc(codeTo(x))}</b><span class="stn">${esc(x.title)}</span>${esc(d)}</span></button>`;
+      <span><b>${esc(codeTo(x))}</b><span class="stn">${esc(placeName(x.title))}</span>${esc(d)}</span></button>`;
   }
   if (y !== null) h += '</div>';
   // Leerer Stempel zum Nachtragen einer Reise ohne Notion-Seite / 노션 없이 지난 여행을 넣는 빈 도장
