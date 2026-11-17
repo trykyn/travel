@@ -197,8 +197,13 @@ input[type="date"].in { min-height: 46px; }
 #sheet-root { position: fixed; inset: 0; z-index: 20; }
 .scrim { position: absolute; inset: 0; background: rgba(0, 20, 20, .45); animation: fade .15s ease-out; }
 .panel { position: absolute; left: 0; right: 0; bottom: 0; max-width: 620px; margin: 0 auto; max-height: 92vh; max-height: 92dvh; overflow-y: auto; overscroll-behavior: contain;
-  padding: 10px 18px calc(20px + env(safe-area-inset-bottom)); background: var(--sheet); border-radius: 24px 24px 0 0; animation: up .2s ease-out; }
-.panel .grab { width: 40px; height: 5px; border-radius: 9px; background: var(--line); margin: 0 auto 10px; }
+  padding: 0 18px calc(20px + env(safe-area-inset-bottom)); background: var(--sheet); border-radius: 24px 24px 0 0; animation: up .2s ease-out; }
+.panel .grab { width: 40px; height: 5px; border-radius: 9px; background: var(--line); margin: 0 auto 6px; }
+.sbar { position: sticky; top: 0; z-index: 3; margin: 0 -18px 12px; padding: 10px 18px 8px; background: var(--sheet); border-bottom: 1px solid var(--line); }
+.sbar-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; min-height: 40px; }
+.sb-t { font-size: 17px; font-weight: 800; letter-spacing: -.01em; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; }
+.sb-l { justify-self: start; padding: 8px 2px; color: var(--muted); font-weight: 600; font-size: 16px; }
+.sb-r { justify-self: end; padding: 8px 18px; border-radius: 12px; background: var(--brand); color: #fff; font-weight: 800; font-size: 16px; }
 .panel h3 { margin: 4px 0 14px; font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
 .panel h4 { margin: 20px 0 8px; font-size: 15px; color: var(--muted); }
 .fld { display: block; margin-bottom: 12px; }
@@ -773,8 +778,8 @@ function moneyTab(tr) {
 }
 
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
-Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일' });
-Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage' });
+Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기' });
+Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen' });
 // Notion-Abgleich / 노션 연결
 Object.assign(T.ko, {
   nOpen: '노션에서 열기', nEditMemo: '노션에서 고치기', nBody: '노션 페이지 안 내용', whichTable: '어느 표에 넣을까요', grpMain: '기본 표',
@@ -1246,10 +1251,43 @@ window.addEventListener('popstate', () => route());
 // ---------- Eingabeblatt / 입력 창 ----------
 const sheetRoot = $('#sheet-root');
 function openSheet(html, mount) {
-  sheetRoot.innerHTML = `<div class="scrim" data-act="close"></div><div class="panel" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  sheetRoot.innerHTML = `<div class="scrim" data-act="close"></div><div class="panel" role="dialog" aria-modal="true"><div class="sbar"><div class="grab"></div><div class="sbar-row"></div></div>${html}</div>`;
   sheetRoot.hidden = false; document.body.classList.add('locked');
   const panel = sheetRoot.querySelector('.panel');
+  // Kopfzeile "Abbrechen · Titel · Speichern" bleibt beim Scrollen oben → kein Runterscrollen zum Speichern
+  // 맨 위 '취소 · 제목 · 저장' 줄은 스크롤해도 고정 → 저장하려고 끝까지 내려갈 필요 없음
+  const h3 = panel.querySelector('h3'), row = panel.querySelector('.sbar-row');
+  const form = panel.querySelector('form[data-form=item], form[data-form=trip], form[data-form=opt]');
+  row.innerHTML = `<button type="button" class="sb-l" data-act="close">${esc(form ? t('cancel') : t('close'))}</button><b class="sb-t"></b>${form ? `<button type="button" class="sb-r">${esc(t('save'))}</button>` : '<span></span>'}`;
+  row.querySelector('.sb-t').textContent = h3 ? h3.textContent : '';
+  if (h3) h3.remove();
+  if (form) row.querySelector('.sb-r').addEventListener('click', () => {
+    if (form.requestSubmit) form.requestSubmit(); else form.dispatchEvent(new Event('submit', { cancelable: true }));
+  });
   if (mount) mount(panel);
+  dragToClose(panel);
+}
+// Ganz oben nach unten ziehen schließt das Blatt (wie bei iPhone-Apps) / 맨 위에서 아래로 쓸어내리면 닫힘
+function dragToClose(panel) {
+  let y0 = null, dy = 0;
+  panel.addEventListener('touchstart', (e) => {
+    y0 = panel.scrollTop <= 0 && !e.target.closest('input, textarea, select') ? e.touches[0].clientY : null;
+    dy = 0;
+  }, { passive: true });
+  panel.addEventListener('touchmove', (e) => {
+    if (y0 == null) return;
+    dy = e.touches[0].clientY - y0;
+    if (dy <= 0 || panel.scrollTop > 0) { panel.style.transform = ''; return; }
+    e.preventDefault();
+    panel.style.transform = `translateY(${dy}px)`;
+  }, { passive: false });
+  panel.addEventListener('touchend', () => {
+    if (y0 == null) return;
+    y0 = null;
+    if (dy > 110) { closeSheet(); return; }
+    panel.style.transition = 'transform .15s'; panel.style.transform = '';
+    setTimeout(() => { panel.style.transition = ''; }, 160);
+  });
 }
 function closeSheet() { sheetRoot.hidden = true; sheetRoot.innerHTML = ''; document.body.classList.remove('locked'); if (pending) render(); }
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheetRoot.hidden) closeSheet(); });
