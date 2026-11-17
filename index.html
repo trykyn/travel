@@ -278,6 +278,7 @@ a.btn { text-decoration: none; }
 <div id="app"></div>
 <div id="sheet-root" hidden></div>
 <div id="toast" role="status" aria-live="polite"></div>
+<script src="maps-config.js"></script>
 <script>
 'use strict';
 // ---------- Speicher / 저장 ----------
@@ -353,7 +354,7 @@ Object.assign(T.ko, {
   spendT: '지출 기록', spendPh: '무엇에? (선택)', spendAdd: '기록', spendToday: '오늘 쓴 돈 {x}', spendDelQ: '이 지출을 지울까요?',
   sp: { food: '식비', move: '교통', shop: '쇼핑', see: '입장료', etc: '기타' }, planned: '계획한 비용', spent: '여행 중 지출',
   mapAll: '전체', noLoc: '위치가 없는 일정 {n}개', findAll: '이름으로 위치 찾기', finding: '찾는 중… {a}/{b}', found: '{a}개 찾았어요 · 못 찾은 {b}개는 일정을 눌러 현지 이름으로 찾아 주세요', locQPh: '찾을 이름 (현지 이름이 잘 찾아져요)',
-  geoNote: '장소 이름으로 OpenStreetMap에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.', mapFail: '지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요', noPins: '아직 지도에 표시할 곳이 없어요',
+  geoNote: '장소 이름으로 OpenStreetMap에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.', geoNoteG: '장소 이름으로 구글 지도에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.',  gmFail: '구글 지도를 쓸 수 없어서 기본 지도로 보여 줘요 (오늘 사용 상한에 닿았을 수 있어요)', mapFail: '지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요', noPins: '아직 지도에 표시할 곳이 없어요',
   loc: '위치', locNone: '위치 없음', locSearch: '이름으로 찾기', locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요',
   locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치', pickOne: '맞는 곳을 고르세요',
   kinds: { stay: '숙소', car: '렌트카', etc: '기타' }, addOpt: '+ 후보', newOpt: '새 후보', editOpt: '후보 고치기', optName: '이름', optNamePh: '예: VIVA Cala Mesquida Resort',
@@ -367,7 +368,7 @@ Object.assign(T.de, {
   spendT: 'Ausgabe eintragen', spendPh: 'Wofür? (optional)', spendAdd: 'Eintragen', spendToday: 'Heute ausgegeben {x}', spendDelQ: 'Diese Ausgabe löschen?',
   sp: { food: 'Essen', move: 'Verkehr', shop: 'Einkauf', see: 'Eintritt', etc: 'Sonstiges' }, planned: 'Geplante Kosten', spent: 'Ausgaben unterwegs',
   mapAll: 'Alle', noLoc: '{n} Einträge ohne Ort', findAll: 'Orte nach Namen suchen', finding: 'Suche … {a}/{b}', found: '{a} gefunden · {b} fehlen: im Eintrag mit dem Namen in Landessprache suchen', locQPh: 'Suchbegriff (Name in Landessprache klappt am besten)',
-  geoNote: 'Sucht die Namen bei OpenStreetMap. Falsche Orte kannst du im Eintrag ändern.', mapFail: 'Karte nicht ladbar. Bitte Internet prüfen', noPins: 'Noch keine Orte auf der Karte',
+  geoNote: 'Sucht die Namen bei OpenStreetMap. Falsche Orte kannst du im Eintrag ändern.', geoNoteG: 'Sucht die Namen bei Google Maps. Falsche Orte kannst du im Eintrag ändern.', gmFail: 'Google Maps nicht verfügbar – zeige die einfache Karte (vielleicht ist das Tageslimit erreicht)', mapFail: 'Karte nicht ladbar. Bitte Internet prüfen', noPins: 'Noch keine Orte auf der Karte',
   loc: 'Ort', locNone: 'Kein Ort', locSearch: 'Nach Namen suchen', locPaste: 'Google-Maps-Link oder Koordinaten einfügen', locBad: 'Keine Koordinaten im Link. Kurze Teilen-Links gehen nicht – such lieber nach dem Namen',
   locClear: 'Entfernen', locNoRes: 'Nichts gefunden. Versuch einen anderen Namen', locAuto: 'Automatisch gefundener Ort', pickOne: 'Richtigen Ort wählen',
   kinds: { stay: 'Unterkunft', car: 'Mietwagen', etc: 'Sonstiges' }, addOpt: '+ Option', newOpt: 'Neue Option', editOpt: 'Option bearbeiten', optName: 'Name', optNamePh: 'z. B. VIVA Cala Mesquida Resort',
@@ -755,6 +756,7 @@ function spendLine(s, tr, withDate) {
 // "점심 - 이치란" → "이치란": der Ortsname ohne Mahlzeit davor / 장소 이름만
 const cleanName = (s) => String(s || '').replace(/^(점심|저녁|아침|카페|조식|브런치|간식|lunch|dinner|breakfast|mittag(essen)?|abendessen|frühstück)\s*[-–:·]?\s*/i, '').replace(/\s*[-–]\s*$/, '').trim();
 function dirUrl(it) {
+  if (it.loc && it.loc.pid) return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(it.loc.name || cleanName(it.title))}&destination_place_id=${encodeURIComponent(it.loc.pid)}`;
   if (it.loc && isFinite(it.loc.lat)) return `https://www.google.com/maps/dir/?api=1&destination=${it.loc.lat},${it.loc.lng}`;
   const q = cleanName(it.title);
   return q ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}` : '';
@@ -853,7 +855,39 @@ function queriesFor(it) {
 }
 // Für das Suchfeld: lieber der Name in Landesschrift, sonst der bereinigte Titel / 검색칸 기본값: 현지 글자 이름 우선
 const bestQuery = (it) => { const qs = queriesFor(it); return qs.find((q) => /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u.test(q)) || qs[0] || ''; };
+// ---------- Google Maps (wenn maps-config.js einen Schlüssel hat) / 구글 지도 (maps-config.js에 키가 있을 때) ----------
+// Ohne Schlüssel bleibt alles bei OpenStreetMap. Den Verbrauch begrenzen Tageslimits in der Google Cloud Console.
+// 키가 없으면 지금처럼 OpenStreetMap. 사용량은 구글 클라우드의 하루 상한으로 막아 둠.
+const GM = () => (window.GMAPS && window.GMAPS.key ? window.GMAPS : null);
+let gmapsP = null;
+function loadGoogle() {
+  if (window.google && google.maps && google.maps.importLibrary) return Promise.resolve(google.maps);
+  if (!gmapsP) gmapsP = new Promise((ok, no) => {
+    window.__gmapsReady = () => ok(google.maps);
+    // Schlüssel abgelehnt (falsche Adresse, Limit erreicht …) / 키 거부 (주소 제한, 상한 도달 등)
+    // → für den Rest der Sitzung OpenStreetMap / 이번에는 기본 지도로 다시 그림
+    window.gm_authFailure = () => { ui.gmFailed = true; toast(t('gmFail')); if (ui.view === 'trip' && ui.tab === 'map') render(true); };
+    const s = document.createElement('script');
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GM().key)}&v=weekly&loading=async&language=${ui.lang}&callback=__gmapsReady`;
+    s.onerror = () => { gmapsP = null; no(new Error('google maps')); };
+    document.head.append(s);
+  });
+  return gmapsP;
+}
+const useGoogle = () => !!GM() && !ui.gmFailed;
+async function googleSearch(q, tr, limit, extra) {
+  const gm = await loadGoogle();
+  const { Place } = await gm.importLibrary('places');
+  const req = { textQuery: q, fields: ['id', 'displayName', 'location', 'formattedAddress'], maxResultCount: limit, language: ui.lang };
+  const cc = flagCC(tr.icon);
+  if (cc) req.region = cc;
+  const pts = [...items(tr).filter((x) => x.loc && isFinite(x.loc.lat)).map((x) => x.loc), ...extra];
+  if (pts.length) req.locationBias = { center: { lat: median(pts.map((x) => x.lat)), lng: median(pts.map((x) => x.lng)) }, radius: 50000 };
+  const { places } = await Place.searchByText(req);
+  return (places || []).map((p) => ({ lat: p.location.lat(), lng: p.location.lng(), pid: p.id, name: [p.displayName, p.formattedAddress].filter(Boolean).join(', ') }));
+}
 async function geocode(q, tr, limit = 1, extra = []) {
+  if (useGoogle()) return googleSearch(q, tr, limit, extra);
   const p = new URLSearchParams({ q, format: 'jsonv2', limit: String(limit), 'accept-language': ui.lang === 'de' ? 'de,en' : 'ko,en' });
   const cc = flagCC(tr.icon);
   if (cc) p.set('countrycodes', cc);
@@ -880,7 +914,7 @@ function mapTab(tr) {
   h += '<div id="map" class="map"></div>';
   if (!all.some((x) => x.loc)) h += `<p class="note">${esc(t('noPins'))}</p>`;
   if (missing.length) {
-    h += `<div class="card" style="margin-top:12px"><b>${esc(t('noLoc', { n: missing.length }))}</b><p class="note">${esc(t('geoNote'))}</p>
+    h += `<div class="card" style="margin-top:12px"><b>${esc(t('noLoc', { n: missing.length }))}</b><p class="note">${esc(t(useGoogle() ? 'geoNoteG' : 'geoNote'))}</p>
       <div class="set-row" style="margin-top:10px"><button class="btn small" data-act="find-all" id="find-all" ${ui.finding ? 'disabled' : ''}>${esc(ui.finding ? t('finding', { a: '…', b: missing.length }) : t('findAll'))}</button></div></div>
       <div class="items" style="margin-top:10px">${missing.map((x) => itemCard(x, tr)).join('')}</div>`;
   }
@@ -900,31 +934,62 @@ function loadLeaflet() {
   });
   return leafletP;
 }
+function mapList(tr, day) {
+  if (day) {
+    const stay = items(tr).filter((x) => x.cat === 'stay' && x.loc && isDate(x.date) && x.date < day && day <= (x.end || x.date));
+    return [...stay, ...dayItems(tr, day)].filter((x) => x.loc && isFinite(x.loc.lat));
+  }
+  return items(tr).filter((x) => x.loc && isFinite(x.loc.lat)).sort((a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0));
+}
+function popupHtml(x) {
+  const when = [x.date ? dayName(x.date, { month: 'short', day: 'numeric', weekday: 'short' }) : '', (x.time || '').split('\n')[0]].filter(Boolean).join(' · ');
+  return `<div class="pop"><b>${icon(x)} ${esc(x.title)}</b>${esc(when)}<div class="row-btns"><a class="btn small" href="${esc(dirUrl(x))}" target="_blank" rel="noopener">🧭 ${esc(t('dir'))}</a>
+    <button class="btn small ghost" data-act="edit-item" data-id="${x.id}">✎</button></div></div>`;
+}
+async function initGoogleMap(tr, box, list, day, days) {
+  const gm = await loadGoogle();
+  const [{ Map, InfoWindow, Polyline }, { AdvancedMarkerElement }] = await Promise.all([gm.importLibrary('maps'), gm.importLibrary('marker')]);
+  if (!document.body.contains(box)) return;
+  const map = new Map(box, { mapId: GM().mapId || 'DEMO_MAP_ID', gestureHandling: 'greedy', mapTypeControl: false, streetViewControl: false, fullscreenControl: false });
+  const holder = { remove() { box.innerHTML = ''; } };
+  mapObj = holder;
+  const info = new InfoWindow();
+  const path = [];
+  list.forEach((x, i) => {
+    const el = document.createElement('div');
+    el.className = `pin c-${x.cat || 'etc'}`;
+    el.innerHTML = `<span>${day ? i + 1 : (days.indexOf(x.date) + 1 || '·')}</span>`;
+    const pos = { lat: x.loc.lat, lng: x.loc.lng };
+    const m = new AdvancedMarkerElement({ map, position: pos, content: el, title: x.title, gmpClickable: true });
+    m.addEventListener('gmp-click', () => { info.setContent(popupHtml(x)); info.open({ map, anchor: m }); });
+    path.push(pos);
+  });
+  if (day && path.length > 1) new Polyline({ map, path, strokeColor: '#11777c', strokeOpacity: 0.7, strokeWeight: 3 });
+  const key = tr.id + '|' + day;
+  if (ui.mapView && ui.mapView.key === key) { map.setCenter(ui.mapView.c); map.setZoom(ui.mapView.z); }
+  else if (path.length > 1) { const b = new gm.LatLngBounds(); path.forEach((p) => b.extend(p)); map.fitBounds(b, 40); }
+  else if (path.length) { map.setCenter(path[0]); map.setZoom(15); }
+  else { map.setCenter({ lat: 48.14, lng: 11.58 }); map.setZoom(4); }
+  map.addListener('idle', () => { if (mapObj === holder) ui.mapView = { key, c: map.getCenter().toJSON(), z: map.getZoom() }; });
+}
 async function initMap(tr) {
   if (mapObj) { mapObj.remove(); mapObj = null; }
   const box = $('#map');
   if (!box) return;
+  const days = tripDays(tr), day = ui.mapDay || '', list = mapList(tr, day);
+  if (useGoogle()) {
+    try { await initGoogleMap(tr, box, list, day, days); return; } catch (e) { console.warn(e); ui.gmFailed = true; }
+  }
   let L;
   try { L = await loadLeaflet(); } catch { box.innerHTML = `<p class="empty">${esc(t('mapFail'))}</p>`; return; }
   if (!document.body.contains(box)) return;
   const map = mapObj = L.map(box);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' }).addTo(map);
-  const days = tripDays(tr), day = ui.mapDay || '';
-  let list;
-  if (day) {
-    const stay = items(tr).filter((x) => x.cat === 'stay' && x.loc && isDate(x.date) && x.date < day && day <= (x.end || x.date));
-    list = [...stay, ...dayItems(tr, day)].filter((x) => x.loc && isFinite(x.loc.lat));
-  } else {
-    list = items(tr).filter((x) => x.loc && isFinite(x.loc.lat)).sort((a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0));
-  }
   const pts = [];
   list.forEach((x, i) => {
     const n = day ? i + 1 : (days.indexOf(x.date) + 1 || '·');
     const pin = L.divIcon({ className: '', html: `<div class="pin c-${x.cat || 'etc'}"><span>${n}</span></div>`, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -28] });
-    const when = [x.date ? dayName(x.date, { month: 'short', day: 'numeric', weekday: 'short' }) : '', (x.time || '').split('\n')[0]].filter(Boolean).join(' · ');
-    L.marker([x.loc.lat, x.loc.lng], { icon: pin, title: x.title }).addTo(map)
-      .bindPopup(`<div class="pop"><b>${icon(x)} ${esc(x.title)}</b>${esc(when)}<div class="row-btns"><a class="btn small" href="${esc(dirUrl(x))}" target="_blank" rel="noopener">🧭 ${esc(t('dir'))}</a>
-        <button class="btn small ghost" data-act="edit-item" data-id="${x.id}">✎</button></div></div>`);
+    L.marker([x.loc.lat, x.loc.lng], { icon: pin, title: x.title }).addTo(map).bindPopup(popupHtml(x));
     pts.push([x.loc.lat, x.loc.lng]);
   });
   if (day && pts.length > 1) L.polyline(pts, { color: '#11777c', weight: 3, opacity: 0.7, dashArray: '6 7' }).addTo(map);
@@ -953,13 +1018,13 @@ async function findAll() {
     // 이미 아는 곳들의 가운데. 거기서 150km보다 먼 결과는 이름만 같은 다른 곳일 가능성이 커서 버림
     const known = [...items(tr).filter((x) => x.loc && isFinite(x.loc.lat)).map((x) => x.loc), ...hits];
     const mid = known.length ? { lat: median(known.map((x) => x.lat)), lng: median(known.map((x) => x.lng)) } : null;
-    for (const q of queriesFor(list[i])) {
-      await sleep(1100); // höchstens eine Anfrage pro Sekunde (Nominatim-Regel) / 1초에 한 번만 (Nominatim 규칙)
+    for (const q of queriesFor(list[i]).slice(0, useGoogle() ? 2 : 5)) {
+      await sleep(useGoogle() ? 150 : 1100); // Nominatim: höchstens eine Anfrage pro Sekunde / Nominatim은 1초에 한 번만
       try { [hit] = await geocode(q, tr, 1, hits); } catch (e) { console.warn(e); hit = null; }
       if (hit && mid && km(hit, mid) > 150) hit = null;
       if (hit) break;
     }
-    if (hit) { hits.push(hit); found.push([['trips', tr.id, 'items', list[i].id, 'loc'], { lat: hit.lat, lng: hit.lng, name: shortName(hit.name), auto: true }]); } else miss++;
+    if (hit) { hits.push(hit); found.push([['trips', tr.id, 'items', list[i].id, 'loc'], { lat: hit.lat, lng: hit.lng, name: shortName(hit.name), auto: true, ...(hit.pid && { pid: hit.pid }) }]); } else miss++;
   }
   ui.finding = false;
   if (found.length) write([...found, touch(tr.id)]); else render(true);
@@ -1185,7 +1250,7 @@ function itemSheet(tr, it, defaults = {}) {
       try { list = await geocode(q, tr, 5); } catch (err) { console.warn(err); }
       e.target.disabled = false;
       res.innerHTML = list.length ? `<span class="note">${esc(t('pickOne'))}</span>` + list.map((r, i) => `<button type="button" data-i="${i}">📍 ${esc(shortName(r.name))}</button>`).join('') : `<span class="note">${esc(t('locNoRes'))}</span>`;
-      res.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('click', () => { const r = list[+b.dataset.i]; loc = { lat: r.lat, lng: r.lng, name: shortName(r.name) }; res.innerHTML = ''; showLoc(); }));
+      res.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('click', () => { const r = list[+b.dataset.i]; loc = { lat: r.lat, lng: r.lng, name: shortName(r.name), ...(r.pid && { pid: r.pid }) }; res.innerHTML = ''; showLoc(); }));
     });
     f.locpaste.addEventListener('input', () => {
       const v = f.locpaste.value.trim();
