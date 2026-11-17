@@ -13,6 +13,9 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=bed,check,confirmation_number,credit_card,directions_boat,directions_bus,directions_car,edit,flight,gondola_lift,group,link,local_taxi,location_on,luggage,map,near_me,payments,public,push_pin,restaurant,settings,shopping_bag,sticky_note_2,train&display=block">
 <title>여행</title>
 <style>
 /* Aussehen „Bordkarte“: hellblauer Himmel, weiße Tickets mit Abrisskante und Strichcode, Navy-Schrift, Koralle als Akzent.
@@ -51,6 +54,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; border: 0; background: none; padding: 0; text-align: inherit; }
 a { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ms { font-family: "Material Symbols Rounded"; font-weight: normal; font-style: normal; font-size: 1.2em; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; width: 1em; overflow: hidden;
+  white-space: nowrap; direction: ltr; vertical-align: -.22em; -webkit-font-smoothing: antialiased; font-feature-settings: "liga"; font-variation-settings: "FILL" 0, "wght" 450, "GRAD" 0, "opsz" 24; }
+.it .ic .ms { font-size: 21px; color: var(--c); font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; vertical-align: 0; }
+.it.done .ic .ms { color: var(--muted); }
+.icon-btn .ms { font-size: 21px; vertical-align: 0; }
+.cats .ms { font-size: 18px; vertical-align: 0; }
+.cats input:checked + span .ms { color: inherit; }
+.nv { display: inline-grid; place-items: center; width: 1.15em; height: 1.15em; border-radius: 4px; background: #03c75a; color: #fff; font: 900 .8em/1 var(--sans); vertical-align: -.15em; }
+.night .ms { font-size: 18px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Kopf / 머리 */
@@ -378,8 +390,8 @@ const T = {
     night: '숙박 {a}/{b}박', checkout: '체크아웃', booked: '예약완료', notBooked: '예약 전', items: '일정 {n}',
     newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란', date: '날짜', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)',
     time: '시간', timePh: '예: 15:00-16:30', isBooked: '예약 완료', code: '예약번호', cost: '비용', notes: '메모', links: '링크 (한 줄에 하나)',
-    save: '저장', cancel: '취소', del: '삭제', delItemQ: '"{t}" 일정을 지울까요?', map: '🗺 지도에서 찾기', copied: '복사했어요',
-    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '예약한 일정', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요 👍', noBook: '숙소·이동 일정이 아직 없어요',
+    save: '저장', cancel: '취소', del: '삭제', delItemQ: '"{t}" 일정을 지울까요?', map: '지도에서 찾기', copied: '복사했어요',
+    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '예약한 일정', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '숙소·이동 일정이 아직 없어요',
     total: '총 비용', inLocal: '현지 통화로 {x}', budgetOf: '예산 {b}', left: '{x} 남음', over: '{x} 초과', byCat: '종류별', rate: '환율', fetchRate: '오늘 환율로', rateOk: '오늘 환율로 바꿨어요', rateFail: '환율을 불러오지 못했어요',
     noRate: '환율이 없어서 유로로 못 바꾼 비용이 있어요', conv: '바로 환산', costList: '비용 목록', noCosts: '비용을 넣은 일정이 없어요', setRate: '환율 넣기',
     addCheckPh: '준비물이나 할 일', add: '추가', tplTitle: '목록 넣기', addedN: '{n}개 넣었어요', noneAdded: '이미 다 들어 있어요', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요. 위에서 목록을 넣어 보세요.',
@@ -402,8 +414,8 @@ const T = {
     night: 'Nacht {a}/{b}', checkout: 'Check-out', booked: 'gebucht', notBooked: 'nicht gebucht', items: '{n} Einträge',
     newItem: 'Neuer Eintrag', editItem: 'Eintrag bearbeiten', title: 'Name', titlePh: 'z. B. Mittagessen – Ichiran', date: 'Datum', endStay: 'Abreise', endMove: 'Rückweg (bei Hin und Zurück)',
     time: 'Uhrzeit', timePh: 'z. B. 15:00-16:30', isBooked: 'gebucht', code: 'Buchungsnummer', cost: 'Kosten', notes: 'Notiz', links: 'Links (einer pro Zeile)',
-    save: 'Speichern', cancel: 'Abbrechen', del: 'Löschen', delItemQ: '„{t}“ löschen?', map: '🗺 In Karte suchen', copied: 'Kopiert',
-    bookDone: 'Gebucht', bookOf: '{a} von {b}', stays: 'Unterkünfte', moves: 'Fahrten', others: 'Weitere Buchungen', gaps: 'Nächte ohne Unterkunft', allNights: 'Jede Nacht hat eine Unterkunft 👍', noBook: 'Noch keine Unterkünfte oder Fahrten',
+    save: 'Speichern', cancel: 'Abbrechen', del: 'Löschen', delItemQ: '„{t}“ löschen?', map: 'In Karte suchen', copied: 'Kopiert',
+    bookDone: 'Gebucht', bookOf: '{a} von {b}', stays: 'Unterkünfte', moves: 'Fahrten', others: 'Weitere Buchungen', gaps: 'Nächte ohne Unterkunft', allNights: 'Jede Nacht hat eine Unterkunft', noBook: 'Noch keine Unterkünfte oder Fahrten',
     total: 'Gesamt', inLocal: 'in Landeswährung {x}', budgetOf: 'Budget {b}', left: '{x} übrig', over: '{x} drüber', byCat: 'Nach Art', rate: 'Kurs', fetchRate: 'Heutiger Kurs', rateOk: 'Heutigen Kurs übernommen', rateFail: 'Kurs nicht abrufbar',
     noRate: 'Ohne Kurs konnten nicht alle Kosten in Euro umgerechnet werden', conv: 'Umrechner', costList: 'Alle Kosten', noCosts: 'Noch keine Kosten eingetragen', setRate: 'Kurs eintragen',
     addCheckPh: 'Mitnehmen oder erledigen', add: 'Hinzufügen', tplTitle: 'Liste einfügen', addedN: '{n} eingefügt', noneAdded: 'Schon alles drin', checkProg: '{a} von {b} erledigt', noChecks: 'Noch leer. Füge oben eine Liste ein.',
@@ -463,6 +475,8 @@ const nightsText = (n) => (ui.lang === 'de' && n === 1 ? '1 Nacht' : t('nights',
 
 // ---------- Hilfen / 도우미 ----------
 const $ = (s, r = document) => r.querySelector(s);
+// Material Symbols (Rounded): einheitliche Linien-Symbole statt Emoji / 이모지 대신 통일된 아이콘
+const ms = (n, cls = '') => `<span class="ms${cls ? ' ' + cls : ''}" aria-hidden="true">${n}</span>`;
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const uid = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const pad = (n) => String(n).padStart(2, '0');
@@ -584,15 +598,15 @@ const CAT_ORDER = ['move', 'stay', 'food', 'see', 'etc'];
 function icon(it) {
   if (it.cat === 'move') {
     const s = (it.title + ' ' + (it.notes || '')).toLowerCase();
-    if (/버스|bus/.test(s)) return '🚌';
-    if (/기차|열차|신칸센|역→|역 →|train|zug|bahn|ice\b|tgv/.test(s)) return '🚆';
-    if (/배|페리|크루즈|ferry|fähre|boot|speedboat/.test(it.title.toLowerCase())) return '⛴️';
+    if (/버스|bus/.test(s)) return 'directions_bus';
+    if (/기차|열차|신칸센|역→|역 →|train|zug|bahn|ice\b|tgv/.test(s)) return 'train';
+    if (/배|페리|크루즈|ferry|fähre|boot|speedboat/.test(it.title.toLowerCase())) return 'directions_boat';
     if (/항공|비행|공항|귀국|출국|인천|김포|flug|flight|air|아시아나|대한항공|티웨이|lufthansa|^[a-z]{3}\s*-\s*[a-z]{3}$/.test(s) || /^[A-Z]{3}\s*[-→]\s*[A-Z]{3}/.test(it.title)
-      || /\b[A-Z]{2}\s?\d{2,4}\b/.test((it.time || '') + ' ' + (it.notes || '') + ' ' + it.title)) return '✈️';
-    if (/로프웨이|케이블|gondel|seilbahn/.test(s)) return '🚡';
-    return '🚗';
+      || /\b[A-Z]{2}\s?\d{2,4}\b/.test((it.time || '') + ' ' + (it.notes || '') + ' ' + it.title)) return 'flight';
+    if (/로프웨이|케이블|gondel|seilbahn/.test(s)) return 'gondola_lift';
+    return 'directions_car';
   }
-  return { stay: '🛏️', food: '🍽️', see: '📍', etc: '📝' }[it.cat] || '📝';
+  return { stay: 'bed', food: 'restaurant', see: 'location_on', etc: 'sticky_note_2' }[it.cat] || 'sticky_note_2';
 }
 // Sortierschlüssel im Tag: erste Uhrzeit; Mahlzeiten ohne Uhrzeit nach Tageszeit; sonst bleibt es hinter dem vorigen Eintrag.
 // 하루 안의 순서: 적힌 시간 → 시간 없으면 아침/점심/저녁 → 그것도 없으면 앞 일정 바로 뒤.
@@ -685,10 +699,10 @@ const NEAR = ['de', 'at', 'ch', 'fr', 'it', 'cz', 'nl', 'be', 'lu', 'pl', 'dk', 
 function modeOf(tr) {
   if (tr.mode) return tr.mode;
   const mv = items(tr).filter((x) => x.cat === 'move').map(icon);
-  if (mv.includes('✈️')) return 'plane';
-  if (mv.includes('⛴️') && !mv.includes('🚗')) return 'ship';
-  if (mv.includes('🚆') && !mv.includes('🚗')) return 'train';
-  if (mv.includes('🚗')) return 'car';
+  if (mv.includes('flight')) return 'plane';
+  if (mv.includes('directions_boat') && !mv.includes('directions_car')) return 'ship';
+  if (mv.includes('train') && !mv.includes('directions_car')) return 'train';
+  if (mv.includes('directions_car')) return 'car';
   if (NEAR.includes(flagCC(tr.icon)) || /스키|\bski\b|오스트리아|österreich|austria|티롤|tirol/i.test(tr.title || '')) return 'car';
   return 'plane';
 }
@@ -701,7 +715,7 @@ function homeView() {
   const past = list.filter((x) => status(x) === 'past').sort((a, b) => byStart(b, a));
   const hero = now[0] || up.find((x) => isDate(x.start));
   let h = `<header class="top"><div class="bar"><h1>${esc(t('app'))}</h1>
-    <span class="set-row">${langSwitch()}<button class="icon-btn" data-act="settings" aria-label="${esc(t('settings'))}">⚙︎</button></span></div></header><section class="sheet">`;
+    <span class="set-row">${langSwitch()}<button class="icon-btn" data-act="settings" aria-label="${esc(t('settings'))}">${ms('settings')}</button></span></div></header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
   if (window.notionSync) h += window.notionSync.bannerHtml();
   if (!list.length) h += `<p class="empty">${esc(t('noTrips'))}</p>`;
@@ -746,7 +760,7 @@ function placeName(title) {
 // Vergangene Reisen als Einreisestempel im Pass / 지난 여행은 여권 입국 도장
 const STAMP_INK = ['#e8553a', '#2a5db0', '#13946f', '#7a5cd3', '#c27a12'];
 function passport(past) {
-  let h = `<section class="passport"><div class="pp-head"><span>${esc(t('pastPass'))}</span><b>ENTRIES · ${past.length}</b></div>`;
+  let h = `<section class="passport"><div class="pp-head"><span>${ms('public')} ${esc(t('pastPass'))}</span><b>ENTRIES · ${past.length}</b></div>`;
   let y = null, i = 0;
   for (const x of past) {
     const yy = (x.start || '').slice(0, 4) || String(x.year || '');
@@ -783,7 +797,7 @@ function tripView(tr) {
   let h = `<header class="top"><div class="bar">
     <button class="back" data-act="home">‹ ${esc(t('back'))}</button>
     <span class="set-row">${tr.notion ? `<a class="icon-btn nbtn" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener" aria-label="${esc(t('nOpen'))}">N</a>` : ''}
-    <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">✎</button></span></div>
+    <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">${ms('edit')}</button></span></div>
     <div class="tk tk-head">${tr.cover ? `<span class="tk-img"${coverStyle(tr)}></span>` : ''}${d ? `<span class="dday">${esc(d)}</span>` : ''}
       <div class="tk-main"><div class="air"><span>${esc(tr.icon || '✈️')} ${esc(tr.title)}${ui.grp != null ? ' · ' + esc(ui.grp || t('grpMain')) : ''}</span><b>${esc(nightsLabel(v))}</b></div>
       <div class="route"><span class="apc">${esc(codeFrom(tr))}<small>${esc(tm(v.start))}</small></span><span class="plane">${modeSvg(modeOf(tr))}</span>
@@ -796,12 +810,11 @@ function tripView(tr) {
   h += '</section>';
   if (ui.tab === 'plan') h += `<button class="fab" data-act="new-item">${esc(t('addItem'))}</button>`;
   if (ui.tab === 'book') h += `<button class="fab" data-act="new-item" data-cat="stay">${esc(t('addItem'))}</button>`;
-  if (ui.tab === 'cmp') h += `<button class="fab" data-act="new-opt">${esc(t('addOpt'))}</button>`;
   if (ui.tab === 'money') h += `<button class="fab" data-act="new-spend">${esc(t('addSpend'))}</button>`;
   return h;
 }
 // "오늘" gibt es nur während der Reise / '오늘' 탭은 여행 중에만
-const tabsOf = (tr) => [...(status(tr) === 'now' ? ['today'] : []), 'plan', 'book', 'cmp', 'map', 'money', 'check', 'memo'];
+const tabsOf = (tr) => [...(status(tr) === 'now' ? ['today'] : []), 'plan', 'book', 'map', 'money', 'check', 'memo'];
 
 function itemCard(it, tr, day) {
   const meta = [];
@@ -815,13 +828,13 @@ function itemCard(it, tr, day) {
     else if (it.cat === 'stay' || it.cat === 'move') meta.push(`<span class="todo">${esc(t('notBooked'))}</span>`);
     if (it.cost && it.cost.amount) meta.push(esc(money(it.cost.amount, it.cost.cur)));
   }
-  if ((it.links && it.links.length) || URL_RE.test(it.notes || '')) meta.push('🔗');
+  if ((it.links && it.links.length) || URL_RE.test(it.notes || '')) meta.push(ms('link'));
   URL_RE.lastIndex = 0;
   // Unterseite in Notion (서울여행, 가르다호 …), wenn nicht schon danach gefiltert / 노션 하위 페이지 이름
   if (it.grp && !ui.grp) meta.push(`<span class="grp">${esc(it.grp)}</span>`);
   const notes = (it.notes || '').replace(URL_RE, '').trim();
   return `<button class="it c-${it.cat || 'etc'}${it.done && !isOut ? ' done' : ''}" data-act="edit-item" data-id="${it.id}">${it.booked && !isOut ? `<span class="cf" aria-hidden="true">CONFIRMED</span>` : ''}
-    <span class="ic" aria-hidden="true">${isOut ? '🧳' : icon(it)}</span>
+    <span class="ic" aria-hidden="true">${ms(isOut ? 'luggage' : icon(it))}</span>
     <span class="ib"><span class="t">${isOut ? esc(t('checkout')) + ' · ' : ''}${esc(it.title || '—')}</span>
     ${meta.length ? `<span class="m">${meta.join('')}</span>` : ''}
     ${notes && !isOut ? `<span class="nt">${esc(notes)}</span>` : ''}</span></button>`;
@@ -882,7 +895,7 @@ function planTab(tr) {
     const outs = stays.filter((s) => s.end === d);
     h += `<div class="day" id="d-${d}"><div class="dh"><span class="n">${esc(t('dayNo', { n: i + 1 }))}</span>
       <span class="d">${esc(dayName(d, { month: 'long', day: 'numeric', weekday: 'short' }))}</span>${d === now ? `<span class="now">${esc(t('today'))}</span>` : ''}</div>`;
-    for (const s of mid) h += `<div class="night"><span>🛏️</span><span>${esc(t('night', { a: diff(s.date, d) + 1, b: diff(s.date, s.end) }))} · ${esc(s.title)}</span></div>`;
+    for (const s of mid) h += `<div class="night">${ms('bed')}<span>${esc(t('night', { a: diff(s.date, d) + 1, b: diff(s.date, s.end) }))} · ${esc(s.title)}</span></div>`;
     h += `<div class="items">${outs.map((s) => itemCard(s, tr, d)).join('')}${list.map((x) => itemCard(x, tr, d)).join('')}</div>
       <button class="add-day" data-act="new-item" data-day="${d}">${esc(t('addHere'))}</button></div>`;
   });
@@ -924,22 +937,22 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { splitFriends: '👥 일행과 나누기', toSpend: '지출로', plannedTag: '예약·계획', history: '내역', spent: '실제 지출', planned: '예약·계획', noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.' });
-Object.assign(T.de, { splitFriends: '👥 Mit anderen teilen', toSpend: 'Bezahlt', plannedTag: 'geplant', history: 'Einträge', spent: 'ausgegeben', planned: 'geplant', noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.' });
+Object.assign(T.ko, { splitFriends: '일행과 나누기', toSpend: '지출로', plannedTag: '예약·계획', history: '내역', spent: '실제 지출', planned: '예약·계획', noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.' });
+Object.assign(T.de, { splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', plannedTag: 'geplant', history: 'Einträge', spent: 'ausgegeben', planned: 'geplant', noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.' });
 Object.assign(T.ko, { us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수', personNote: '나눌 때 인원 수만큼 몫을 가져요. 예: 우리 가족 4명, 지민네 2명이면 4:2로 나눠요.',
   personDelQ: '"{n}"을(를) 일행에서 뺄까요?', personUsed: '이 일행이 들어간 지출이 있어서 뺄 수 없어요', ledgerTotal: '총 지출', paid: '낸 돈', share: '몫', gets: '받을 돈 {x}', owes: '낼 돈 {x}',
-  settle: '정산', settleNone: '정산할 게 없어요 👍', copySettle: '정산 내용 복사', settleCopied: '복사했어요. 메신저에 붙여 보내세요', addSpend: '+ 지출', spendNew: '지출 기록', spendEdit: '지출 고치기',
+  settle: '정산', settleNone: '정산할 게 없어요', copySettle: '정산 내용 복사', settleCopied: '복사했어요. 메신저에 붙여 보내세요', addSpend: '+ 지출', spendNew: '지출 기록', spendEdit: '지출 고치기',
   payer: '낸 사람', splitWith: '나눌 사람', spendTitle: '내용', spendDate: '날짜', spendList: '지출 목록', noSpends: '아직 지출이 없어요. 쓴 돈을 적으면 일행끼리 누가 얼마 보내면 되는지 계산해 줘요.' });
 Object.assign(T.de, { us: 'Wir', ppl: ' P.', addPerson: '+ Mitreisende', personT: 'Mitreisende', personName: 'Name', personPh: 'z. B. Familie Kim', personN: 'Personen', personNote: 'Beim Teilen zählt jede Person einen Anteil. Wir 4 und Familie Kim 2 → 4:2.',
   personDelQ: '„{n}“ entfernen?', personUsed: 'Kommt in Ausgaben vor – kann nicht entfernt werden', ledgerTotal: 'Ausgaben gesamt', paid: 'bezahlt', share: 'Anteil', gets: 'bekommt {x}', owes: 'zahlt {x}',
-  settle: 'Ausgleich', settleNone: 'Alles ausgeglichen 👍', copySettle: 'Abrechnung kopieren', settleCopied: 'Kopiert – im Messenger einfügen', addSpend: '+ Ausgabe', spendNew: 'Ausgabe eintragen', spendEdit: 'Ausgabe bearbeiten',
+  settle: 'Ausgleich', settleNone: 'Alles ausgeglichen', copySettle: 'Abrechnung kopieren', settleCopied: 'Kopiert – im Messenger einfügen', addSpend: '+ Ausgabe', spendNew: 'Ausgabe eintragen', spendEdit: 'Ausgabe bearbeiten',
   payer: 'Bezahlt von', splitWith: 'Geteilt mit', spendTitle: 'Wofür', spendDate: 'Datum', spendList: 'Alle Ausgaben', noSpends: 'Noch keine Ausgaben. Trag sie ein, dann rechnet die App aus, wer wem was überweist.' });
 Object.assign(T.ko, { mode: '이동 수단', modeAuto: '자동', modes: { plane: '비행기', car: '자동차', train: '기차', ship: '배' }, passHead: { plane: 'BOARDING PASS · 탑승권', car: 'ROAD TRIP · 자동차 여행', train: 'TRAIN TICKET · 승차권', ship: 'BOARDING PASS · 승선권' } });
 Object.assign(T.de, { mode: 'Reisemittel', modeAuto: 'Automatisch', modes: { plane: 'Flugzeug', car: 'Auto', train: 'Zug', ship: 'Schiff' }, passHead: { plane: 'BOARDING PASS · Bordkarte', car: 'ROAD TRIP · Autoreise', train: 'TRAIN TICKET · Fahrkarte', ship: 'BOARDING PASS · Schiff' } });
 Object.assign(T.ko, { addRecord: '지난 여행', recordT: '지난 여행 기록', recordNote: '짧은 기록', recordPh: '어땠는지 한두 줄 (선택)', toNotion: '노션에도 페이지 만들기', recorded: '여권에 도장을 찍었어요' });
 Object.assign(T.de, { addRecord: 'Vergangene Reise', recordT: 'Vergangene Reise eintragen', recordNote: 'Kurze Notiz', recordPh: 'Wie war es? (optional)', toNotion: 'Auch als Notion-Seite anlegen', recorded: 'Stempel im Pass' });
-Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기', naver: '네이버 지도', map: '🗺 구글 지도', pass: '탑승권', pastPass: '🛂 여권 · 지난 여행', apFrom: '출발 공항', apTo: '도착 공항', apPh: '예: MUC' });
-Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen', naver: 'Naver Map', map: '🗺 Google Maps', pass: 'Bordkarte', pastPass: '🛂 Reisepass · vergangene Reisen', apFrom: 'Abflughafen', apTo: 'Zielflughafen', apPh: 'z. B. MUC' });
+Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기', naver: '네이버 지도', map: '구글 지도', pass: '탑승권', pastPass: '여권 · 지난 여행', apFrom: '출발 공항', apTo: '도착 공항', apPh: '예: MUC' });
+Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen', naver: 'Naver Map', map: 'Google Maps', pass: 'Bordkarte', pastPass: 'Reisepass · vergangene Reisen', apFrom: 'Abflughafen', apTo: 'Zielflughafen', apPh: 'z. B. MUC' });
 // Notion-Abgleich / 노션 연결
 Object.assign(T.ko, {
   nOpen: '노션에서 열기', nEditMemo: '노션에서 고치기', nBody: '노션 페이지 안 내용', whichTable: '어느 표에 넣을까요', grpMain: '기본 표',
@@ -964,10 +977,10 @@ const notionUrl = (id) => 'https://www.notion.so/' + String(id || '').replace(/-
 const parseAmount = (v) => parseFloat(String(v).replace(/\s/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.'));
 const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
 const spendsOf = (tr) => Object.values(tr.spend || {}).filter((s) => s && s.id && s.amount);
-const SP_ICON = { food: '🍽️', move: '🚕', stay: '🛏️', shop: '🛍️', see: '🎟️', etc: '💳' };
+const SP_ICON = { food: 'restaurant', move: 'local_taxi', stay: 'bed', shop: 'shopping_bag', see: 'confirmation_number', etc: 'payments' };
 function spendLine(s, tr, withDate) {
   const e = eurOf(s, tr);
-  return `<li>${withDate ? `<span class="dt">${s.date ? esc(md(s.date)) : '–'}</span>` : ''}<span class="x">${SP_ICON[s.cat] || '💳'} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}</span>
+  return `<li>${withDate ? `<span class="dt">${s.date ? esc(md(s.date)) : '–'}</span>` : ''}<span class="x">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}</span>
     <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
     <button class="rm" data-act="del-spend" data-id="${s.id}" aria-label="${esc(t('del'))}">×</button></li>`;
 }
@@ -986,7 +999,8 @@ function inKorea(it) {
 }
 const naverUrl = (it) => { const q = cleanName(it.title) || (it.loc && shortName(it.loc.name).split(',')[0]) || ''; return q ? `https://map.naver.com/p/search/${encodeURIComponent(q)}` : ''; };
 const googleUrl = (it) => dirUrl(it, true);
-const dirLabel = (it) => (inKorea(it) ? '🟢 ' + t('naver') : '🧭 ' + t('dir'));
+const dirLabel = (it) => (inKorea(it) ? t('naver') : t('dir'));
+const dirIcon = (it) => (inKorea(it) ? '<span class="nv" aria-hidden="true">N</span>' : ms('near_me'));
 function dirUrl(it, google) {
   if (!google && inKorea(it)) return naverUrl(it);
   if (it.loc && it.loc.pid) return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(it.loc.name || cleanName(it.title))}&destination_place_id=${encodeURIComponent(it.loc.pid)}`;
@@ -1016,24 +1030,24 @@ function todayTab(tr) {
       cd = m <= 5 ? t('nowish') : m < 60 ? t('inM', { m }) : t('inHM', { h: Math.floor(m / 60), m: m % 60 });
     }
     const dir = dirUrl(next), tm = (next.time || '').split('\n')[0];
-    h += `<div class="next"><div class="lb">${esc(t('nextUp'))}</div><span class="nt-title">${icon(next)} ${esc(next.title)}</span>
+    h += `<div class="next"><div class="lb">${esc(t('nextUp'))}</div><span class="nt-title">${ms(icon(next))} ${esc(next.title)}</span>
       ${tm ? `<span class="nt-when">${esc(tm)}</span>` : ''}${cd ? ` <span class="cd">${esc(cd)}</span>` : ''}
-      <div class="row-btns">${dir ? `<a class="btn small" href="${esc(dir)}" target="_blank" rel="noopener">${esc(dirLabel(next))}</a>` : ''}
+      <div class="row-btns">${dir ? `<a class="btn small" href="${esc(dir)}" target="_blank" rel="noopener">${dirIcon(next)} ${esc(dirLabel(next))}</a>` : ''}
       <button class="btn small" data-act="toggle-done" data-id="${next.id}">${esc(t('markDone'))}</button>
-      <button class="btn small" data-act="edit-item" data-id="${next.id}" aria-label="${esc(t('editItem'))}">✎</button></div></div>`;
+      <button class="btn small" data-act="edit-item" data-id="${next.id}" aria-label="${esc(t('editItem'))}">${ms('edit')}</button></div></div>`;
   } else {
     h += `<div class="next"><div class="lb">${esc(dayName(d, { month: 'long', day: 'numeric', weekday: 'long' }))}</div><span class="nt-title">${esc(list.length ? t('allDone') : t('noToday'))}</span></div>`;
   }
   for (const s of outs) {
     const tm = (s.time || '').split(/\n|\//).find((x) => /아웃|out/i.test(x)) || '';
-    h += `<div class="mini"><b>🧳 ${esc(t('checkoutToday'))}</b> · ${esc(s.title)}${tm ? ` · ${esc(tm.replace(/체크아웃|check-?out/i, '').trim())}` : ''}</div>`;
+    h += `<div class="mini"><b>${ms('luggage')} ${esc(t('checkoutToday'))}</b> · ${esc(s.title)}${tm ? ` · ${esc(tm.replace(/체크아웃|check-?out/i, '').trim())}` : ''}</div>`;
   }
   if (tonight) {
     const tm = d === tonight.date ? (tonight.time || '').split(/\n|\//).find((x) => /인|in\b|\d/i.test(x)) || '' : '';
     const dir = dirUrl(tonight);
-    h += `<div class="mini"><b>🛏️ ${esc(t('tonight'))}</b><div style="font-weight:700;font-size:17px;margin-top:2px">${esc(tonight.title)}</div>
+    h += `<div class="mini"><b>${ms('bed')} ${esc(t('tonight'))}</b><div style="font-weight:700;font-size:17px;margin-top:2px">${esc(tonight.title)}</div>
       ${tm ? `<div class="note" style="margin:2px 0 0">${esc(tm.trim())}</div>` : ''}
-      <div class="row-btns" style="margin-top:8px">${dir ? `<a class="btn small ghost" href="${esc(dir)}" target="_blank" rel="noopener">${esc(dirLabel(tonight))}</a>` : ''}
+      <div class="row-btns" style="margin-top:8px">${dir ? `<a class="btn small ghost" href="${esc(dir)}" target="_blank" rel="noopener">${dirIcon(tonight)} ${esc(dirLabel(tonight))}</a>` : ''}
       ${tonight.code ? `<button class="code" data-act="copy" data-v="${esc(tonight.code)}">${esc(tonight.code)} ⧉</button>` : ''}</div></div>`;
   }
   // Ausgabe eintragen / 지출 기록
@@ -1043,7 +1057,7 @@ function todayTab(tr) {
   h += `<h2>${esc(t('spendT'))}</h2><form class="spend card" data-form="spend">
     <div class="r"><input class="in" name="amount" inputmode="decimal" placeholder="0" aria-label="${esc(t('cost'))}" autocomplete="off">
       <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curs.map((c) => `<option ${c === spCur ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
-    <div class="cats" style="margin:0">${['food', 'move', 'shop', 'see', 'etc'].map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${c === (ui.spendCat || 'food') ? 'checked' : ''}><span>${SP_ICON[c]} ${esc(t('sp.' + c))}</span></label>`).join('')}</div>
+    <div class="cats" style="margin:0">${['food', 'move', 'shop', 'see', 'etc'].map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${c === (ui.spendCat || 'food') ? 'checked' : ''}><span>${ms(SP_ICON[c])} ${esc(t('sp.' + c))}</span></label>`).join('')}</div>
     <div class="r"><input class="in" name="title" placeholder="${esc(t('spendPh'))}" autocomplete="off"><button class="btn sun">${esc(t('spendAdd'))}</button></div></form>`;
   if (todays.length) h += `<p class="note" style="margin:10px 2px 0"><b>${esc(t('spendToday', { x: money(sum, 'EUR') }))}</b></p><ul class="lines">${todays.map((s) => spendLine(s, tr)).join('')}</ul>`;
   // Der ganze Tag / 오늘 전체 일정
@@ -1185,8 +1199,8 @@ function mapList(tr, day) {
 }
 function popupHtml(x) {
   const when = [x.date ? dayName(x.date, { month: 'short', day: 'numeric', weekday: 'short' }) : '', (x.time || '').split('\n')[0]].filter(Boolean).join(' · ');
-  return `<div class="pop"><b>${icon(x)} ${esc(x.title)}</b>${esc(when)}<div class="row-btns"><a class="btn small" href="${esc(dirUrl(x))}" target="_blank" rel="noopener">${esc(dirLabel(x))}</a>
-    <button class="btn small ghost" data-act="edit-item" data-id="${x.id}">✎</button></div></div>`;
+  return `<div class="pop"><b>${ms(icon(x))} ${esc(x.title)}</b>${esc(when)}<div class="row-btns"><a class="btn small" href="${esc(dirUrl(x))}" target="_blank" rel="noopener">${dirIcon(x)} ${esc(dirLabel(x))}</a>
+    <button class="btn small ghost" data-act="edit-item" data-id="${x.id}" aria-label="${esc(t('editItem'))}">${ms('edit')}</button></div></div>`;
 }
 async function initGoogleMap(tr, box, list, day, days) {
   const gm = await loadGoogle();
@@ -1301,7 +1315,7 @@ function optCard(o, tr, low) {
     <button class="nm" data-act="edit-opt" data-id="${o.id}">${esc(o.name)}${o.chosen ? `<span class="badge">✓ ${esc(t('chosen'))}</span>` : ''}${low ? `<span class="badge low">${esc(t('cheapest'))}</span>` : ''}</button>
     <div>${o.price ? `<div class="pr">${esc(money(o.price, c))}</div>` : ''}${per ? `<div class="pn">${esc(per)}</div>` : ''}${c !== 'EUR' && e != null ? `<div class="pn">${esc(money(e, 'EUR'))}</div>` : ''}</div></div>
     ${o.notes ? `<div class="memo" style="font-size:14px;color:var(--muted);margin-top:6px">${linkify(o.notes)}</div>` : ''}
-    <div class="row-btns">${o.link ? `<a class="btn small ghost" href="${esc(o.link)}" target="_blank" rel="noopener">🔗 ${esc(hostOf(o.link))}</a>` : ''}
+    <div class="row-btns">${o.link ? `<a class="btn small ghost" href="${esc(o.link)}" target="_blank" rel="noopener">${ms('link')} ${esc(hostOf(o.link))}</a>` : ''}
     ${o.chosen ? `<button class="btn small ghost" data-act="unchoose" data-id="${o.id}">${esc(t('unchoose'))}</button>` : `<button class="btn small" data-act="choose" data-id="${o.id}">${esc(t('choose'))}</button>`}</div></div>`;
 }
 // Die gewählte Option als Eintrag in Plan und Buchungen / 결정한 후보를 일정·예약에 넣기
@@ -1442,7 +1456,7 @@ function moneyTab(tr) {
       <div class="stat"><span>${esc(t('budgetOf', { b: money(tr.budget, 'EUR') }))}</span><span class="${over ? 'todo' : 'ok'}">${esc(t(over ? 'over' : 'left', { x: money(Math.abs(tr.budget - total), 'EUR') }))}</span></div>`;
   }
   if (missing) h += `<p class="note">${esc(t('noRate'))}</p>`;
-  if (!multi) h += `<button class="link-btn" data-act="add-person">${esc(t('splitFriends'))}</button>`;
+  if (!multi) h += `<button class="link-btn" data-act="add-person">${ms('group')} ${esc(t('splitFriends'))}</button>`;
   h += '</div>';
   // Abrechnung / 정산
   if (multi && spends.length) {
@@ -1473,12 +1487,12 @@ function moneyTab(tr) {
   h += `<ul class="lines">${rows.map(({ s, x }) => {
     if (s) {
       const e = eurOf(s, tr), split = (s.split || []).map((id) => pName(tr, id));
-      return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${SP_ICON[s.cat] || '💳'} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}
-        ${multi ? `<small>💳 ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ' · 👥 ' + esc(split.join(', ')) : ''}</small>` : ''}</button>
+      return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}
+        ${multi ? `<small>${ms('credit_card')} ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ` · ${ms('group')} ` + esc(split.join(', ')) : ''}</small>` : ''}</button>
         <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
     }
     const e = eurOf(x.cost, tr);
-    return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${icon(x)} ${esc(x.title)}<small>📌 ${esc(t('plannedTag'))}</small></button>
+    return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${ms(icon(x))} ${esc(x.title)}<small>${ms('push_pin')} ${esc(t('plannedTag'))}</small></button>
       <span class="am">${esc(money(x.cost.amount, x.cost.cur))}${x.cost.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
       <button class="to-spend" data-act="plan-to-spend" data-id="${x.id}">${esc(t('toSpend'))}</button></li>`;
   }).join('')}</ul>`;
@@ -1500,7 +1514,7 @@ function spendSheet(tr, s, pre) {
   openSheet(`<h3>${esc(t(isNew ? 'spendNew' : 'spendEdit'))}</h3><form data-form="spendx">
     <div class="fld"><span>${esc(t('cost'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="amount" inputmode="decimal" value="${s.amount ?? ''}" style="font-size:22px;font-weight:800" aria-label="${esc(t('cost'))}">
       <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curs.map((c) => `<option ${c === (s.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div>
-    <div class="cats">${['food', 'move', 'stay', 'shop', 'see', 'etc'].map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${(s.cat || 'etc') === c ? 'checked' : ''}><span>${SP_ICON[c]} ${esc(t('sp.' + c))}</span></label>`).join('')}</div>
+    <div class="cats">${['food', 'move', 'stay', 'shop', 'see', 'etc'].map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${(s.cat || 'etc') === c ? 'checked' : ''}><span>${ms(SP_ICON[c])} ${esc(t('sp.' + c))}</span></label>`).join('')}</div>
     <label class="fld"><span>${esc(t('spendTitle'))}</span><input class="in" name="title" value="${esc(s.title || '')}" placeholder="${esc(t('spendPh'))}" autocomplete="off"></label>
     <label class="fld"><span>${esc(t('spendDate'))}</span><input class="in" type="date" name="date" value="${esc(s.date || '')}"></label>
     ${ppl.length > 1 ? `<div class="fld"><span>${esc(t('payer'))}</span><div class="cats">${ppl.map((p) => `<label class="c-pp"><input type="radio" name="payer" value="${esc(p.id)}" ${(s.payer || 'me') === p.id ? 'checked' : ''}><span>${esc(p.name)}</span></label>`).join('')}</div></div>
@@ -1678,7 +1692,7 @@ function itemSheet(tr, it, defaults = {}) {
   const links = (it.links || []).join('\n');
   const dateMin = isDate(tr.start) ? tr.start : '', dateMax = isDate(tr.end) ? tr.end : '';
   openSheet(`<h3>${esc(t(isNew ? 'newItem' : 'editItem'))}</h3><form data-form="item">${dbPick}
-    <div class="cats">${CAT_ORDER.map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${it.cat === c ? 'checked' : ''}><span>${icon({ cat: c, title: c === 'move' ? 'flug' : '' })} ${esc(t('cats.' + c))}</span></label>`).join('')}</div>
+    <div class="cats">${CAT_ORDER.map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${it.cat === c ? 'checked' : ''}><span>${ms(icon({ cat: c, title: c === 'move' ? 'flug' : '' }))} ${esc(t('cats.' + c))}</span></label>`).join('')}</div>
     <label class="fld"><span>${esc(t('title'))}</span><input class="in" name="title" value="${esc(it.title)}" placeholder="${esc(t('titlePh'))}" autocomplete="off"></label>
     <div class="two"><label class="fld"><span>${esc(t('date'))}</span><input class="in" type="date" name="date" value="${esc(it.date)}" ${dateMin ? `min="${addDays(dateMin, -60)}"` : ''}></label>
     <label class="fld" data-end><span data-endl>${esc(t(it.cat === 'stay' ? 'endStay' : 'endMove'))}</span><input class="in" type="date" name="end" value="${esc(it.end || '')}"></label></div>
@@ -1698,8 +1712,8 @@ function itemSheet(tr, it, defaults = {}) {
     <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
     ${it.body ? `<div class="fld"><span>${esc(t('nBody'))}</span><div class="memo card" style="font-size:15px">${linkify(it.body)}</div></div>` : ''}
     <label class="fld"><span>${esc(t('links'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px">${esc(links)}</textarea></label>
-    <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">🔗 ${esc(hostOf(u))}</a>`).join('')}
-      ${inKorea(it) && naverUrl(it) ? `<a href="${esc(naverUrl(it))}" target="_blank" rel="noopener">🟢 ${esc(t('naver'))}</a>` : ''}${googleUrl(it) ? `<a href="${esc(googleUrl(it))}" target="_blank" rel="noopener">${esc(t('map'))}</a>` : ''}</div>
+    <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ms('link')} ${esc(hostOf(u))}</a>`).join('')}
+      ${inKorea(it) && naverUrl(it) ? `<a href="${esc(naverUrl(it))}" target="_blank" rel="noopener"><span class="nv" aria-hidden="true">N</span> ${esc(t('naver'))}</a>` : ''}${googleUrl(it) ? `<a href="${esc(googleUrl(it))}" target="_blank" rel="noopener">${ms('map')} ${esc(t('map'))}</a>` : ''}</div>
     <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-item" data-id="${it.id}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
   </form>`, (p) => {
     const f = p.querySelector('form');
@@ -1718,7 +1732,7 @@ function itemSheet(tr, it, defaults = {}) {
     let loc = it.loc || null;
     const res = p.querySelector('#geo-res');
     const showLoc = () => {
-      p.querySelector('#loc-txt').textContent = loc ? `📍 ${loc.name || `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`}${loc.auto ? ' · ' + t('locAuto') : ''}` : t('locNone');
+      p.querySelector('#loc-txt').innerHTML = loc ? `${ms('location_on')} ${esc(loc.name || `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`)}${loc.auto ? ' · ' + esc(t('locAuto')) : ''}` : esc(t('locNone'));
       p.querySelector('[data-loc=clear]').hidden = !loc;
     };
     showLoc();
@@ -1732,7 +1746,7 @@ function itemSheet(tr, it, defaults = {}) {
       let list = [];
       try { list = await geocode(q, tr, 5); } catch (err) { console.warn(err); }
       e.target.disabled = false;
-      res.innerHTML = list.length ? `<span class="note">${esc(t('pickOne'))}</span>` + list.map((r, i) => `<button type="button" data-i="${i}">📍 ${esc(shortName(r.name))}</button>`).join('') : `<span class="note">${esc(t('locNoRes'))}</span>`;
+      res.innerHTML = list.length ? `<span class="note">${esc(t('pickOne'))}</span>` + list.map((r, i) => `<button type="button" data-i="${i}">${ms('location_on')} ${esc(shortName(r.name))}</button>`).join('') : `<span class="note">${esc(t('locNoRes'))}</span>`;
       res.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('click', () => { const r = list[+b.dataset.i]; loc = { lat: r.lat, lng: r.lng, name: shortName(r.name), ...(r.pid && { pid: r.pid }) }; res.innerHTML = ''; showLoc(); }));
     });
     f.locpaste.addEventListener('input', () => {
