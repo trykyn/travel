@@ -121,6 +121,9 @@ h2:first-child { margin-top: 2px; }
 .st .stn { display: block; max-width: 76px; margin: 2px auto 1px; font: 700 10.5px/1.25 var(--sans); letter-spacing: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .st.rect { border-radius: 8px; border-style: double; border-width: 4.5px; }
 .st.dash { border-style: dashed; }
+.st.add { --stamp: var(--muted); border-style: dashed; border-width: 2px; mix-blend-mode: normal; font: 700 12px/1.3 var(--sans); letter-spacing: 0; }
+.st.add b { font: 900 26px/1 var(--sans); }
+.add-row { margin-top: 12px; }
 .mrz::before, .mrz::after { content: ""; position: absolute; top: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); }
 .mrz::before { left: -10px; } .mrz::after { right: -10px; }
 .mrz { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 16px 12px; border-top: 2px dashed var(--line); font: 600 11px/1.45 var(--mono); letter-spacing: .1em; color: var(--paper-ink); opacity: .75; white-space: nowrap; overflow: hidden; }
@@ -643,7 +646,7 @@ function homeView() {
   if (hero) h += ticket(hero);
   const rest = [...now, ...up].filter((x) => x !== hero);
   if (rest.length) h += `<h2>${esc(t('upcoming'))}</h2><div class="trips">${rest.map((x) => stubCard(x)).join('')}</div>`;
-  if (past.length) h += passport(past);
+  h += passport(past);
   h += `</section><button class="fab" data-act="new-trip">${esc(t('newTrip'))}</button>`;
   return h;
 }
@@ -684,7 +687,10 @@ function passport(past) {
     h += `<button class="st ${shape}" style="--stamp:${ink};transform:rotate(${rot}deg)" data-act="open" data-id="${x.id}">
       <span><b>${esc(codeTo(x))}</b><span class="stn">${esc(x.title)}</span>${esc(d)}</span></button>`;
   }
-  h += `</div><div class="mrz" aria-hidden="true">P&lt;KOR&lt;&lt;FAMILY&lt;&lt;TRAVEL&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>${esc(past.map((x) => codeTo(x)).join('<').slice(0, 26))}&lt;&lt;&lt;&lt;&lt;&lt;</div></section>`;
+  if (y !== null) h += '</div>';
+  // Leerer Stempel zum Nachtragen einer Reise ohne Notion-Seite / 노션 없이 지난 여행을 넣는 빈 도장
+  h += `<div class="stamps add-row"><button class="st add" data-act="add-record"><span><b>+</b>${esc(t('addRecord'))}</span></button></div>`;
+  h += `<div class="mrz" aria-hidden="true">P&lt;KOR&lt;&lt;FAMILY&lt;&lt;TRAVEL&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>${esc(past.map((x) => codeTo(x)).join('<').slice(0, 26))}&lt;&lt;&lt;&lt;&lt;&lt;</div></section>`;
   return h;
 }
 const hashId = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); };
@@ -889,6 +895,8 @@ function moneyTab(tr) {
 }
 
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
+Object.assign(T.ko, { addRecord: '지난 여행', recordT: '지난 여행 기록', recordNote: '짧은 기록', recordPh: '어땠는지 한두 줄 (선택)', toNotion: '노션에도 페이지 만들기', recorded: '여권에 도장을 찍었어요' });
+Object.assign(T.de, { addRecord: 'Vergangene Reise', recordT: 'Vergangene Reise eintragen', recordNote: 'Kurze Notiz', recordPh: 'Wie war es? (optional)', toNotion: 'Auch als Notion-Seite anlegen', recorded: 'Stempel im Pass' });
 Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기', naver: '네이버 지도', map: '🗺 구글 지도', pass: '탑승권', pastPass: '🛂 여권 · 지난 여행', apFrom: '출발 공항', apTo: '도착 공항', apPh: '예: MUC' });
 Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen', naver: 'Naver Map', map: '🗺 Google Maps', pass: 'Bordkarte', pastPass: '🛂 Reisepass · vergangene Reisen', apFrom: 'Abflughafen', apTo: 'Zielflughafen', apPh: 'z. B. MUC' });
 // Notion-Abgleich / 노션 연결
@@ -1522,22 +1530,26 @@ function itemSheet(tr, it, defaults = {}) {
   });
 }
 
-function tripSheet(tr) {
-  const isNew = !tr;
+// opt.record: kurzer Eintrag für eine vergangene Reise, nur in der App (keine Notion-Seite)
+// opt.record: 지난 여행 짧은 기록 — 앱에만 저장 (노션 페이지 안 만듦)
+function tripSheet(tr, opt = {}) {
+  const isNew = !tr, record = isNew && !!opt.record;
   tr = tr || { id: uid('t'), title: '', icon: '✈️', start: '', end: '', year: new Date().getFullYear(), cur: 'EUR', rate: 1 };
-  openSheet(`<h3>${esc(t(isNew ? 'newTripT' : 'tripInfo'))}</h3><form data-form="trip">
+  openSheet(`<h3>${esc(t(record ? 'recordT' : isNew ? 'newTripT' : 'tripInfo'))}</h3><form data-form="trip">
     <label class="fld"><span>${esc(t('tripTitle'))}</span><input class="in" name="title" value="${esc(tr.title)}" placeholder="${esc(t('tripTitlePh'))}" autocomplete="off"></label>
     <div class="fld"><span>${esc(t('icon'))}</span><input class="in" name="icon" value="${esc(tr.icon || '')}" style="width:80px;font-size:24px;text-align:center" aria-label="${esc(t('icon'))}">
       <div class="flags">${FLAGS.map(([f, c]) => `<button type="button" data-flag="${f}" data-cur="${c}" class="${tr.icon === f ? 'on' : ''}">${f}</button>`).join('')}</div></div>
     <div class="two"><label class="fld"><span>${esc(t('start'))}</span><input class="in" type="date" name="start" value="${esc(tr.start || '')}"></label>
       <label class="fld"><span>${esc(t('end'))}</span><input class="in" type="date" name="end" value="${esc(tr.end || '')}"></label></div>
     <label class="fld" data-year><span>${esc(t('year'))}</span><input class="in" name="year" inputmode="numeric" value="${esc(tr.year || '')}"></label>
-    <div class="two"><label class="fld"><span>${esc(t('cur'))}</span><select class="in" name="cur">${CURS.map((c) => `<option ${c === (tr.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
+    <div class="two" ${record ? 'hidden' : ''}><label class="fld"><span>${esc(t('cur'))}</span><select class="in" name="cur">${CURS.map((c) => `<option ${c === (tr.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
       <label class="fld" data-rate><span data-ratel>${esc(t('rateL', { c: tr.cur || 'EUR' }))}</span><input class="in" name="rate" inputmode="decimal" value="${tr.rate ?? ''}"></label></div>
     <div class="two"><label class="fld"><span>${esc(t('apFrom'))}</span><input class="in" name="apFrom" value="${esc(tr.apFrom || '')}" placeholder="MUC" maxlength="4" autocapitalize="characters" autocomplete="off"></label>
       <label class="fld"><span>${esc(t('apTo'))}</span><input class="in" name="apTo" value="${esc(tr.apTo || '')}" placeholder="${esc(tr.title ? codeTo(tr) : t('apPh'))}" maxlength="4" autocapitalize="characters" autocomplete="off"></label></div>
-    <label class="fld"><span>${esc(t('budget'))}</span><input class="in" name="budget" inputmode="decimal" value="${tr.budget ?? ''}"></label>
-    <label class="fld"><span>${esc(t('cover'))}</span><input class="in" name="cover" value="${esc(tr.cover || '')}" placeholder="https://…" autocomplete="off"></label>
+    ${record ? `<label class="fld"><span>${esc(t('recordNote'))}</span><textarea class="in" name="memo" rows="3" placeholder="${esc(t('recordPh'))}"></textarea></label>` : ''}
+    <label class="fld" ${record ? 'hidden' : ''}><span>${esc(t('budget'))}</span><input class="in" name="budget" inputmode="decimal" value="${tr.budget ?? ''}"></label>
+    <label class="fld" ${record ? 'hidden' : ''}><span>${esc(t('cover'))}</span><input class="in" name="cover" value="${esc(tr.cover || '')}" placeholder="https://…" autocomplete="off"></label>
+    ${isNew && window.notionSync ? `<label class="toggle"><input type="checkbox" name="toNotion" ${record ? '' : 'checked'}>${esc(t('toNotion'))}</label>` : ''}
     <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-trip">${esc(t('delTrip'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
   </form>`, (p) => {
     const f = p.querySelector('form');
@@ -1573,8 +1585,11 @@ function tripSheet(tr) {
         cur: f.cur.value, rate: f.cur.value === 'EUR' ? 1 : num(f.rate.value), budget: num(f.budget.value), cover: f.cover.value.trim(), apFrom: f.apFrom.value.trim().toUpperCase(), apTo: f.apTo.value.trim().toUpperCase(), mt: Date.now(),
       };
       if (isNew) {
-        write([[['trips', tr.id], { id: tr.id, ...fields, items: {}, checks: {}, memo: '', created: Date.now() }]]);
-        closeSheet(); go(`#/t/${tr.id}/plan`);
+        // Ohne Häkchen "auch in Notion" nur in der App (local) / 노션 체크를 끄면 앱에만 (local)
+        const local = f.toNotion ? !f.toNotion.checked : record;
+        write([[['trips', tr.id], { id: tr.id, ...fields, items: {}, checks: {}, memo: record && f.memo ? f.memo.value.trim() : '', created: Date.now(), ...(local && { local: true }) }]]);
+        closeSheet();
+        if (record) toast(t('recorded')); else go(`#/t/${tr.id}/plan`);
       } else {
         write(Object.entries(fields).map(([k, v]) => [['trips', tr.id, k], v]));
         closeSheet();
@@ -1645,6 +1660,7 @@ const ACT = {
   open: (b) => go(`#/t/${b.dataset.id}`),
   tab: (b) => { ui.memoEdit = false; go(`#/t/${ui.trip}/${b.dataset.tab}`); },
   'new-trip': () => tripSheet(),
+  'add-record': () => tripSheet(null, { record: true }),
   'edit-trip': () => tripSheet(cur()),
   'del-trip': () => {
     const tr = cur();

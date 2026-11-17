@@ -439,7 +439,7 @@
       const tid = p[1], tr = trips[tid], old = before ? before[i] : undefined;
       if (p.length === 2) {
         if (v == null && old && old.notion) queue({ k: 'delTrip', tid, nid: old.notion.page });
-        else if (v && !v.notion && v.title && v.from !== 'notion' && !old) queue({ k: 'newTrip', tid });
+        else if (v && !v.notion && v.title && v.from !== 'notion' && !v.local && !old) queue({ k: 'newTrip', tid }); // local: nur in der App / 앱에만
         return;
       }
       if (!tr) return;
@@ -531,7 +531,7 @@
     if (op.k === 'delItem') { await call('PATCH', `pages/${op.nid}`, { archived: true }); return false; }
     if (op.k === 'delCheck') { await call('DELETE', `blocks/${op.nid}`); return false; }
     if (op.k === 'newTrip') {
-      if (!tr || tr.notion || tr.from === 'notion') return false;
+      if (!tr || tr.notion || tr.from === 'notion' || tr.local) return false;
       const n = await createTrip(tr);
       write([[['trips', op.tid, 'notion'], n]], { sync: true });
       for (const x of items(trips[op.tid])) queue({ k: 'item', tid: op.tid, id: x.id });
