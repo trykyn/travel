@@ -1024,7 +1024,6 @@ function planTab(tr) {
 }
 
 const needBook = (x) => !!x.booked || !!x.need;
-const bookState = (x) => (x.booked ? 'done' : needBook(x) ? 'need' : 'no');
 function bookTab(tr) {
   const all = itemsG(tr), sc = scopeOf(tr);
   const byDate = (a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0);
@@ -2073,7 +2072,8 @@ function itemSheet(tr, it, defaults = {}) {
     ${days.length ? `<div class="picks">${days.slice(0, 21).map((d) => `<button type="button" class="pill${d === it.date ? ' on' : ''}" data-pick="${d}">${esc(md(d))}</button>`).join('')}</div>` : ''}
     <label class="fld"><span>${esc(t('time'))}</span><textarea class="in" name="time" rows="${Math.min(4, (it.time || '').split('\n').length)}" style="min-height:46px" placeholder="${esc(t('timePh'))}">${esc(it.time || '')}</textarea></label>
     <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
-    <div class="fld"><span>${esc(t('bkLabel'))}</span><div class="seg bk">${[['no', 'bkNo'], ['need', 'bkNeed'], ['done', 'bkDone']].map(([v, k]) => `<label><input type="radio" name="bk" value="${v}" ${bookState(it) === v ? 'checked' : ''}><span>${esc(t(k))}</span></label>`).join('')}</div></div>
+    <div class="two"><label class="toggle"><input type="checkbox" name="need" ${needBook(it) ? 'checked' : ''}>${esc(t('bkNeed'))}</label>
+    <label class="toggle"><input type="checkbox" name="booked" ${it.booked ? 'checked' : ''}>${esc(t('bkDone'))}</label></div>
     <label class="fld" data-bklink ${it.booked ? 'hidden' : ''}><span>${esc(t('bookLink'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px" placeholder="https://…">${esc(links)}</textarea></label>
     <div class="fld"><span>${esc(t('cost'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="amount" inputmode="decimal" value="${cost.amount ?? ''}" aria-label="${esc(t('cost'))}">
       <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curOpts.map((c) => `<option ${c === (cost.cur || tr.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div>
@@ -2098,7 +2098,10 @@ function itemSheet(tr, it, defaults = {}) {
     syncEnd();
     f.addEventListener('change', (e) => {
       if (e.target.name === 'cat') syncEnd();
-      if (e.target.name === 'bk') { p.querySelector('[data-bklink]').hidden = f.bk.value === 'done'; } // gebucht → Link-Feld weg / 예약 완료면 링크 칸 숨김
+      // 예약 완료를 체크하면 예약할 것도 체크, 예약할 것을 풀면 완료도 풂 / gebucht ⇒ zu buchen
+      if (e.target.name === 'booked' && f.booked.checked) f.need.checked = true;
+      if (e.target.name === 'need' && !f.need.checked) f.booked.checked = false;
+      if (e.target.name === 'booked' || e.target.name === 'need') p.querySelector('[data-bklink]').hidden = f.booked.checked; // gebucht → Link-Feld weg / 예약 완료면 링크 칸 숨김
     });
     p.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
       f.date.value = b.dataset.pick;
@@ -2138,14 +2141,14 @@ function itemSheet(tr, it, defaults = {}) {
       const amount = parseAmount(f.amount.value);
       const x = {
         ...it, cat: f.cat.value, title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
-        time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.bk.value === 'done', code: it.code || '',
+        time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.booked.checked, code: it.code || '',
         links: f.links.value.split(/\s+/).map((s) => s.trim()).filter((s) => /^https?:\/\//.test(s)),
         order: it.order ?? Date.now() / 1000,
       };
       if (!isNaN(amount) && amount) x.cost = { amount, cur: f.cur.value }; else delete x.cost;
       // 예약 완료도 need를 켜 둠 (완료를 풀면 '예약할 것'으로 돌아가게) / gebucht behält need, falls die Buchung aufgehoben wird
       delete x.noBook;
-      x.need = f.bk.value !== 'no';
+      x.need = f.need.checked || f.booked.checked;
       if (!x.code) delete x.code;
       if (!x.links.length) delete x.links;
       if (loc) x.loc = loc; else delete x.loc;
