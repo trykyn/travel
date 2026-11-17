@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#11777c" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b5458" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#cfe6ff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#102449" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="여행">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -15,106 +15,138 @@
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <title>여행</title>
 <style>
-/* Aussehen: oben ein petrolfarbener Kopf (bei Reisen mit Titelbild das Bild), darunter ein weißes Blatt.
-   Farben je Art: Fahrt lila, Unterkunft blau, Essen orange, Sehenswert grün.
-   모양: 위는 바다색 머리(커버 사진이 있으면 사진), 아래는 흰 종이. 종류별 색: 이동 보라, 숙소 파랑, 맛집 주황, 관광 초록. */
+/* Aussehen „Bordkarte“: hellblauer Himmel, weiße Tickets mit Abrisskante und Strichcode, Navy-Schrift, Koralle als Akzent.
+   Vergangene Reisen stehen als Einreisestempel auf einer Passseite. Farben je Art: Fahrt lila, Unterkunft blau, Essen orange, Ausflug grün.
+   모양 '탑승권': 하늘색 바탕, 절취선·바코드가 있는 흰 탑승권, 남색 글씨, 산호색 포인트. 지난 여행은 여권 페이지의 입국 도장.
+   종류별 색: 이동 보라, 숙소 파랑, 맛집 주황, 관광 초록. */
 :root {
-  --brand: #11777c; --brand-2: #0d5f63; --on-brand: #fff; --sheet: #fff; --ink: #14211f; --muted: #627370; --line: #e7eeed;
-  --field: #f1f5f4; --soft: #e3f3f2; --accent: #0d6b70; --sun: #ffc94d; --sun-ink: #3b2c00;
-  --ok: #137a4b; --ok-bg: #e2f5ea; --warn: #b4520b; --warn-bg: #fff0dc; --bad: #c62f22;
-  --move: #7a5cd3; --stay: #2f72d6; --food: #e3702f; --see: #1d9a64; --etc: #7b8a88;
-  --move-bg: #efeafc; --stay-bg: #e7f0fd; --food-bg: #fdeee4; --see-bg: #e2f5ec; --etc-bg: #eef1f1;
-  --shadow: 0 1px 2px rgba(10, 40, 40, .06), 0 4px 14px rgba(10, 40, 40, .07);
+  --bg: #e7f2ff; --bg-top: #cfe6ff; --brand: #13294b; --brand-2: #0c1c36; --on-brand: #fff; --sheet: #fff; --ink: #13294b; --muted: #687a94; --line: #dbe5f2;
+  --field: #f0f5fb; --soft: #e4eefb; --accent: #2a5db0; --sun: #ff6b4a; --sun-ink: #fff; --coral: #ff6b4a; --mint: #13946f; --rail: #b8cbe6;
+  --ok: #138a63; --ok-bg: #e0f5ec; --warn: #c2541a; --warn-bg: #fff0e6; --bad: #d23a2c;
+  --move: #7a5cd3; --stay: #2f72d6; --food: #e3702f; --see: #1d9a64; --etc: #7b8aa0;
+  --move-bg: #efeafc; --stay-bg: #e7f0fd; --food-bg: #fdeee4; --see-bg: #e2f5ec; --etc-bg: #eef2f7;
+  --shadow: 0 1px 2px rgba(19, 41, 75, .05), 0 6px 18px rgba(19, 41, 75, .08);
+  --paper: #f5efe0; --paper-line: #ddd2b8; --paper-ink: #5b5546; --paper-head: #1d2742;
   --sans: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --brand: #0b5458; --brand-2: #08403f; --sheet: #121918; --ink: #e6efed; --muted: #95a8a5; --line: #243130;
-    --field: #1c2524; --soft: #15302f; --accent: #6fd3cc; --sun: #f0bd3e;
+    --bg: #0b1730; --bg-top: #102449; --brand: #3d6fd6; --brand-2: #2a56b3; --sheet: #14264a; --ink: #e8eefb; --muted: #9fb0cc; --line: #26395f;
+    --field: #1b2f58; --soft: #1a3160; --accent: #93b6ff; --sun: #ff7a5c; --coral: #ff7a5c; --mint: #4fd1a5; --rail: #34507f;
     --ok: #6fdca4; --ok-bg: #173526; --warn: #ffb070; --warn-bg: #3a2818; --bad: #ff7a6b;
-    --move: #a68cf0; --stay: #6ea4f5; --food: #f59a5e; --see: #4fcf94; --etc: #a2b0ae;
-    --move-bg: #262040; --stay-bg: #182a44; --food-bg: #3a2416; --see-bg: #14322a; --etc-bg: #222b2a;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    --move: #a68cf0; --stay: #6ea4f5; --food: #f59a5e; --see: #4fcf94; --etc: #a2b0c4;
+    --move-bg: #262040; --stay-bg: #182a44; --food-bg: #3a2416; --see-bg: #14322a; --etc-bg: #1f2a3d;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35);
+    --paper: #232a3d; --paper-line: #3a4359; --paper-ink: #cfc8b4; --paper-head: #efe6cf;
   }
 }
 * { box-sizing: border-box; touch-action: pan-x pan-y; -webkit-tap-highlight-color: transparent; }
-html { background: var(--brand); }
-body { margin: 0; background: var(--brand); color: var(--ink); font: 17px/1.5 var(--sans); -webkit-text-size-adjust: 100%; }
+html { background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 var(--sans); -webkit-text-size-adjust: 100%; }
 body.locked { overflow: hidden; }
-#app { max-width: 620px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; display: flex; flex-direction: column; }
+#app { max-width: 620px; min-height: 100vh; min-height: 100dvh; margin: 0 auto; display: flex; flex-direction: column; background: linear-gradient(180deg, var(--bg-top), var(--bg) 340px); }
 [hidden] { display: none !important; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; border: 0; background: none; padding: 0; text-align: inherit; }
 a { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Kopf / 머리 */
-.top { position: relative; padding: calc(16px + env(safe-area-inset-top)) 20px 30px; color: var(--on-brand); background: var(--brand) center/cover no-repeat; }
-.top.cover::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 30, 32, .35), rgba(0, 30, 32, .72)); }
-.top > * { position: relative; }
-.top :focus-visible { outline-color: #fff; }
+.top { position: relative; padding: calc(12px + env(safe-area-inset-top)) 16px 4px; color: var(--ink); }
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; }
-.icon-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; border-radius: 12px; font-size: 20px; }
-.top .icon-btn { background: rgba(255, 255, 255, .16); }
-.back { display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 12px 0 8px; border-radius: 12px; background: rgba(255, 255, 255, .16); font-weight: 600; font-size: 15px; }
+.icon-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; border-radius: 50%; font-size: 18px; color: var(--ink); text-decoration: none; }
+.top .icon-btn { background: var(--sheet); box-shadow: var(--shadow); }
+.back { display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 14px 0 10px; border-radius: 999px; background: var(--sheet); box-shadow: var(--shadow); font-weight: 700; font-size: 15px; }
 .lang { display: flex; gap: 12px; }
-.lang button { font-size: 15px; opacity: .75; padding: 4px 0; border-bottom: 2px solid transparent; }
-.lang button.on { opacity: 1; font-weight: 700; border-bottom-color: var(--sun); }
-h1 { margin: 14px 0 0; font-size: 30px; font-weight: 800; line-height: 1.15; letter-spacing: -.03em; }
-h1 .fl { margin-right: 8px; }
-.sub { margin: 6px 0 0; font-size: 15px; opacity: .9; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
-.chip-d { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--sun); color: var(--sun-ink); font-weight: 800; font-size: 14px; }
-.tabs { display: flex; gap: 6px; overflow-x: auto; margin: 18px -20px 0; padding: 0 20px; scrollbar-width: none; }
+.lang button { font-size: 14px; color: var(--muted); padding: 4px 0; border-bottom: 2px solid transparent; }
+.lang button.on { color: var(--ink); font-weight: 800; border-bottom-color: var(--coral); }
+h1 { margin: 0; font-size: 30px; font-weight: 900; line-height: 1.15; letter-spacing: -.035em; }
+.chip-d { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--coral); color: #fff; font-weight: 800; font-size: 14px; }
+.tabs { display: flex; gap: 6px; overflow-x: auto; margin: 12px -16px 0; padding: 0 16px 6px; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
-.tab { flex: none; padding: 8px 14px; white-space: nowrap; font-size: 15px; font-weight: 600; border-radius: 999px; background: rgba(255, 255, 255, .16); }
-.tab.on { background: #fff; color: var(--brand-2); font-weight: 700; }
+.tab { flex: none; padding: 7px 14px; white-space: nowrap; font-size: 15px; font-weight: 700; border-radius: 999px; background: var(--sheet); color: var(--muted); box-shadow: var(--shadow); }
+.tab.on { background: var(--brand); color: #fff; }
 
-/* Blatt / 종이 */
-.sheet { flex: 1; margin-top: -14px; padding: 20px 18px calc(110px + env(safe-area-inset-bottom)); background: var(--sheet); border-radius: 28px 28px 0 0; position: relative; }
-h2 { margin: 22px 2px 10px; font-size: 15px; font-weight: 700; color: var(--muted); letter-spacing: .01em; }
+/* Inhalt / 내용 */
+.sheet { flex: 1; padding: 10px 16px calc(110px + env(safe-area-inset-bottom)); position: relative; }
+h2 { margin: 22px 2px 10px; font-size: 14px; font-weight: 800; color: var(--muted); letter-spacing: .01em; }
 h2:first-child { margin-top: 2px; }
 .empty { margin: 30px 0; text-align: center; color: var(--muted); }
 .banner { margin: 0 0 14px; padding: 11px 14px; border-radius: 14px; background: var(--warn-bg); color: var(--warn); font-size: 15px; font-weight: 600; }
 
-/* Startseite / 홈 */
-.hero { display: block; width: 100%; position: relative; overflow: hidden; border-radius: 22px; padding: 18px 18px 16px; min-height: 150px;
-  background: linear-gradient(135deg, #1a9a96, #11777c 60%, #0d5f63) center/cover no-repeat; color: #fff; box-shadow: var(--shadow); }
-.hero.cover::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 25, 28, .15), rgba(0, 25, 28, .7)); }
-.hero > * { position: relative; }
-.hero .label { font-size: 14px; font-weight: 600; opacity: .9; }
-.hero .big { display: block; margin-top: 2px; font-size: 44px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
-.hero .name { display: block; margin-top: 18px; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
-.hero .when { display: block; font-size: 15px; opacity: .92; }
-.trips { display: grid; gap: 10px; }
-.trip { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; border-radius: 18px; background: var(--sheet); box-shadow: var(--shadow); border: 1px solid var(--line); }
-.trip .fl { font-size: 30px; line-height: 1; width: 36px; text-align: center; flex: none; }
-.trip .tb { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.trip .tt { font-weight: 700; font-size: 18px; letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.trip .ts { font-size: 14px; color: var(--muted); }
-.trip .td { flex: none; font-weight: 800; color: var(--accent); font-size: 16px; }
-.trip.past { box-shadow: none; padding: 10px 12px; }
-.trip.past .fl { font-size: 24px; }
-.trip.past .tt { font-size: 16px; font-weight: 600; }
-.year { margin: 22px 2px 8px; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
-h2 + .year { margin-top: 0; }
+/* Bordkarte / 탑승권 */
+.tk { display: block; width: 100%; position: relative; margin: 12px 0 16px; background: var(--sheet); border-radius: 18px; box-shadow: var(--shadow); color: var(--ink); text-align: left; }
+.tk-img { display: block; height: 84px; border-radius: 18px 18px 0 0; background: var(--soft) center/cover no-repeat; }
+.tk-main { display: block; padding: 14px 16px 10px; }
+.air { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 800; color: var(--muted); }
+.air span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.air b { flex: none; color: var(--coral); }
+.route { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: end; margin: 8px 0 2px; }
+.apc { display: block; min-width: 0; font-size: 40px; font-weight: 900; line-height: 1; letter-spacing: -.02em; }
+.apc small { display: block; margin-top: 5px; font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: 0; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.route .r { text-align: right; }
+.plane { color: var(--coral); font-size: 20px; padding: 0 8px 20px; }
+.stub { display: block; position: relative; padding: 12px 16px 14px; border-top: 2px dashed var(--line); }
+.stub::before, .stub::after { content: ""; position: absolute; top: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg-top); }
+.stub::before { left: -10px; } .stub::after { right: -10px; }
+.stub .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 16px; font-weight: 800; }
+.stub small { display: block; font: 600 10px var(--mono); letter-spacing: .12em; color: var(--muted); }
+.stub .bar { display: block; height: 30px; margin-top: 10px; opacity: .85; border-radius: 2px;
+  background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 8px, var(--ink) 8px 11px, transparent 11px 12px, var(--ink) 12px 13px, transparent 13px 17px); }
+.tk:has(.dday) .air { padding-right: 86px; }
+.dday { position: absolute; right: 14px; top: -11px; z-index: 1; padding: 4px 11px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 14px; font-weight: 900; box-shadow: 0 3px 10px rgba(255, 107, 74, .35); }
+.tk-head { margin: 14px 0 0; }
+.tk-head .apc { font-size: 34px; }
+.tk-head .tk-img { height: 64px; }
+.trips { display: grid; gap: 8px; }
+.stubc { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; gap: 12px; align-items: center; width: 100%; padding: 12px 14px; background: var(--sheet); border-radius: 14px; border-left: 4px dashed var(--line); box-shadow: var(--shadow); text-align: left; }
+.stubc .c { font-size: 19px; font-weight: 900; line-height: 1.1; }
+.stubc .c small { display: block; margin-top: 2px; font-size: 11.5px; font-weight: 600; color: var(--muted); }
+.stubc b { min-width: 0; font-size: 15.5px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stubc b small { display: block; font-size: 13px; font-weight: 500; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.stubc .d { font-size: 14px; font-weight: 900; color: var(--coral); white-space: nowrap; }
+
+/* Pass mit Stempeln (vergangene Reisen) / 여권 도장 (지난 여행) */
+.passport { position: relative; margin: 24px 0 10px; padding: 14px 14px 66px; border-radius: 16px; border: 1px solid var(--paper-line); color: var(--paper-ink); overflow: hidden; box-shadow: var(--shadow);
+  background-color: var(--paper);
+  background-image: repeating-radial-gradient(circle at 20% 30%, rgba(46, 122, 88, .06) 0 2px, transparent 2px 9px), repeating-radial-gradient(circle at 80% 70%, rgba(176, 52, 58, .05) 0 2px, transparent 2px 11px); }
+.pp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; color: var(--paper-head); font-weight: 900; font-size: 16px; }
+.pp-head b { font: 700 11px var(--mono); letter-spacing: .14em; color: var(--paper-ink); opacity: .8; }
+.pp-year { margin: 14px 2px 8px; font: 700 12px var(--mono); letter-spacing: .22em; color: var(--paper-ink); opacity: .8; }
+.stamps { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px 8px; }
+.st { aspect-ratio: 1.1; display: grid; place-items: center; text-align: center; padding: 5px; border: 2.5px solid var(--stamp); border-radius: 50%; color: var(--stamp); font: 700 10px/1.25 var(--mono); letter-spacing: .04em; mix-blend-mode: multiply; }
+.st b { display: block; font: 900 18px/1.05 Georgia, "Times New Roman", serif; letter-spacing: .02em; }
+.st .stn { display: block; max-width: 76px; margin: 2px auto 1px; font: 700 10.5px/1.25 var(--sans); letter-spacing: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st.rect { border-radius: 8px; border-style: double; border-width: 4.5px; }
+.st.dash { border-style: dashed; }
+.mrz { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 14px 12px; border-top: 1px solid var(--paper-line); font: 600 11px/1.45 var(--mono); letter-spacing: .1em; color: var(--paper-ink); opacity: .75; white-space: nowrap; overflow: hidden; }
+@media (prefers-color-scheme: dark) { .passport .st { mix-blend-mode: normal; filter: brightness(1.7) saturate(.85); } }
 
 /* Tage / 날짜별 일정 */
-.days { display: flex; gap: 6px; overflow-x: auto; margin: -4px -18px 14px; padding: 2px 18px 4px; scrollbar-width: none; position: sticky; top: 0; z-index: 3; background: var(--sheet); }
+.days { display: flex; gap: 6px; overflow-x: auto; margin: -2px -16px 14px; padding: 4px 16px 6px; scrollbar-width: none; position: sticky; top: 0; z-index: 3; background: var(--bg); }
 .days::-webkit-scrollbar { display: none; }
-.days button { flex: none; display: flex; flex-direction: column; align-items: center; min-width: 52px; padding: 6px 8px; border-radius: 14px; background: var(--field); font-size: 13px; color: var(--muted); }
+.days button { flex: none; display: flex; flex-direction: column; align-items: center; min-width: 54px; padding: 6px 8px; border-radius: 14px; background: var(--sheet); box-shadow: var(--shadow); font-size: 12.5px; font-weight: 600; color: var(--muted); }
 .days button b { font-size: 17px; color: var(--ink); }
-.days button.today { background: var(--sun); color: var(--sun-ink); }
-.days button.today b { color: var(--sun-ink); }
-.day { scroll-margin-top: 76px; margin-bottom: 18px; }
+.days button.today { background: var(--coral); color: #fff; }
+.days button.today b { color: #fff; }
+.day { scroll-margin-top: 80px; margin-bottom: 18px; }
 .dh { display: flex; align-items: baseline; gap: 8px; margin: 0 2px 8px; }
-.dh .n { font-weight: 800; font-size: 19px; letter-spacing: -.02em; }
-.dh .d { color: var(--muted); font-size: 15px; }
-.dh .now { margin-left: auto; padding: 1px 9px; border-radius: 999px; background: var(--sun); color: var(--sun-ink); font-size: 13px; font-weight: 800; }
+.dh .n { font-weight: 900; font-size: 18px; letter-spacing: -.02em; }
+.dh .d { color: var(--muted); font-size: 15px; font-weight: 600; }
+.dh .now { margin-left: auto; padding: 1px 9px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 13px; font-weight: 800; }
 .night { display: flex; gap: 8px; align-items: center; margin: 0 0 8px; padding: 8px 12px; border-radius: 12px; background: var(--stay-bg); color: var(--stay); font-size: 14px; font-weight: 600; }
 .night span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .items { display: grid; gap: 8px; }
-.it { display: flex; gap: 12px; width: 100%; padding: 12px 14px 12px 12px; border-radius: 16px; background: var(--sheet); border: 1px solid var(--line); box-shadow: var(--shadow); position: relative; }
+.it { display: flex; gap: 12px; width: 100%; padding: 12px 14px 12px 12px; border-radius: 14px; background: var(--sheet); box-shadow: var(--shadow); position: relative; }
 .it::before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 0 4px 4px 0; background: var(--c); }
+/* Tagesplan wie ein Flugplan: gestrichelte Linie mit farbigen Punkten / 하루 일정은 점선 위의 비행 일정표 */
+.day .items { position: relative; padding-left: 22px; }
+.day .items::before { content: ""; position: absolute; left: 7px; top: 12px; bottom: 8px; border-left: 2px dashed var(--rail); }
+.day .it::before { left: -20px; top: 17px; bottom: auto; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 3px var(--bg); }
+.cf { position: absolute; right: 10px; top: 8px; padding: 0 4px; border: 1.5px solid var(--mint); border-radius: 4px; color: var(--mint); font: 900 10px/1.6 var(--mono); letter-spacing: .04em; transform: rotate(4deg); opacity: .9; }
+.it:has(.cf) .t { padding-right: 82px; }
 .it .ic { flex: none; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; background: var(--cbg); }
 .it .ib { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .it .t { font-weight: 700; font-size: 16.5px; line-height: 1.35; overflow-wrap: anywhere; }
@@ -231,7 +263,7 @@ input[type="date"].in { min-height: 46px; }
 /* 2단계: 오늘, 지도, 비교 / Heute, Karte, Vergleich */
 .c-shop { --c: #d4457f; --cbg: #fde8f0; }
 @media (prefers-color-scheme: dark) { .c-shop { --c: #f07aa8; --cbg: #3a1a28; } }
-.next { display: block; padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #1a9a96, #11777c 60%, #0d5f63); color: #fff; box-shadow: var(--shadow); }
+.next { display: block; padding: 18px; border-radius: 22px; background: linear-gradient(135deg, #24467d, #13294b); color: #fff; box-shadow: var(--shadow); }
 .next .lb { font-size: 14px; font-weight: 700; opacity: .9; }
 .next .nt-title { display: block; margin-top: 4px; font-size: 23px; font-weight: 800; letter-spacing: -.02em; line-height: 1.25; overflow-wrap: anywhere; }
 .next .nt-when { font-size: 16px; font-weight: 600; opacity: .95; }
@@ -567,6 +599,31 @@ function nightsLabel(tr) {
 }
 const coverStyle = (tr) => (tr.cover && /^https:\/\//.test(tr.cover) ? ` style="background-image:url('${esc(tr.cover).replace(/'/g, '%27')}')"` : '');
 
+// ---------- Flughafen-Codes / 공항 코드 ----------
+// Aus dem Namen der Reise erraten; in den Reise-Infos änderbar (apFrom / apTo).
+// 여행 이름으로 짐작하고, 여행 정보(✎)에서 바꿀 수 있음.
+const AIRPORTS = [
+  [/파리|paris|디즈니|disney/i, 'CDG'], [/후쿠오카|fukuoka|유후인|yufuin|벳푸|beppu/i, 'FUK'], [/오사카|osaka|교토|kyoto/i, 'KIX'],
+  [/도쿄|tokyo|tokio/i, 'HND'], [/오키나와|okinawa/i, 'OKA'], [/삿포로|sapporo|홋카이도/i, 'CTS'], [/제주|jeju/i, 'CJU'],
+  [/부산|busan|경주|포항/i, 'PUS'], [/서울|seoul|한국|korea|korean/i, 'ICN'], [/마요르카|mallorca|palma/i, 'PMI'],
+  [/프라하|prag|prague/i, 'PRG'], [/스트라스부르|strasbourg|straßburg/i, 'SXB'], [/몰디브|maldives|malediven/i, 'MLE'],
+  [/바르셀로나|barcelona/i, 'BCN'], [/로마|\brom\b|rome/i, 'FCO'], [/밀라노|milan|mailand/i, 'MXP'], [/베네치아|venedig|venice/i, 'VCE'],
+  [/런던|london/i, 'LHR'], [/방콕|bangkok/i, 'BKK'], [/뉴욕|new york/i, 'JFK'], [/빈\b|wien|vienna/i, 'VIE'], [/리스본|lisbon|lissabon/i, 'LIS'],
+  [/아테네|athen/i, 'ATH'], [/테네리페|tenerife|teneriffa/i, 'TFS'], [/가르다|garda|이탈리아|italien|italy/i, 'VRN'], [/암스테르담|amsterdam/i, 'AMS'],
+  [/취리히|zürich|zurich/i, 'ZRH'], [/니스|\bnice\b|nizza/i, 'NCE'], [/크로아티아|kroatien|croatia|split/i, 'SPU'], [/스키|\bski\b/i, 'SKI'],
+];
+function codeTo(tr) {
+  if (tr.apTo) return tr.apTo;
+  for (const [re, c] of AIRPORTS) if (re.test(tr.title || '')) return c;
+  const cc = flagCC(tr.icon);
+  if (cc) return cc.toUpperCase();
+  return ((tr.title || '').match(/[A-Za-z]{3}/) || ['✈'])[0].toUpperCase();
+}
+const codeFrom = (tr) => tr.apFrom || 'MUC';
+const cityFrom = (tr) => (codeFrom(tr) === 'MUC' ? (ui.lang === 'de' ? 'München' : '뮌헨') : codeFrom(tr) === 'ICN' ? (ui.lang === 'de' ? 'Seoul' : '서울') : '');
+const mmdd = (s) => (isDate(s) ? `${s.slice(5, 7)}.${s.slice(8)}` : '—');
+
+// ---------- Startseite / 홈 ----------
 function homeView() {
   const list = allTrips();
   const byStart = (a, b) => (a.start || `${a.year || 9999}-99`).localeCompare(b.start || `${b.year || 9999}-99`);
@@ -574,53 +631,74 @@ function homeView() {
   const up = list.filter((x) => status(x) === 'up').sort(byStart);
   const past = list.filter((x) => status(x) === 'past').sort((a, b) => byStart(b, a));
   const hero = now[0] || up.find((x) => isDate(x.start));
-  let h = `<header class="top"><div class="bar"><div style="font-weight:800;font-size:15px;opacity:.9">🧳</div>${langSwitch()}
-    <button class="icon-btn" data-act="settings" aria-label="${esc(t('settings'))}">⚙️</button></div>
-    <h1>${esc(t('app'))}</h1></header><section class="sheet">`;
+  let h = `<header class="top"><div class="bar"><h1>${esc(t('app'))}</h1>
+    <span class="set-row">${langSwitch()}<button class="icon-btn" data-act="settings" aria-label="${esc(t('settings'))}">⚙︎</button></span></div></header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
   if (window.notionSync) h += window.notionSync.bannerHtml();
   if (!list.length) h += `<p class="empty">${esc(t('noTrips'))}</p>`;
-  if (hero) {
-    const st = status(hero);
-    h += `<button class="hero${hero.cover ? ' cover' : ''}" data-act="open" data-id="${hero.id}"${coverStyle(hero)}>
-      <span class="label">${esc(st === 'now' ? t('ongoing') : t('next'))}</span>
-      <span class="big">${esc(st === 'now' ? t('dayN', { n: diff(hero.start, today()) + 1 }) : dLabel(hero))}</span>
-      <span class="name">${esc(hero.icon || '✈️')} ${esc(hero.title)}</span>
-      <span class="when">${esc(fmtRange(hero))}${nightsLabel(hero) ? ' · ' + esc(nightsLabel(hero)) : ''}</span></button>`;
-  }
+  if (hero) h += ticket(hero);
   const rest = [...now, ...up].filter((x) => x !== hero);
-  if (rest.length) h += `<h2>${esc(t('upcoming'))}</h2><div class="trips">${rest.map((x) => tripCard(x)).join('')}</div>`;
-  if (past.length) {
-    h += `<h2>${esc(t('past'))}</h2>`;
-    let y = null;
-    for (const x of past) {
-      const yy = (x.start || '').slice(0, 4) || String(x.year || '');
-      if (yy !== y) { if (y !== null) h += '</div>'; y = yy; h += `<div class="year">${esc(yy)}</div><div class="trips">`; }
-      h += tripCard(x, true);
-    }
-    h += '</div>';
-  }
+  if (rest.length) h += `<h2>${esc(t('upcoming'))}</h2><div class="trips">${rest.map((x) => stubCard(x)).join('')}</div>`;
+  if (past.length) h += passport(past);
   h += `</section><button class="fab" data-act="new-trip">${esc(t('newTrip'))}</button>`;
   return h;
 }
-function tripCard(x, past) {
-  const n = items(x).length;
-  const sub = [fmtRange(x), nightsLabel(x), !past && n ? t('items', { n }) : ''].filter(Boolean).join(' · ');
-  return `<button class="trip${past ? ' past' : ''}" data-act="open" data-id="${x.id}"><span class="fl">${esc(x.icon || '✈️')}</span>
-    <span class="tb"><span class="tt">${esc(x.title)}</span><span class="ts">${esc(sub)}</span></span>
-    ${past ? '' : `<span class="td">${esc(dLabel(x))}</span>`}</button>`;
+// Großer Bordkarte für die nächste Reise / 다음 여행은 큰 탑승권
+function ticket(tr) {
+  const st = status(tr);
+  const badge = st === 'now' ? `${t('ongoing')} · ${t('dayN', { n: diff(tr.start, today()) + 1 })}` : dLabel(tr);
+  const n = isDate(tr.start) && isDate(tr.end) ? diff(tr.start, tr.end) : 0;
+  return `<button class="tk tk-big" data-act="open" data-id="${tr.id}">
+    ${tr.cover ? `<span class="tk-img"${coverStyle(tr)}></span>` : ''}
+    ${badge ? `<span class="dday">${esc(badge)}</span>` : ''}
+    <span class="tk-main">
+      <span class="air"><span>BOARDING PASS · ${esc(t('pass'))}</span><b>${esc(st === 'now' ? t('ongoing') : t('next'))}</b></span>
+      <span class="route"><span class="apc">${esc(codeFrom(tr))}<small>${esc(cityFrom(tr))}</small></span><span class="plane">✈</span>
+        <span class="apc r">${esc(codeTo(tr))}<small>${esc(tr.icon || '')} ${esc(tr.title)}</small></span></span>
+    </span>
+    <span class="stub"><span class="grid"><span><small>DATE</small>${esc(mmdd(tr.start))}</span><span><small>RETURN</small>${esc(mmdd(tr.end))}</span>
+      <span><small>STAY</small>${esc(n ? nightsText(n) : '—')}</span></span><span class="bar" aria-hidden="true"></span></span></button>`;
 }
+// Kleiner Abschnitt für weitere kommende Reisen / 다가오는 여행은 작은 탑승권 조각
+function stubCard(tr) {
+  return `<button class="stubc" data-act="open" data-id="${tr.id}"><span class="c">${esc(codeTo(tr))}<small>${esc(mmdd(tr.start) === '—' ? String(tr.year || '') : mmdd(tr.start))}</small></span>
+    <b>${esc(tr.icon || '✈️')} ${esc(tr.title)}<small>${esc([fmtRange(tr), nightsLabel(tr)].filter(Boolean).join(' · '))}</small></b>
+    <span class="d">${esc(dLabel(tr) || t('undated'))}</span></button>`;
+}
+// Vergangene Reisen als Einreisestempel im Pass / 지난 여행은 여권 입국 도장
+const STAMP_INK = ['#b0343a', '#2b5aa6', '#2e7a58', '#6a4a9c', '#a8621f'];
+function passport(past) {
+  let h = `<section class="passport"><div class="pp-head"><span>${esc(t('pastPass'))}</span><b>ENTRIES · ${past.length}</b></div>`;
+  let y = null, i = 0;
+  for (const x of past) {
+    const yy = (x.start || '').slice(0, 4) || String(x.year || '');
+    if (yy !== y) { if (y !== null) h += '</div>'; y = yy; h += `<div class="pp-year">${esc(yy)}</div><div class="stamps">`; }
+    const seed = parseInt(hashId(x.id), 36);
+    const rot = (seed % 15) - 7, shape = ['', 'rect', 'dash', 'rect dash'][seed % 4];
+    const ink = STAMP_INK[i++ % STAMP_INK.length];
+    const d = isDate(x.start) ? `${x.start.slice(2, 4)}.${x.start.slice(5, 7)}.${x.start.slice(8)}` : String(x.year || '');
+    h += `<button class="st ${shape}" style="--stamp:${ink};transform:rotate(${rot}deg)" data-act="open" data-id="${x.id}">
+      <span><b>${esc(codeTo(x))}</b><span class="stn">${esc(x.title)}</span>${esc(d)}</span></button>`;
+  }
+  h += `</div><div class="mrz" aria-hidden="true">P&lt;KOR&lt;&lt;FAMILY&lt;&lt;TRAVEL&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>${esc(past.map((x) => codeTo(x)).join('<').slice(0, 26))}&lt;&lt;&lt;&lt;&lt;&lt;</div></section>`;
+  return h;
+}
+const hashId = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); };
 
 function tripView(tr) {
   const tabs = tabsOf(tr);
   if (!tabs.includes(ui.tab)) ui.tab = 'plan';
   const d = dLabel(tr);
-  let h = `<header class="top${tr.cover ? ' cover' : ''}"${coverStyle(tr)}><div class="bar">
+  // Kopf als Bordkarte: Route mit Flughafen-Codes, Daten, Nächte, D-Tag / 머리는 탑승권: 공항 코드, 날짜, 박, D-day
+  const tm = (s) => (isDate(s) ? dayName(s, { month: 'numeric', day: 'numeric', weekday: 'short' }) : t('undated'));
+  let h = `<header class="top"><div class="bar">
     <button class="back" data-act="home">‹ ${esc(t('back'))}</button>
     <span class="set-row">${tr.notion ? `<a class="icon-btn nbtn" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener" aria-label="${esc(t('nOpen'))}">N</a>` : ''}
     <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">✎</button></span></div>
-    <h1><span class="fl">${esc(tr.icon || '✈️')}</span>${esc(tr.title)}</h1>
-    <p class="sub"><span>${esc(fmtRange(tr))}</span>${nightsLabel(tr) ? `<span>${esc(nightsLabel(tr))}</span>` : ''}${d ? `<span class="chip-d">${esc(d)}</span>` : ''}</p>
+    <div class="tk tk-head">${tr.cover ? `<span class="tk-img"${coverStyle(tr)}></span>` : ''}${d ? `<span class="dday">${esc(d)}</span>` : ''}
+      <div class="tk-main"><div class="air"><span>${esc(tr.icon || '✈️')} ${esc(tr.title)}</span><b>${esc(nightsLabel(tr))}</b></div>
+      <div class="route"><span class="apc">${esc(codeFrom(tr))}<small>${esc(tm(tr.start))}</small></span><span class="plane">✈</span>
+        <span class="apc r">${esc(codeTo(tr))}<small>${esc(isDate(tr.end) && tr.end !== tr.start ? tm(tr.end) : String(tr.year || ''))}</small></span></div></div></div>
     <nav class="tabs">${tabs.map((k) => `<button class="tab${ui.tab === k ? ' on' : ''}" data-act="tab" data-tab="${k}">${esc(t('tabs.' + k))}</button>`).join('')}</nav>
     </header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
@@ -643,7 +721,7 @@ function itemCard(it, tr, day) {
   if (it.cat === 'stay' && isDate(it.date) && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} – ${md(it.end)} · ${nightsText(diff(it.date, it.end))}`));
   if (it.cat === 'move' && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} · ${md(it.end)}`));
   if (!isOut) {
-    if (it.booked) meta.push(`<span class="ok">✓ ${esc(t('booked'))}</span>`);
+    if (it.booked) meta.push(`<span class="ok sr">✓ ${esc(t('booked'))}</span>`);
     else if (it.cat === 'stay' || it.cat === 'move') meta.push(`<span class="todo">${esc(t('notBooked'))}</span>`);
     if (it.cost && it.cost.amount) meta.push(esc(money(it.cost.amount, it.cost.cur)));
   }
@@ -652,7 +730,7 @@ function itemCard(it, tr, day) {
   // Unterseite in Notion (서울여행, 가르다호 …), wenn nicht schon danach gefiltert / 노션 하위 페이지 이름
   if (it.grp && !ui.grp) meta.push(`<span class="grp">${esc(it.grp)}</span>`);
   const notes = (it.notes || '').replace(URL_RE, '').trim();
-  return `<button class="it c-${it.cat || 'etc'}${it.done && !isOut ? ' done' : ''}" data-act="edit-item" data-id="${it.id}">
+  return `<button class="it c-${it.cat || 'etc'}${it.done && !isOut ? ' done' : ''}" data-act="edit-item" data-id="${it.id}">${it.booked && !isOut ? `<span class="cf" aria-hidden="true">CONFIRMED</span>` : ''}
     <span class="ic" aria-hidden="true">${isOut ? '🧳' : icon(it)}</span>
     <span class="ib"><span class="t">${isOut ? esc(t('checkout')) + ' · ' : ''}${esc(it.title || '—')}</span>
     ${meta.length ? `<span class="m">${meta.join('')}</span>` : ''}
@@ -778,8 +856,8 @@ function moneyTab(tr) {
 }
 
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
-Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기', naver: '네이버 지도', map: '🗺 구글 지도' });
-Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen', naver: 'Naver Map', map: '🗺 Google Maps' });
+Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기', naver: '네이버 지도', map: '🗺 구글 지도', pass: '탑승권', pastPass: '🛂 여권 · 지난 여행', apFrom: '출발 공항', apTo: '도착 공항', apPh: '예: MUC' });
+Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen', naver: 'Naver Map', map: '🗺 Google Maps', pass: 'Bordkarte', pastPass: '🛂 Reisepass · vergangene Reisen', apFrom: 'Abflughafen', apTo: 'Zielflughafen', apPh: 'z. B. MUC' });
 // Notion-Abgleich / 노션 연결
 Object.assign(T.ko, {
   nOpen: '노션에서 열기', nEditMemo: '노션에서 고치기', nBody: '노션 페이지 안 내용', whichTable: '어느 표에 넣을까요', grpMain: '기본 표',
@@ -1423,6 +1501,8 @@ function tripSheet(tr) {
     <label class="fld" data-year><span>${esc(t('year'))}</span><input class="in" name="year" inputmode="numeric" value="${esc(tr.year || '')}"></label>
     <div class="two"><label class="fld"><span>${esc(t('cur'))}</span><select class="in" name="cur">${CURS.map((c) => `<option ${c === (tr.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></label>
       <label class="fld" data-rate><span data-ratel>${esc(t('rateL', { c: tr.cur || 'EUR' }))}</span><input class="in" name="rate" inputmode="decimal" value="${tr.rate ?? ''}"></label></div>
+    <div class="two"><label class="fld"><span>${esc(t('apFrom'))}</span><input class="in" name="apFrom" value="${esc(tr.apFrom || '')}" placeholder="MUC" maxlength="4" autocapitalize="characters" autocomplete="off"></label>
+      <label class="fld"><span>${esc(t('apTo'))}</span><input class="in" name="apTo" value="${esc(tr.apTo || '')}" placeholder="${esc(tr.title ? codeTo(tr) : t('apPh'))}" maxlength="4" autocapitalize="characters" autocomplete="off"></label></div>
     <label class="fld"><span>${esc(t('budget'))}</span><input class="in" name="budget" inputmode="decimal" value="${tr.budget ?? ''}"></label>
     <label class="fld"><span>${esc(t('cover'))}</span><input class="in" name="cover" value="${esc(tr.cover || '')}" placeholder="https://…" autocomplete="off"></label>
     <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-trip">${esc(t('delTrip'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
@@ -1457,7 +1537,7 @@ function tripSheet(tr) {
       const start = f.start.value, end = f.end.value && f.end.value >= start ? f.end.value : start;
       const fields = {
         title, icon: f.icon.value.trim() || '✈️', start, end: start ? end : '', year: start ? +start.slice(0, 4) : (parseInt(f.year.value, 10) || new Date().getFullYear()),
-        cur: f.cur.value, rate: f.cur.value === 'EUR' ? 1 : num(f.rate.value), budget: num(f.budget.value), cover: f.cover.value.trim(), mt: Date.now(),
+        cur: f.cur.value, rate: f.cur.value === 'EUR' ? 1 : num(f.rate.value), budget: num(f.budget.value), cover: f.cover.value.trim(), apFrom: f.apFrom.value.trim().toUpperCase(), apTo: f.apTo.value.trim().toUpperCase(), mt: Date.now(),
       };
       if (isNew) {
         write([[['trips', tr.id], { id: tr.id, ...fields, items: {}, checks: {}, memo: '', created: Date.now() }]]);
