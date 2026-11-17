@@ -1034,9 +1034,9 @@ function bookTab(tr) {
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
 Object.assign(T.ko, { ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
-  todoUnbooked: '예약 전 {n}', todoChecks: '할 일·짐 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
+  todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
 Object.assign(T.de, { ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
-  todoUnbooked: '{n} nicht gebucht', todoChecks: '{n} offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
+  todoN: '{n} Aufgaben offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
 Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
 Object.assign(T.ko, { bookLink: '예약 링크 (한 줄에 하나)' });
@@ -1819,16 +1819,11 @@ function recordSheet(tr, d) {
 }
 
 // ---------- Was vor der Abreise noch offen ist (Startseite) / 출발 전 남은 일 (홈) ----------
-function todoCounts(tr) {
-  return {
-    unbooked: items(tr).filter((x) => (x.cat === 'stay' || x.cat === 'move') && !x.booked).length,
-  };
-}
+// Startseite: offene Aufgaben (nicht die Packliste) / 홈: 남은 할 일 개수 (짐 체크리스트는 빼고)
 function todoLine(tr) {
   if (status(tr) !== 'up') return '';
-  const c = todoCounts(tr), parts = [];
-  if (c.unbooked) parts.push(`${ms('pending')} ${esc(t('todoUnbooked', { n: c.unbooked }))}`);
-  return parts.length ? `<span class="todo-line">${parts.join('<i>·</i>')}</span>` : '';
+  const n = Object.values(tr.checks || {}).filter((c) => c && c.id && !c.done && !isPack(c)).length;
+  return n ? `<span class="todo-line">${ms('checklist')} ${esc(t('todoN', { n }))}</span>` : '';
 }
 
 // ---------- Packlisten der Kinder (mit Bildern) / 아이별 짐 목록 (그림과 함께) ----------
