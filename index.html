@@ -467,7 +467,7 @@ const T = {
     newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란', date: '날짜', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)',
     time: '시간', timePh: '예: 15:00-16:30', isBooked: '예약 완료', code: '예약번호', cost: '비용', notes: '메모', links: '링크 (한 줄에 하나)',
     save: '저장', cancel: '취소', del: '삭제', delItemQ: '"{t}" 일정을 지울까요?', map: '지도에서 찾기', copied: '복사했어요',
-    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '그 밖의 예약', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '예약할 일정이 없어요. 일정 창에서 ‘예약할 것’을 고르면 여기 모여요.',
+    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '그 밖의 예약', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '예약할 것이 없어요. 아래 ‘+ 예약할 것’으로 넣거나, 일정 창에서 ‘예약할 것’을 고르면 여기 모여요.',
     total: '총 비용', inLocal: '현지 통화로 {x}', budgetOf: '예산 {b}', left: '{x} 남음', over: '{x} 초과', byCat: '종류별', rate: '환율', fetchRate: '오늘 환율로', rateOk: '오늘 환율로 바꿨어요', rateFail: '환율을 불러오지 못했어요',
     noRate: '환율이 없어서 유로로 못 바꾼 비용이 있어요', conv: '바로 환산', costList: '비용 목록', noCosts: '비용을 넣은 일정이 없어요', setRate: '환율 넣기',
     addCheckPh: '준비물이나 할 일', add: '추가', tplTitle: '목록 넣기', addedN: '{n}개 넣었어요', noneAdded: '이미 다 들어 있어요', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요.',
@@ -908,7 +908,8 @@ function tripView(tr) {
   h += { today: todayTab, plan: planTab, book: bookTab, cmp: cmpTab, map: mapTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
   h += '</section>';
   if (ui.tab === 'plan') h += `<button class="fab" data-act="new-item">${esc(t('addItem'))}</button>`;
-  if (ui.tab === 'book') h += `<button class="fab" data-act="new-item" data-cat="stay">${esc(t('addItem'))}</button>`;
+  // 예약 탭: 스키패스·스키학교처럼 예약할 것을 바로 추가 / Buchungen: direkt etwas „zu buchen“ anlegen
+  if (ui.tab === 'book') h += `<button class="fab" data-act="new-item" data-need="1">${esc(t('addBook'))}</button>`;
   if (ui.tab === 'money') h += `<button class="fab" data-act="new-spend">${esc(t('addSpend'))}</button>`;
   return h;
 }
@@ -1055,9 +1056,9 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkLabel: '예약', bkNo: '필요 없음', bkNeed: '예약할 것', bkDone: '예약 완료', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
+Object.assign(T.ko, { addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkLabel: '예약', bkNo: '필요 없음', bkNeed: '예약할 것', bkDone: '예약 완료', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
   todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
-Object.assign(T.de, { movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', bkLabel: 'Buchung', bkNo: 'nicht nötig', bkNeed: 'zu buchen', bkDone: 'gebucht', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
+Object.assign(T.de, { addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', bkLabel: 'Buchung', bkNo: 'nicht nötig', bkNeed: 'zu buchen', bkDone: 'gebucht', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
   todoN: '{n} Aufgaben offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
 Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
@@ -1994,7 +1995,7 @@ const FLAGS = [['🇰🇷', 'KRW'], ['🇯🇵', 'JPY'], ['🇫🇷', 'EUR'], ['
 
 function itemSheet(tr, it, defaults = {}) {
   const isNew = !it;
-  it = it || { id: uid('i'), cat: defaults.cat || 'see', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false };
+  it = it || { id: uid('i'), cat: defaults.cat || 'see', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false, ...(defaults.need && { need: true }) };
   // Neuer Eintrag in einer Notion-Reise mit mehreren Tabellen: in welche? / 노션에 표가 여러 개면 어느 표에 넣을지
   const dbs = tr.notion && tr.notion.dbs ? Object.entries(tr.notion.dbs) : [];
   const dbPick = isNew && dbs.length > 1
@@ -2239,7 +2240,7 @@ const ACT = {
   'new-item': (b) => {
     const tr = cur(), now = today();
     const day = b.dataset.day || (isDate(tr.start) && now >= tr.start && now <= (tr.end || tr.start) ? now : '');
-    itemSheet(tr, null, { date: day, cat: b.dataset.cat });
+    itemSheet(tr, null, { date: day, cat: b.dataset.cat, need: b.dataset.need === '1' });
   },
   'edit-item': (b) => itemSheet(cur(), cur().items[b.dataset.id]),
   'del-item': (b) => {
