@@ -26,7 +26,7 @@
   --move: #7a5cd3; --stay: #2f72d6; --food: #e3702f; --see: #1d9a64; --etc: #7b8aa0;
   --move-bg: #efeafc; --stay-bg: #e7f0fd; --food-bg: #fdeee4; --see-bg: #e2f5ec; --etc-bg: #eef2f7;
   --shadow: 0 1px 2px rgba(19, 41, 75, .05), 0 6px 18px rgba(19, 41, 75, .08);
-  --paper: #f5efe0; --paper-line: #ddd2b8; --paper-ink: #5b5546; --paper-head: #1d2742;
+  --paper: #fbfdff; --paper-line: #dbe5f2; --paper-ink: #687a94; --paper-head: #13294b;
   --sans: "Pretendard Variable", Pretendard, system-ui, -apple-system, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
@@ -38,7 +38,7 @@
     --move: #a68cf0; --stay: #6ea4f5; --food: #f59a5e; --see: #4fcf94; --etc: #a2b0c4;
     --move-bg: #262040; --stay-bg: #182a44; --food-bg: #3a2416; --see-bg: #14322a; --etc-bg: #1f2a3d;
     --shadow: 0 1px 2px rgba(0, 0, 0, .35);
-    --paper: #232a3d; --paper-line: #3a4359; --paper-ink: #cfc8b4; --paper-head: #efe6cf;
+    --paper: #14264a; --paper-line: #26395f; --paper-ink: #9fb0cc; --paper-head: #1d3a73;
   }
 }
 * { box-sizing: border-box; touch-action: pan-x pan-y; -webkit-tap-highlight-color: transparent; }
@@ -109,11 +109,11 @@ h2:first-child { margin-top: 2px; }
 .stubc .d { font-size: 14px; font-weight: 900; color: var(--coral); white-space: nowrap; }
 
 /* Pass mit Stempeln (vergangene Reisen) / 여권 도장 (지난 여행) */
-.passport { position: relative; margin: 24px 0 10px; padding: 14px 14px 66px; border-radius: 16px; border: 1px solid var(--paper-line); color: var(--paper-ink); overflow: hidden; box-shadow: var(--shadow);
+.passport { position: relative; margin: 24px 0 10px; padding: 0 14px 70px; border-radius: 18px; color: var(--paper-ink); overflow: hidden; box-shadow: var(--shadow);
   background-color: var(--paper);
-  background-image: repeating-radial-gradient(circle at 20% 30%, rgba(46, 122, 88, .06) 0 2px, transparent 2px 9px), repeating-radial-gradient(circle at 80% 70%, rgba(176, 52, 58, .05) 0 2px, transparent 2px 11px); }
-.pp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; color: var(--paper-head); font-weight: 900; font-size: 16px; }
-.pp-head b { font: 700 11px var(--mono); letter-spacing: .14em; color: var(--paper-ink); opacity: .8; }
+  background-image: repeating-radial-gradient(circle at 15% 25%, rgba(42, 93, 176, .055) 0 1.5px, transparent 1.5px 10px), repeating-radial-gradient(circle at 85% 80%, rgba(255, 107, 74, .045) 0 1.5px, transparent 1.5px 12px); }
+.pp-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 -14px 4px; padding: 11px 16px; background: var(--paper-head); color: #fff; font-weight: 900; font-size: 15.5px; }
+.pp-head b { font: 700 11px var(--mono); letter-spacing: .14em; color: #c9d6ee; }
 .pp-year { margin: 14px 2px 8px; font: 700 12px var(--mono); letter-spacing: .22em; color: var(--paper-ink); opacity: .8; }
 .stamps { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px 8px; }
 .st { aspect-ratio: 1.1; display: grid; place-items: center; text-align: center; padding: 5px; border: 2.5px solid var(--stamp); border-radius: 50%; color: var(--stamp); font: 700 10px/1.25 var(--mono); letter-spacing: .04em; mix-blend-mode: multiply; }
@@ -121,8 +121,10 @@ h2:first-child { margin-top: 2px; }
 .st .stn { display: block; max-width: 76px; margin: 2px auto 1px; font: 700 10.5px/1.25 var(--sans); letter-spacing: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .st.rect { border-radius: 8px; border-style: double; border-width: 4.5px; }
 .st.dash { border-style: dashed; }
-.mrz { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 14px 12px; border-top: 1px solid var(--paper-line); font: 600 11px/1.45 var(--mono); letter-spacing: .1em; color: var(--paper-ink); opacity: .75; white-space: nowrap; overflow: hidden; }
-@media (prefers-color-scheme: dark) { .passport .st { mix-blend-mode: normal; filter: brightness(1.7) saturate(.85); } }
+.mrz::before, .mrz::after { content: ""; position: absolute; top: -11px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); }
+.mrz::before { left: -10px; } .mrz::after { right: -10px; }
+.mrz { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 16px 12px; border-top: 2px dashed var(--line); font: 600 11px/1.45 var(--mono); letter-spacing: .1em; color: var(--paper-ink); opacity: .75; white-space: nowrap; overflow: hidden; }
+@media (prefers-color-scheme: dark) { .passport .st { mix-blend-mode: normal; filter: brightness(1.45); } }
 
 /* Tage / 날짜별 일정 */
 .days { display: flex; gap: 6px; overflow-x: auto; margin: -2px -16px 14px; padding: 4px 16px 6px; scrollbar-width: none; position: sticky; top: 0; z-index: 3; background: var(--bg); }
@@ -666,7 +668,7 @@ function stubCard(tr) {
     <span class="d">${esc(dLabel(tr) || t('undated'))}</span></button>`;
 }
 // Vergangene Reisen als Einreisestempel im Pass / 지난 여행은 여권 입국 도장
-const STAMP_INK = ['#b0343a', '#2b5aa6', '#2e7a58', '#6a4a9c', '#a8621f'];
+const STAMP_INK = ['#e8553a', '#2a5db0', '#13946f', '#7a5cd3', '#c27a12'];
 function passport(past) {
   let h = `<section class="passport"><div class="pp-head"><span>${esc(t('pastPass'))}</span><b>ENTRIES · ${past.length}</b></div>`;
   let y = null, i = 0;
