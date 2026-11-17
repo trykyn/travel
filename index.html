@@ -211,6 +211,10 @@ h2:first-child { margin-top: 2px; }
 .pill { padding: 6px 12px; border-radius: 999px; background: var(--field); font-size: 14px; font-weight: 600; }
 .pill.on { background: var(--brand); color: #fff; }
 .grps .pill { text-align: center; line-height: 1.25; }
+.top-grps { margin: 12px 0 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.top-grps::-webkit-scrollbar { display: none; }
+.top-grps .pill { flex: none; padding: 8px 16px; font-size: 15px; font-weight: 800; background: var(--sheet); color: var(--ink); box-shadow: var(--shadow); }
+.top-grps .pill.on { background: var(--coral); color: #fff; }
 .grps .pill small { display: block; font-size: 11.5px; font-weight: 600; opacity: .75; }
 .checks { list-style: none; margin: 0; padding: 0; }
 .checks li { display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--line); }
@@ -746,10 +750,13 @@ const hashId = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.ch
 function tripView(tr) {
   const tabs = tabsOf(tr);
   if (!tabs.includes(ui.tab)) ui.tab = 'plan';
-  // Im Plan mit gewählter Gruppe zeigt die Bordkarte deren Zeitraum / 일정 탭에서 묶음을 고르면 탑승권도 그 묶음 날짜로
-  if (ui.tab === 'plan') resolveGroup(tr);
-  const gs = ui.tab === 'plan' && ui.grp != null ? groupSpan(tr, ui.grp) : null;
-  const v = gs ? { ...tr, start: gs[0], end: gs[1] } : viewOf(tr);
+  // Gruppen (Notion-Unterseiten) sind das Hauptthema: gewählt gilt sie für alle Tabs und die Bordkarte
+  // 묶음(노션 하위 페이지)이 대주제: 고르면 모든 탭과 탑승권이 그 묶음 기준
+  const groups = resolveGroup(tr);
+  const gs = ui.grp != null ? groupSpan(tr, ui.grp) : null;
+  const glabel = (g) => { const s = groupSpan(tr, g); return esc(g || t('grpMain')) + (s ? `<small>${esc(md(s[0]))}${s[1] !== s[0] ? '–' + esc(md(s[1])) : ''}</small>` : ''); };
+  const grpBar = groups.length > 1 ? `<div class="tpl grps top-grps">${[...groups, null].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${g == null ? esc(t('mapAll')) : glabel(g)}</button>`).join('')}</div>` : '';
+  const v = scopeOf(tr);
   const d = dLabel(v);
   // Kopf als Bordkarte: Route mit Flughafen-Codes, Daten, Nächte, D-Tag / 머리는 탑승권: 공항 코드, 날짜, 박, D-day
   const tm = (s) => (isDate(s) ? dayName(s, { month: 'numeric', day: 'numeric', weekday: 'short' }) : t('undated'));
@@ -758,10 +765,10 @@ function tripView(tr) {
     <span class="set-row">${tr.notion ? `<a class="icon-btn nbtn" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener" aria-label="${esc(t('nOpen'))}">N</a>` : ''}
     <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">✎</button></span></div>
     <div class="tk tk-head">${tr.cover ? `<span class="tk-img"${coverStyle(tr)}></span>` : ''}${d ? `<span class="dday">${esc(d)}</span>` : ''}
-      <div class="tk-main"><div class="air"><span>${esc(tr.icon || '✈️')} ${esc(tr.title)}${gs ? ' · ' + esc(ui.grp || t('grpMain')) : ''}</span><b>${esc(nightsLabel(v))}</b></div>
+      <div class="tk-main"><div class="air"><span>${esc(tr.icon || '✈️')} ${esc(tr.title)}${ui.grp != null ? ' · ' + esc(ui.grp || t('grpMain')) : ''}</span><b>${esc(nightsLabel(v))}</b></div>
       <div class="route"><span class="apc">${esc(codeFrom(tr))}<small>${esc(tm(v.start))}</small></span><span class="plane">${modeSvg(modeOf(tr))}</span>
         <span class="apc r">${esc(codeTo(tr))}<small>${esc(isDate(v.end) && v.end !== v.start ? tm(v.end) : String(tr.year || ''))}</small></span></div></div></div>
-    <nav class="tabs">${tabs.map((k) => `<button class="tab${ui.tab === k ? ' on' : ''}" data-act="tab" data-tab="${k}">${esc(t('tabs.' + k))}</button>`).join('')}</nav>
+    ${grpBar}<nav class="tabs">${tabs.map((k) => `<button class="tab${ui.tab === k ? ' on' : ''}" data-act="tab" data-tab="${k}">${esc(t('tabs.' + k))}</button>`).join('')}</nav>
     </header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
   if (window.notionSync) h += window.notionSync.bannerHtml();
@@ -800,7 +807,17 @@ function itemCard(it, tr, day) {
 }
 
 // Notion-Unterseiten als Gruppen / 노션 하위 페이지 = 묶음
-const groupsOf = (tr) => [...new Set(items(tr).map((x) => x.grp || ''))];
+// Reihenfolge: nach Datum (frühere Reise zuerst), ohne Datum danach, die Haupttabelle zuletzt
+// 순서: 날짜가 빠른 묶음 먼저, 날짜 없는 묶음 다음, 기본 표는 맨 뒤
+function groupsOf(tr) {
+  const gs = [...new Set([...items(tr).map((x) => x.grp || ''), ...Object.values(tr.checks || {}).filter((c) => c && c.grp).map((c) => c.grp)])];
+  const sp = Object.fromEntries(gs.map((g) => [g, groupSpan(tr, g)]));
+  return gs.sort((a, b) => (sp[a] ? 0 : 1) - (sp[b] ? 0 : 1) || (sp[a] && sp[b] ? sp[a][0].localeCompare(sp[b][0]) : 0) || (a === '' ? 1 : 0) - (b === '' ? 1 : 0));
+}
+const itemsG = (tr) => items(tr).filter(inGrp);
+// Zeitraum der gewählten Gruppe bzw. der Reise / 고른 묶음(없으면 여행)의 기간
+const scopeOf = (tr) => { const s = ui.grp != null ? groupSpan(tr, ui.grp) : null; return s ? { ...tr, start: s[0], end: s[1] } : viewOf(tr); };
+const scopeDays = (tr) => { const s = ui.grp != null ? groupSpan(tr, ui.grp) : null; return s ? spanDays(s[0], s[1]) : ui.grp != null ? [] : tripDays(tr); };
 const inGrp = (x) => ui.grp == null || ui.grp === '*' || (x.grp || '') === ui.grp;
 // Zeitraum einer Gruppe aus ihren Einträgen (zwei Skireisen in einer Notion-Seite = zwei Gruppen mit eigenen Tagen)
 // 묶음의 기간은 그 묶음 일정들의 날짜로 (노션 한 페이지에 스키 여행 두 번 = 묶음 두 개, 날짜·일차도 따로)
@@ -827,15 +844,10 @@ function resolveGroup(tr) {
 }
 function planTab(tr) {
   const now = today();
-  const groups = resolveGroup(tr);
-  const span = ui.grp != null ? groupSpan(tr, ui.grp) : null;
-  const days = span ? spanDays(span[0], span[1]) : ui.grp != null ? [] : tripDays(tr);
-  const all = items(tr).filter(inGrp);
+  resolveGroup(tr);
+  const days = scopeDays(tr);
+  const all = itemsG(tr);
   let h = '';
-  if (groups.length > 1) {
-    const label = (g) => { const s = groupSpan(tr, g); return esc(g || t('grpMain')) + (s ? `<small>${esc(md(s[0]))}${s[1] !== s[0] ? '–' + esc(md(s[1])) : ''}</small>` : ''); };
-    h += `<div class="tpl grps">${[null, ...groups].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${g == null ? esc(t('mapAll')) : label(g)}</button>`).join('')}</div>`;
-  }
   if (days.length > 1) {
     h += `<nav class="days">${days.map((d, i) => `<button data-act="jump" data-day="${d}" class="${d === now ? 'today' : ''}">
       <span>${esc(t('dayNo', { n: i + 1 }))}</span><b>${esc(md(d))}</b></button>`).join('')}</nav>`;
@@ -860,7 +872,7 @@ function planTab(tr) {
 }
 
 function bookTab(tr) {
-  const all = items(tr);
+  const all = itemsG(tr), sc = scopeOf(tr);
   const byDate = (a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0);
   const stays = all.filter((x) => x.cat === 'stay').sort(byDate);
   const moves = all.filter((x) => x.cat === 'move').sort(byDate);
@@ -873,9 +885,9 @@ function bookTab(tr) {
       <div class="progress"><span style="width:${Math.round((done / need.length) * 100)}%"></span></div></div>`;
   }
   // Nächte ohne Unterkunft / 숙소가 없는 밤
-  if (isDate(tr.start) && isDate(tr.end) && tr.end > tr.start) {
+  if (isDate(sc.start) && isDate(sc.end) && sc.end > sc.start) {
     const gaps = [];
-    for (let d = tr.start; d < tr.end; d = addDays(d, 1)) {
+    for (let d = sc.start; d < sc.end; d = addDays(d, 1)) {
       if (!stays.some((s) => isDate(s.date) && s.date <= d && d < (isDate(s.end) ? s.end : addDays(s.date, 1)))) gaps.push(d);
     }
     h += `<div class="card">${gaps.length ? `<b>${esc(t('gaps'))}</b><div class="gaps">${gaps.map((d) => `<span>${esc(dayName(d, { month: 'numeric', day: 'numeric', weekday: 'short' }))}</span>`).join('')}</div>` : esc(t('allNights'))}</div>`;
@@ -889,7 +901,7 @@ function bookTab(tr) {
 }
 
 function moneyTab(tr) {
-  const all = items(tr).filter((x) => x.cost && x.cost.amount);
+  const all = itemsG(tr).filter((x) => x.cost && x.cost.amount);
   let total = 0, local = 0, missing = 0;
   const by = {};
   for (const x of all) {
@@ -898,7 +910,8 @@ function moneyTab(tr) {
     if (x.cost.cur === tr.cur) local += x.cost.amount;
   }
   // Ausgaben unterwegs (Heute-Seite) / 여행 중 지출 ('오늘' 화면에서 기록)
-  const spends = spendsOf(tr);
+  const scm = ui.grp != null ? groupSpan(tr, ui.grp) : null;
+  const spends = spendsOf(tr).filter((s) => !scm || (s.date >= scm[0] && s.date <= scm[1]));
   const plannedTotal = total;
   let spentTotal = 0;
   for (const s of spends) {
@@ -1158,7 +1171,7 @@ const km = (a, b) => { const r = Math.PI / 180, x = (b.lng - a.lng) * r * Math.c
 const shortName = (s) => String(s || '').split(',').slice(0, 3).join(',').trim();
 
 function mapTab(tr) {
-  const days = tripDays(tr), all = items(tr);
+  const days = scopeDays(tr), all = itemsG(tr);
   const missing = all.filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title));
   let h = '';
   if (days.length > 1) h += `<div class="tpl">${['', ...days].map((d) => `<button class="pill${(ui.mapDay || '') === d ? ' on' : ''}" data-act="map-day" data-day="${d}">${d ? esc(t('dayNo', { n: days.indexOf(d) + 1 })) : esc(t('mapAll'))}</button>`).join('')}</div>`;
@@ -1188,9 +1201,9 @@ function loadLeaflet() {
 function mapList(tr, day) {
   if (day) {
     const stay = items(tr).filter((x) => x.cat === 'stay' && x.loc && isDate(x.date) && x.date < day && day <= (x.end || x.date));
-    return [...stay, ...dayItems(tr, day)].filter((x) => x.loc && isFinite(x.loc.lat));
+    return [...stay, ...dayItems(tr, day)].filter((x) => x.loc && isFinite(x.loc.lat) && inGrp(x));
   }
-  return items(tr).filter((x) => x.loc && isFinite(x.loc.lat)).sort((a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0));
+  return itemsG(tr).filter((x) => x.loc && isFinite(x.loc.lat)).sort((a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0));
 }
 function popupHtml(x) {
   const when = [x.date ? dayName(x.date, { month: 'short', day: 'numeric', weekday: 'short' }) : '', (x.time || '').split('\n')[0]].filter(Boolean).join(' · ');
@@ -1227,7 +1240,7 @@ async function initMap(tr) {
   if (mapObj) { mapObj.remove(); mapObj = null; }
   const box = $('#map');
   if (!box) return;
-  const days = tripDays(tr), day = ui.mapDay || '', list = mapList(tr, day);
+  const days = scopeDays(tr), day = days.includes(ui.mapDay) ? ui.mapDay : '', list = mapList(tr, day);
   // Jedes Zeichnen der Karte ist bei Google ein Kartenaufruf / 지도를 그릴 때마다 구글에서는 1번으로 셈
   if (useGoogle() && gmBudget('map', 100)) {
     try { await initGoogleMap(tr, box, list, day, days); return; } catch (e) { console.warn(e); ui.gmFailed = true; }
@@ -1258,7 +1271,7 @@ async function initMap(tr) {
 async function findAll() {
   const tr = cur();
   if (ui.finding || !tr) return;
-  const list = items(tr).filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title));
+  const list = itemsG(tr).filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title));
   ui.finding = true;
   const found = [], hits = [];
   let miss = 0;
@@ -1288,7 +1301,7 @@ const optsOf = (tr) => Object.values(tr.opts || {}).filter((o) => o && o.id && o
 const optNights = (o) => (isDate(o.start) && isDate(o.end) && o.end > o.start ? diff(o.start, o.end) : 0);
 const optEur = (o, tr) => (o.price ? eurOf({ amount: o.price, cur: o.cur || 'EUR' }, tr) : null);
 function cmpTab(tr) {
-  const kind = ui.cmpKind || 'stay', all = optsOf(tr);
+  const kind = ui.cmpKind || 'stay', all = optsOf(tr).filter((o) => ui.grp == null || (o.grp || '') === ui.grp);
   let h = `<div class="tpl">${['stay', 'car', 'etc'].map((k) => { const n = all.filter((o) => (o.kind || 'stay') === k).length; return `<button class="pill${kind === k ? ' on' : ''}" data-act="cmp-kind" data-k="${k}">${esc(t('kinds.' + k))}${n ? ' ' + n : ''}</button>`; }).join('')}</div>`;
   const list = all.filter((o) => (o.kind || 'stay') === kind);
   if (!list.length) return h + `<p class="empty">${esc(t('noOpts'))}</p>`;
@@ -1319,7 +1332,8 @@ function optItemEntries(tr, o) {
   const iid = old ? o.itemId : uid('i');
   const item = {
     ...(old || {}), id: iid, cat: kind === 'stay' ? 'stay' : kind === 'car' ? 'move' : 'etc',
-    title: kind === 'car' ? t('carTitle', { n: o.name }) : o.name, date: o.start || '', end: o.end || '',
+    title: kind === 'car' ? t('carTitle', { n: o.name }) : o.name, date: o.start || '', end: o.end || '', grp: o.grp || '',
+    ...(o.grp && tr.notion && { ndb: (Object.entries(tr.notion.dbs || {}).find(([, s]) => s.grp === o.grp) || [])[0] }),
     time: (old && old.time) || '', notes: o.notes || '', booked: !!(old && old.booked), order: (old && old.order) ?? Date.now() / 1000,
   };
   if (o.price) item.cost = { amount: o.price, cur: o.cur || 'EUR' }; else delete item.cost;
@@ -1330,7 +1344,8 @@ function optItemEntries(tr, o) {
 }
 function optSheet(tr, o) {
   const isNew = !o;
-  o = o || { id: uid('o'), kind: ui.cmpKind || 'stay', name: '', start: tr.start || '', end: tr.end || '', price: null, cur: 'EUR', notes: '', link: '' };
+  const sc = scopeOf(tr);
+  o = o || { id: uid('o'), kind: ui.cmpKind || 'stay', name: '', start: sc.start || '', end: sc.end || '', price: null, cur: 'EUR', notes: '', link: '', grp: ui.grp != null ? ui.grp : '' };
   const curOpts = [...new Set(['EUR', tr.cur || 'EUR', o.cur || 'EUR'])];
   openSheet(`<h3>${esc(t(isNew ? 'newOpt' : 'editOpt'))}</h3><form data-form="opt">
     <div class="cats">${['stay', 'car', 'etc'].map((k) => `<label class="c-${k === 'stay' ? 'stay' : k === 'car' ? 'move' : 'etc'}"><input type="radio" name="kind" value="${k}" ${(o.kind || 'stay') === k ? 'checked' : ''}><span>${esc(t('kinds.' + k))}</span></label>`).join('')}</div>
@@ -1371,7 +1386,7 @@ const TPL = {
   before: { ko: ['숙소 예약 확인', '렌트카 예약', '여행자 보험 가입', '환전·카드 해외결제 확인', '유치원·학교에 알리기', '우편물·화분 부탁하기', '주차 예약'], de: ['Unterkünfte prüfen', 'Mietwagen buchen', 'Reiseversicherung abschließen', 'Geld wechseln·Karte freischalten', 'Kita·Schule Bescheid sagen', 'Post·Pflanzen organisieren', 'Parkplatz reservieren'] },
 };
 function checkTab(tr) {
-  const list = Object.values(tr.checks || {}).filter((x) => x && x.id).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
+  const list = Object.values(tr.checks || {}).filter((x) => x && x.id && (ui.grp == null || !x.grp || x.grp === ui.grp)).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
   const done = list.filter((x) => x.done).length;
   let h = `<form class="add" data-form="add-check"><input name="text" placeholder="${esc(t('addCheckPh'))}" autocomplete="off" enterkeyhint="done"><button class="btn sun">${esc(t('add'))}</button></form>
     <div class="tpl"><span class="note" style="margin:6px 4px 0 2px">${esc(t('tplTitle'))}</span>${Object.keys(TPL).map((k) => `<button class="pill" data-act="tpl" data-k="${k}">${esc(t('tpl.' + k))}</button>`).join('')}</div>`;
@@ -1782,7 +1797,7 @@ const ACT = {
     const tr = cur(), have = new Set(Object.values(tr.checks || {}).map((x) => x.text));
     const add = TPL[b.dataset.k][ui.lang].filter((s) => !have.has(s));
     const base = Date.now() / 1000;
-    write([...add.map((text, i) => { const id = uid('c'); return [['trips', tr.id, 'checks', id], { id, text, done: false, order: base + i }]; }), touch(tr.id)]);
+    write([...add.map((text, i) => { const id = uid('c'); return [['trips', tr.id, 'checks', id], { id, text, done: false, order: base + i, ...(ui.grp && { grp: ui.grp }) }]; }), touch(tr.id)]);
     toast(add.length ? t('addedN', { n: add.length }) : t('noneAdded'));
   },
   'memo-edit': () => { ui.memoEdit = true; render(true); const ta = $('textarea[name=memo]'); if (ta) ta.focus(); },
@@ -1806,7 +1821,7 @@ document.addEventListener('submit', async (e) => {
     const text = f.text.value.trim();
     if (!text) return;
     const id = uid('c');
-    write([[['trips', ui.trip, 'checks', id], { id, text, done: false, order: Date.now() / 1000 }], touch(ui.trip)]);
+    write([[['trips', ui.trip, 'checks', id], { id, text, done: false, order: Date.now() / 1000, ...(ui.grp && { grp: ui.grp }) }], touch(ui.trip)]);
     const input = $('form[data-form=add-check] input'); if (input) input.focus();
   } else if (kind === 'spend') {
     e.preventDefault();

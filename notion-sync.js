@@ -155,7 +155,7 @@
       page: p.id, title, icon: p.icon && p.icon.type === 'emoji' ? p.icon.emoji : '',
       cover: p.cover && p.cover.type === 'external' ? p.cover.external.url : '',
       year: year || +((title.match(/(20\d\d)/) || [])[1] || 0) || +String(p.created_time).slice(0, 4),
-      edited: p.last_edited_time, dbs: {}, db: null, pages: [p.id], memo: [], items: [], checks: [],
+      edited: p.last_edited_time, dbs: {}, db: null, pages: [p.id], grpPages: {}, memo: [], items: [], checks: [],
     };
     await walk(p.id, '', 0, out);
     if (!out.db) out.db = Object.keys(out.dbs)[0] || null;
@@ -170,13 +170,14 @@
         // 하위 페이지: 표는 그 이름의 묶음, 글은 메모에 그 이름 아래로
         const name = b.child_page.title || '';
         out.pages.push(b.id);
+        out.grpPages[name] = b.id;
         const m0 = out.memo.length, n0 = out.items.length;
         out.memo.push('', '■ ' + name);
         await walk(b.id, name, depth + 1, out);
         if (out.memo.length === m0 + 2) out.memo.splice(m0, 2, ...(out.items.length === n0 ? [name] : []));
         continue;
       }
-      if (b.type === 'to_do') { out.checks.push({ nid: b.id, text: plain(b.to_do.rich_text), done: !!b.to_do.checked }); continue; }
+      if (b.type === 'to_do') { out.checks.push({ nid: b.id, text: plain(b.to_do.rich_text), done: !!b.to_do.checked, grp }); continue; }
       if (b.type === 'table') {
         for (const r of await children(b.id)) if (r.type === 'table_row') out.memo.push(r.table_row.cells.map((c) => plain(c).replace(/\n/g, ' ')).join(' | '));
         continue;
@@ -283,7 +284,7 @@
     const tid = tripIdOf(n.page) || tidOf(n.page);
     const local = trips[tid] && trips[tid].title ? trips[tid] : null;
     if (n.gone) { if (local) write([[['trips', tid], null]], { sync: true }); return; }
-    const notion = { page: n.page, db: n.db, dbs: n.dbs, pages: n.pages, read: Date.now(), edited: n.edited };
+    const notion = { page: n.page, db: n.db, dbs: n.dbs, pages: n.pages, grpPages: n.grpPages || {}, read: Date.now(), edited: n.edited };
     let trip = local;
     if (!trip) {
       const [s, e] = clusterRange(n.items.flatMap((x) => x.dn.map((d) => d.iso)).filter(Boolean).sort());
@@ -334,7 +335,7 @@
       const ex = byC.get(cid(c.nid)) || oldC.find((x) => !x.nid && !usedC.has(x.id) && norm(x.text) === norm(c.text)) || null;
       if (ex) usedC.add(ex.id);
       if (ex && outboxHas('check', tid, ex.id)) { nextC[ex.id] = ex; return; }
-      const x = { ...(ex || {}), id, nid: c.nid, text: c.text, done: c.done, order: i };
+      const x = { ...(ex || {}), id, nid: c.nid, text: c.text, done: c.done, order: i, grp: c.grp || '' };
       delete x.mt;
       nextC[id] = x;
     });
@@ -562,7 +563,8 @@
       const todo = { rich_text: rt(c.text), checked: !!c.done };
       if (c.nid) await call('PATCH', `blocks/${c.nid}`, { to_do: todo });
       else {
-        const r = await call('PATCH', `blocks/${tr.notion.page}/children`, { children: [{ object: 'block', type: 'to_do', to_do: todo }] });
+        const parent = (c.grp && (tr.notion.grpPages || {})[c.grp]) || tr.notion.page; // Unterseite der Gruppe / 묶음의 하위 페이지
+        const r = await call('PATCH', `blocks/${parent}/children`, { children: [{ object: 'block', type: 'to_do', to_do: todo }] });
         const nb = r.results && r.results[0];
         if (nb) write([[['trips', op.tid, 'checks', op.id, 'nid'], nb.id]], { sync: true });
       }
