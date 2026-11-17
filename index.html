@@ -789,7 +789,7 @@ function tripView(tr) {
   const groups = resolveGroup(tr);
   const gs = ui.grp != null ? groupSpan(tr, ui.grp) : null;
   const glabel = (g) => { const s = groupSpan(tr, g); return esc(g || t('grpMain')) + (s ? `<small>${esc(md(s[0]))}${s[1] !== s[0] ? '–' + esc(md(s[1])) : ''}</small>` : ''); };
-  const grpBar = groups.length > 1 ? `<div class="tpl grps top-grps">${[...groups, null].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${g == null ? esc(t('mapAll')) : glabel(g)}</button>`).join('')}</div>` : '';
+  const grpBar = groups.some((g) => g) ? `<div class="tpl grps top-grps">${[...groups, null].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${g == null ? esc(t('mapAll')) : glabel(g)}</button>`).join('')}</div>` : '';
   const v = scopeOf(tr);
   const d = dLabel(v);
   // Kopf als Bordkarte: Route mit Flughafen-Codes, Daten, Nächte, D-Tag / 머리는 탑승권: 공항 코드, 날짜, 박, D-day
@@ -881,7 +881,7 @@ function autoGroup(tr, groups) {
 // Gruppe festlegen (beim ersten Öffnen automatisch) / 묶음 정하기 (처음 열 때는 자동)
 function resolveGroup(tr) {
   const groups = groupsOf(tr);
-  if (groups.length < 2) ui.grp = null;
+  if (!groups.some((g) => g)) ui.grp = null; // keine Unterseite → keine Gruppen / 하위 페이지가 없으면 묶음 없음
   else if (ui.grp === undefined) ui.grp = autoGroup(tr, groups);
   return groups;
 }
