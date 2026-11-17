@@ -291,7 +291,7 @@ input[type="date"].in { min-height: 46px; }
 .cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .cats label { position: relative; }
 .cats input { position: absolute; opacity: 0; pointer-events: none; }
-.cats span { display: inline-flex; gap: 5px; align-items: center; padding: 7px 13px; border-radius: 999px; background: var(--field); font-size: 15px; font-weight: 600; }
+.cats label > span { display: inline-flex; gap: 5px; align-items: center; padding: 7px 13px; border-radius: 999px; background: var(--field); font-size: 15px; font-weight: 600; }
 .cats input:checked + span { background: var(--c); color: #fff; }
 .cats input:focus-visible + span { outline: 2px solid var(--accent); }
 .toggle { display: flex; align-items: center; gap: 12px; padding: 10px 2px; font-weight: 600; }
@@ -325,7 +325,7 @@ a.btn { text-decoration: none; }
 .spend .r input { flex: 1; min-width: 0; }
 .spend input[name=amount] { font-size: 22px; font-weight: 800; }
 .spend select { flex: none; width: 100px; }
-.spend .cats span { padding: 6px 11px; font-size: 14px; }
+.spend .cats label > span { padding: 6px 11px; font-size: 14px; }
 .lines .rm { flex: none; width: 32px; height: 32px; color: var(--muted); font-size: 20px; border-radius: 9px; align-self: center; }
 .lines li .x { text-align: left; }
 .it.done { opacity: .5; }
@@ -814,7 +814,16 @@ function tripView(tr) {
   return h;
 }
 // "오늘" gibt es nur während der Reise / '오늘' 탭은 여행 중에만
-const tabsOf = (tr) => [...(status(tr) === 'now' ? ['today'] : []), 'plan', 'book', 'map', 'money', 'check', 'memo'];
+// Reihenfolge nach dem, was in der Phase am meisten gebraucht wird / 단계마다 가장 많이 쓰는 탭 순서
+//  vorher (계획): 일정 → 예약 → 체크리스트 → 가계부(예산) → 지도 → 메모
+//  unterwegs (여행 중): 오늘 → 일정 → 가계부(지출) → 지도 → 체크리스트 → 예약 → 메모
+//  danach (지난 여행): 일정 → 가계부 → 지도 → 메모 → 예약 → 체크리스트
+const TAB_ORDER = {
+  up: ['plan', 'book', 'check', 'money', 'map', 'memo'],
+  now: ['today', 'plan', 'money', 'map', 'check', 'book', 'memo'],
+  past: ['plan', 'money', 'map', 'memo', 'book', 'check'],
+};
+const tabsOf = (tr) => TAB_ORDER[status(tr)] || TAB_ORDER.up;
 
 function itemCard(it, tr, day) {
   const meta = [];
@@ -937,6 +946,8 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
+Object.assign(T.ko, { bookLink: '예약 링크 (한 줄에 하나)' });
+Object.assign(T.de, { bookLink: 'Buchungslink (einer pro Zeile)' });
 Object.assign(T.ko, { splitFriends: '일행과 나누기', toSpend: '지출로', plannedTag: '예약·계획', history: '내역', spent: '실제 지출', planned: '예약·계획', noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.' });
 Object.assign(T.de, { splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', plannedTag: 'geplant', history: 'Einträge', spent: 'ausgegeben', planned: 'geplant', noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.' });
 Object.assign(T.ko, { us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수', personNote: '나눌 때 인원 수만큼 몫을 가져요. 예: 우리 가족 4명, 지민네 2명이면 4:2로 나눠요.',
@@ -1699,7 +1710,7 @@ function itemSheet(tr, it, defaults = {}) {
     ${days.length ? `<div class="picks">${days.slice(0, 21).map((d) => `<button type="button" class="pill${d === it.date ? ' on' : ''}" data-pick="${d}">${esc(md(d))}</button>`).join('')}</div>` : ''}
     <label class="fld"><span>${esc(t('time'))}</span><textarea class="in" name="time" rows="${Math.min(4, (it.time || '').split('\n').length)}" style="min-height:46px" placeholder="${esc(t('timePh'))}">${esc(it.time || '')}</textarea></label>
     <label class="toggle"><input type="checkbox" name="booked" ${it.booked ? 'checked' : ''}>${esc(t('isBooked'))}</label>
-    <label class="fld"><span>${esc(t('code'))}</span><input class="in" name="code" value="${esc(it.code || '')}" autocomplete="off" autocapitalize="characters"></label>
+    <label class="fld" data-bklink ${it.booked ? 'hidden' : ''}><span>${esc(t('bookLink'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px" placeholder="https://…">${esc(links)}</textarea></label>
     <div class="fld"><span>${esc(t('cost'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="amount" inputmode="decimal" value="${cost.amount ?? ''}" aria-label="${esc(t('cost'))}">
       <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curOpts.map((c) => `<option ${c === (cost.cur || tr.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div>
     <div class="fld"><span>${esc(t('loc'))}</span>
@@ -1711,7 +1722,6 @@ function itemSheet(tr, it, defaults = {}) {
       <div class="geo-res" id="geo-res"></div></div>
     <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
     ${it.body ? `<div class="fld"><span>${esc(t('nBody'))}</span><div class="memo card" style="font-size:15px">${linkify(it.body)}</div></div>` : ''}
-    <label class="fld"><span>${esc(t('links'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px">${esc(links)}</textarea></label>
     <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ms('link')} ${esc(hostOf(u))}</a>`).join('')}
       ${inKorea(it) && naverUrl(it) ? `<a href="${esc(naverUrl(it))}" target="_blank" rel="noopener"><span class="nv" aria-hidden="true">N</span> ${esc(t('naver'))}</a>` : ''}${googleUrl(it) ? `<a href="${esc(googleUrl(it))}" target="_blank" rel="noopener">${ms('map')} ${esc(t('map'))}</a>` : ''}</div>
     <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-item" data-id="${it.id}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
@@ -1723,7 +1733,10 @@ function itemSheet(tr, it, defaults = {}) {
       p.querySelector('[data-endl]').textContent = t(c === 'stay' ? 'endStay' : 'endMove');
     };
     syncEnd();
-    f.addEventListener('change', (e) => { if (e.target.name === 'cat') syncEnd(); });
+    f.addEventListener('change', (e) => {
+      if (e.target.name === 'cat') syncEnd();
+      if (e.target.name === 'booked') p.querySelector('[data-bklink]').hidden = f.booked.checked; // gebucht → Link-Feld weg / 예약 완료면 링크 칸 숨김
+    });
     p.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
       f.date.value = b.dataset.pick;
       p.querySelectorAll('[data-pick]').forEach((x) => x.classList.toggle('on', x === b));
@@ -1762,7 +1775,7 @@ function itemSheet(tr, it, defaults = {}) {
       const amount = parseAmount(f.amount.value);
       const x = {
         ...it, cat: f.cat.value, title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
-        time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.booked.checked, code: f.code.value.trim(),
+        time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.booked.checked, code: it.code || '',
         links: f.links.value.split(/\s+/).map((s) => s.trim()).filter((s) => /^https?:\/\//.test(s)),
         order: it.order ?? Date.now() / 1000,
       };
