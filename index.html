@@ -262,6 +262,8 @@ a.btn { text-decoration: none; }
 .opt .pr { font-weight: 800; font-size: 18px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .opt .pn { color: var(--muted); font-size: 13px; text-align: right; white-space: nowrap; }
 .opt .row-btns { margin-top: 10px; }
+.grp { padding: 0 7px; border-radius: 6px; background: var(--field); color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.nbtn { font: 800 17px/1 Georgia, "Times New Roman", serif; color: #fff; text-decoration: none; }
 .badge { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--ok-bg); color: var(--ok); font-size: 12px; font-weight: 800; vertical-align: 2px; }
 .badge.low { background: var(--sun); color: var(--sun-ink); }
 .geo-res { display: grid; gap: 6px; margin-top: 8px; }
@@ -439,7 +441,22 @@ function persist() { store.put('trips', trips); }
 const connected = () => !!(window.cloud && window.cloud.user && window.cloud.house);
 // Ein Pfad wie ['trips', id, 'items', itemId]; value null = löschen. Mehrere Änderungen gehen zusammen hoch.
 // 경로 예: ['trips', 여행ID, 'items', 일정ID]. 값이 null 이면 지움. 여러 변경은 한 번에 올림.
-function write(entries) {
+// opts.sync: Änderung kommt aus dem Notion-Abgleich (nicht wieder an Notion schicken, Eingaben nicht stören).
+// opts.sync: 노션에서 가져온 변경 (노션에 다시 보내지 않고, 입력 중인 화면도 건드리지 않음).
+const getAt = (path) => path.reduce((o, k) => (o && typeof o === 'object' ? o[k] : undefined), { trips });
+function write(entries, opts = {}) {
+  if (!opts.sync) {
+    // Änderungszeit je Eintrag / 일정·체크마다 고친 시각 (노션과 어느 쪽이 새것인지 가리는 데 씀)
+    const now = Date.now(), extra = [];
+    entries = entries.map(([p, v]) => {
+      if (p[0] === 'trips' && (p[2] === 'items' || p[2] === 'checks') && p.length === 4 && v && typeof v === 'object') return [p, { ...v, mt: now }];
+      if (p[0] === 'trips' && (p[2] === 'items' || p[2] === 'checks') && p.length > 4 && p[4] !== 'mt'
+        && !entries.some(([q]) => q.length === 4 && q[2] === p[2] && q[3] === p[3]) && !extra.some(([q]) => q[2] === p[2] && q[3] === p[3])) extra.push([['trips', p[1], p[2], p[3], 'mt'], now]);
+      return [p, v];
+    });
+    entries = [...entries, ...extra];
+  }
+  const before = opts.sync ? null : entries.map(([path]) => { const v = getAt(path); return v === undefined ? undefined : JSON.parse(JSON.stringify(v)); });
   for (const [path, value] of entries) {
     let o = { trips };
     for (let i = 0; i < path.length - 1; i++) { if (!o[path[i]] || typeof o[path[i]] !== 'object') o[path[i]] = {}; o = o[path[i]]; }
@@ -449,7 +466,8 @@ function write(entries) {
   persist();
   if (connected()) window.cloud.write(entries);
   else { for (const [path] of entries) unsynced.add(path[1]); store.put('unsynced', [...unsynced]); }
-  render(true);
+  if (!opts.sync && window.notionSync) window.notionSync.changed(entries, before);
+  render(!opts.sync);
 }
 const put = (path, value) => write([[path, value]]);
 function touch(tid) { return [['trips', tid, 'mt'], Date.now()]; }
@@ -555,6 +573,7 @@ function homeView() {
     <button class="icon-btn" data-act="settings" aria-label="${esc(t('settings'))}">⚙️</button></div>
     <h1>${esc(t('app'))}</h1></header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
+  if (window.notionSync) h += window.notionSync.bannerHtml();
   if (!list.length) h += `<p class="empty">${esc(t('noTrips'))}</p>`;
   if (hero) {
     const st = status(hero);
@@ -593,12 +612,14 @@ function tripView(tr) {
   const d = dLabel(tr);
   let h = `<header class="top${tr.cover ? ' cover' : ''}"${coverStyle(tr)}><div class="bar">
     <button class="back" data-act="home">‹ ${esc(t('back'))}</button>
-    <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">✎</button></div>
+    <span class="set-row">${tr.notion ? `<a class="icon-btn nbtn" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener" aria-label="${esc(t('nOpen'))}">N</a>` : ''}
+    <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">✎</button></span></div>
     <h1><span class="fl">${esc(tr.icon || '✈️')}</span>${esc(tr.title)}</h1>
     <p class="sub"><span>${esc(fmtRange(tr))}</span>${nightsLabel(tr) ? `<span>${esc(nightsLabel(tr))}</span>` : ''}${d ? `<span class="chip-d">${esc(d)}</span>` : ''}</p>
     <nav class="tabs">${tabs.map((k) => `<button class="tab${ui.tab === k ? ' on' : ''}" data-act="tab" data-tab="${k}">${esc(t('tabs.' + k))}</button>`).join('')}</nav>
     </header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
+  if (window.notionSync) h += window.notionSync.bannerHtml();
   h += { today: todayTab, plan: planTab, book: bookTab, cmp: cmpTab, map: mapTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
   h += '</section>';
   if (ui.tab === 'plan') h += `<button class="fab" data-act="new-item">${esc(t('addItem'))}</button>`;
@@ -623,6 +644,8 @@ function itemCard(it, tr, day) {
   }
   if ((it.links && it.links.length) || URL_RE.test(it.notes || '')) meta.push('🔗');
   URL_RE.lastIndex = 0;
+  // Unterseite in Notion (서울여행, 가르다호 …), wenn nicht schon danach gefiltert / 노션 하위 페이지 이름
+  if (it.grp && !ui.grp) meta.push(`<span class="grp">${esc(it.grp)}</span>`);
   const notes = (it.notes || '').replace(URL_RE, '').trim();
   return `<button class="it c-${it.cat || 'etc'}${it.done && !isOut ? ' done' : ''}" data-act="edit-item" data-id="${it.id}">
     <span class="ic" aria-hidden="true">${isOut ? '🧳' : icon(it)}</span>
@@ -631,9 +654,17 @@ function itemCard(it, tr, day) {
     ${notes && !isOut ? `<span class="nt">${esc(notes)}</span>` : ''}</span></button>`;
 }
 
+// Notion-Unterseiten als Gruppen / 노션 하위 페이지 = 묶음
+const groupsOf = (tr) => [...new Set(items(tr).map((x) => x.grp || ''))];
+const inGrp = (x) => ui.grp == null || ui.grp === '*' || (x.grp || '') === ui.grp;
 function planTab(tr) {
-  const days = tripDays(tr), now = today(), all = items(tr);
+  const days = tripDays(tr), now = today(), groups = groupsOf(tr);
+  if (groups.length < 2) ui.grp = null;
+  const all = items(tr).filter(inGrp);
   let h = '';
+  if (groups.length > 1) {
+    h += `<div class="tpl">${[null, ...groups].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${esc(g == null ? t('mapAll') : g || t('grpMain'))}</button>`).join('')}</div>`;
+  }
   if (days.length > 1) {
     h += `<nav class="days">${days.map((d, i) => `<button data-act="jump" data-day="${d}" class="${d === now ? 'today' : ''}">
       <span>${esc(t('dayNo', { n: i + 1 }))}</span><b>${esc(md(d))}</b></button>`).join('')}</nav>`;
@@ -641,7 +672,8 @@ function planTab(tr) {
   if (!all.length) h += `<p class="empty">${esc(t('noItems'))}</p>`;
   const stays = all.filter((x) => x.cat === 'stay' && isDate(x.date) && isDate(x.end));
   days.forEach((d, i) => {
-    const list = dayItems(tr, d);
+    const list = dayItems(tr, d).filter(inGrp);
+    if (ui.grp != null && !list.length && !all.some((s) => s.cat === 'stay' && s.date <= d && d <= (s.end || s.date))) return; // leere Tage einer Gruppe weglassen / 묶음에 없는 날은 숨김
     // Nächte mitten im Aufenthalt und der Abreisetag / 숙박 중간 밤과 체크아웃 날
     const mid = stays.filter((s) => s.date < d && d < s.end);
     const outs = stays.filter((s) => s.end === d);
@@ -743,6 +775,27 @@ function moneyTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일' });
 Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage' });
+// Notion-Abgleich / 노션 연결
+Object.assign(T.ko, {
+  nOpen: '노션에서 열기', nEditMemo: '노션에서 고치기', nBody: '노션 페이지 안 내용', whichTable: '어느 표에 넣을까요', grpMain: '기본 표',
+  notes: '주요내용', date: '일정 (날짜)', links: '파일·링크 (한 줄에 하나)',
+  delTripQ: '"{t}" 여행을 지울까요? 노션 페이지도 휴지통으로 옮겨져요 (노션 휴지통에서 30일 안에 되살릴 수 있어요).',
+  nSec: '노션', nInfo: '노션 여행 페이지와 양방향으로 맞춰요. 앱에서 고치면 바로 노션에, 노션에서 고치면 몇 분 안에 앱에 들어와요.',
+  nOk: '✓ 노션과 연결됨', nLast: '마지막으로 맞춘 때: {x}', nNow: '지금 맞추기', nFull: '노션에서 전부 다시 가져오기', nFullQ: '노션의 모든 여행을 다시 읽어요. 1–2분 걸려요. 계속할까요?',
+  nPulling: '노션에서 가져오는 중… {a}/{b}', nPushing: '노션에 저장하는 중…', nPending: '노션에 아직 못 보낸 변경 {n}개',
+  nNeedLogin: '노션과 맞추려면 위에서 구글로 로그인해 주세요.', nChecking: '노션 연결을 확인하는 중…', nJustNow: '방금',
+  nErr: { not_configured: '노션 연결 서버에 비밀 값이 아직 없어요.', other_family: '이 가족 코드는 노션 연결이 허락되지 않았어요.', unauthorized: '로그인을 다시 해 주세요.', no_house: '먼저 가족 코드에 연결해 주세요.', net: '노션 연결 서버에 닿지 못했어요. 인터넷을 확인해 주세요.', notion: '노션이 요청을 거절했어요. 여행 페이지에 \'여행 앱\' 연결이 되어 있는지 확인해 주세요.' },
+});
+Object.assign(T.de, {
+  nOpen: 'In Notion öffnen', nEditMemo: 'In Notion bearbeiten', nBody: 'Inhalt der Notion-Seite', whichTable: 'In welche Tabelle?', grpMain: 'Haupttabelle',
+  delTripQ: '„{t}“ löschen? Die Notion-Seite kommt in den Papierkorb (30 Tage wiederherstellbar).',
+  nSec: 'Notion', nInfo: 'Gleicht mit den Notion-Reiseseiten in beide Richtungen ab. Änderungen in der App gehen sofort nach Notion, Änderungen in Notion kommen in ein paar Minuten in die App.',
+  nOk: '✓ Mit Notion verbunden', nLast: 'Zuletzt abgeglichen: {x}', nNow: 'Jetzt abgleichen', nFull: 'Alles neu aus Notion laden', nFullQ: 'Alle Reisen aus Notion neu lesen? Dauert 1–2 Minuten.',
+  nPulling: 'Lade aus Notion … {a}/{b}', nPushing: 'Speichere in Notion …', nPending: '{n} Änderungen noch nicht in Notion',
+  nNeedLogin: 'Für Notion bitte oben mit Google anmelden.', nChecking: 'Prüfe Notion-Verbindung …', nJustNow: 'gerade eben',
+  nErr: { not_configured: 'Der Notion-Server ist noch nicht eingerichtet.', other_family: 'Dieser Familiencode darf Notion nicht nutzen.', unauthorized: 'Bitte neu anmelden.', no_house: 'Bitte zuerst einen Familiencode verbinden.', net: 'Notion-Server nicht erreichbar. Bitte Internet prüfen.', notion: 'Notion hat die Anfrage abgelehnt. Ist die Integration „여행 앱“ mit der Reiseseite verbunden?' },
+});
+const notionUrl = (id) => 'https://www.notion.so/' + String(id || '').replace(/-/g, '');
 const parseAmount = (v) => parseFloat(String(v).replace(/\s/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.'));
 const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
 const spendsOf = (tr) => Object.values(tr.spend || {}).filter((s) => s && s.id && s.amount);
@@ -1146,7 +1199,11 @@ function memoTab(tr) {
     return `<form data-form="memo"><textarea class="in" name="memo" rows="16" placeholder="${esc(t('memoPh'))}" style="min-height:50vh">${esc(tr.memo || '')}</textarea>
       <div class="acts"><button type="button" class="btn ghost" data-act="memo-cancel">${esc(t('cancel'))}</button><button class="btn">${esc(t('save'))}</button></div></form>`;
   }
-  return `<div class="set-row" style="justify-content:flex-end;margin-bottom:8px"><button class="btn small ghost" data-act="memo-edit">${esc(t('edit'))}</button></div>
+  // Mit Notion verbunden: der Text der Notion-Seite, bearbeitet wird in Notion / 노션 여행: 메모는 노션 페이지 글, 노션에서 고침
+  const btn = tr.notion
+    ? `<a class="btn small ghost" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener">${esc(t('nEditMemo'))}</a>`
+    : `<button class="btn small ghost" data-act="memo-edit">${esc(t('edit'))}</button>`;
+  return `<div class="set-row" style="justify-content:flex-end;margin-bottom:8px">${btn}</div>
     ${tr.memo ? `<div class="memo">${linkify(tr.memo)}</div>` : `<p class="empty">${esc(t('memoEmpty'))}</p>`}`;
 }
 
@@ -1175,7 +1232,11 @@ function go(hash) {
 }
 function route(hash) {
   const m = (typeof hash === 'string' ? hash : location.hash).match(/^#\/t\/([^/]+)(?:\/(\w+))?/);
-  if (m && valid(trips[m[1]])) { ui.view = 'trip'; if (ui.trip !== m[1]) ui.memoEdit = false; ui.trip = m[1]; ui.tab = m[2] || (status(trips[m[1]]) === 'now' ? 'today' : 'plan'); }
+  if (m && valid(trips[m[1]])) {
+    ui.view = 'trip';
+    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = null; if (window.notionSync) window.notionSync.opened(m[1]); }
+    ui.trip = m[1]; ui.tab = m[2] || (status(trips[m[1]]) === 'now' ? 'today' : 'plan');
+  }
   else { ui.view = 'home'; ui.trip = null; ui.scrolled = ''; }
   render(true);
   window.scrollTo(0, 0);
@@ -1200,12 +1261,16 @@ const FLAGS = [['🇰🇷', 'KRW'], ['🇯🇵', 'JPY'], ['🇫🇷', 'EUR'], ['
 function itemSheet(tr, it, defaults = {}) {
   const isNew = !it;
   it = it || { id: uid('i'), cat: defaults.cat || 'see', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false };
+  // Neuer Eintrag in einer Notion-Reise mit mehreren Tabellen: in welche? / 노션에 표가 여러 개면 어느 표에 넣을지
+  const dbs = tr.notion && tr.notion.dbs ? Object.entries(tr.notion.dbs) : [];
+  const dbPick = isNew && dbs.length > 1
+    ? `<label class="fld"><span>${esc(t('whichTable'))}</span><select class="in" name="ndb">${dbs.map(([id, s]) => `<option value="${esc(id)}" ${(ui.grp != null ? (s.grp || '') === ui.grp : id === tr.notion.db) ? 'selected' : ''}>${esc(s.grp || t('grpMain'))}</option>`).join('')}</select></label>` : '';
   const days = tripDays(tr);
   const cost = it.cost || {};
   const curOpts = [...new Set([tr.cur || 'EUR', 'EUR', cost.cur].filter(Boolean))];
   const links = (it.links || []).join('\n');
   const dateMin = isDate(tr.start) ? tr.start : '', dateMax = isDate(tr.end) ? tr.end : '';
-  openSheet(`<h3>${esc(t(isNew ? 'newItem' : 'editItem'))}</h3><form data-form="item">
+  openSheet(`<h3>${esc(t(isNew ? 'newItem' : 'editItem'))}</h3><form data-form="item">${dbPick}
     <div class="cats">${CAT_ORDER.map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${it.cat === c ? 'checked' : ''}><span>${icon({ cat: c, title: c === 'move' ? 'flug' : '' })} ${esc(t('cats.' + c))}</span></label>`).join('')}</div>
     <label class="fld"><span>${esc(t('title'))}</span><input class="in" name="title" value="${esc(it.title)}" placeholder="${esc(t('titlePh'))}" autocomplete="off"></label>
     <div class="two"><label class="fld"><span>${esc(t('date'))}</span><input class="in" type="date" name="date" value="${esc(it.date)}" ${dateMin ? `min="${addDays(dateMin, -60)}"` : ''}></label>
@@ -1224,6 +1289,7 @@ function itemSheet(tr, it, defaults = {}) {
       <input class="in" name="locpaste" placeholder="${esc(t('locPaste'))}" style="margin-top:8px" autocomplete="off">
       <div class="geo-res" id="geo-res"></div></div>
     <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
+    ${it.body ? `<div class="fld"><span>${esc(t('nBody'))}</span><div class="memo card" style="font-size:15px">${linkify(it.body)}</div></div>` : ''}
     <label class="fld"><span>${esc(t('links'))}</span><textarea class="in" name="links" rows="2" style="min-height:60px">${esc(links)}</textarea></label>
     <div class="linkrow">${[...(it.links || []), ...((it.notes || '').match(URL_RE) || [])].map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">🔗 ${esc(hostOf(u))}</a>`).join('')}
       ${dirUrl(it) ? `<a href="${esc(dirUrl(it))}" target="_blank" rel="noopener">${esc(t('map'))}</a>` : ''}</div>
@@ -1283,6 +1349,8 @@ function itemSheet(tr, it, defaults = {}) {
       if (!x.code) delete x.code;
       if (!x.links.length) delete x.links;
       if (loc) x.loc = loc; else delete x.loc;
+      if (f.ndb) { x.ndb = f.ndb.value; x.grp = (tr.notion.dbs[x.ndb] || {}).grp || ''; }
+      else if (isNew && tr.notion && ui.grp != null) { const e = dbs.find(([, s]) => (s.grp || '') === ui.grp); if (e) { x.ndb = e[0]; x.grp = ui.grp; } }
       if (!x.title) { f.title.focus(); return; }
       write([[['trips', tr.id, 'items', x.id], x], touch(tr.id)]);
       closeSheet();
@@ -1371,6 +1439,7 @@ function settingsSheet() {
   openSheet(`<h3>${esc(t('settings'))}</h3>
     <h4>${esc(t('lang'))}</h4><div class="set-row">${['ko', 'de'].map((l) => `<button class="pill${ui.lang === l ? ' on' : ''}" data-act="lang" data-l="${l}">${l === 'ko' ? '한국어' : 'Deutsch'}</button>`).join('')}</div>
     <h4>${esc(t('sync'))}</h4><div id="sync-box">${sync}</div>
+    ${window.notionSync ? `<h4>${esc(t('nSec'))}</h4><div id="notion-box">${window.notionSync.settingsHtml()}</div>` : ''}
     <h4>${esc(t('backup'))}</h4><div class="set-row"><button class="btn ghost" data-act="export">${esc(t('exportBtn'))}</button>
       <label class="btn ghost">${esc(t('importBtn'))}<input type="file" accept=".json,application/json" id="import-file" hidden></label></div>
     <p class="note">${esc(t('importNote'))}</p>
@@ -1441,6 +1510,9 @@ const ACT = {
   'map-day': (b) => { ui.mapDay = b.dataset.day; render(true); },
   'find-all': () => findAll(),
   'cmp-kind': (b) => { ui.cmpKind = b.dataset.k; render(true); },
+  grp: (b) => { ui.grp = b.dataset.g === '*' ? null : b.dataset.g; render(true); },
+  'n-now': () => window.notionSync && window.notionSync.pull({ manual: true }),
+  'n-full': () => { if (window.notionSync && confirm(t('nFullQ'))) window.notionSync.pull({ full: true, manual: true }); },
   'new-opt': () => optSheet(cur()),
   'edit-opt': (b) => optSheet(cur(), cur().opts[b.dataset.id]),
   'del-opt': (b) => {
@@ -1538,6 +1610,7 @@ route();
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
 </script>
+<script src="notion-sync.js"></script>
 <script src="firebase-config.js"></script>
 <script type="module">
 // ---------- 함께 보기 (Firebase) ----------
@@ -1597,6 +1670,7 @@ if (cfg && APP) {
           APP.clearUnsynced(); APP.setSyncedHouse(cloud.house);
           if (entries.length) cloud.write(entries);
           cloud.live = true;
+          if (window.notionSync) setTimeout(() => window.notionSync.start(), 500);
         }
         APP.setTrips(remote);
       }, (e) => {
@@ -1610,6 +1684,7 @@ if (cfg && APP) {
       await F.setDoc(F.doc(db, 'users', auth.currentUser.uid), { house: code }, { merge: true });
       listen(); APP.refresh();
     }
+    cloud.idToken = () => auth.currentUser.getIdToken();
     cloud.signIn = () => A.signInWithPopup(auth, new A.GoogleAuthProvider());
     cloud.signOut = async () => { clearTimeout(retryTimer); stop(); cloud.house = null; await A.signOut(auth); APP.refresh(); };
     cloud.create = async () => {

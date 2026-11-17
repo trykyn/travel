@@ -1,0 +1,7 @@
+name = "travel-notion"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# 노션 연결 서버. 비밀 값은 여기 적지 않고 아래 명령으로 넣음 (travel/worker 폴더에서):
+#   npx.cmd wrangler secret put NOTION_TOKEN   ← 노션 '여행 앱' 통합의 내부 통합 시크릿
+#   npx.cmd wrangler secret put HOUSE          ← 앱 설정에 보이는 가족 코드
