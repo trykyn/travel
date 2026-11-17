@@ -360,6 +360,7 @@ input[type="date"].in { min-height: 46px; }
 .seg.bk input[value=done]:checked + span { color: var(--ok); }
 .seg.bk input:focus-visible + span { outline: 2px solid var(--accent); }
 .bk-todo .ms { font-size: 15px; vertical-align: -.15em; }
+.orig { display: block; margin-top: 1px; font-size: 12px; font-weight: 500; color: var(--muted); }
 .nobk { margin: 18px 2px 0; }
 .nobk summary { cursor: pointer; color: var(--muted); font-weight: 700; font-size: 14px; padding: 6px 0; }
 .nobk .items { margin-top: 8px; opacity: .75; }
@@ -835,7 +836,7 @@ function ticket(tr) {
     <span class="tk-main">
       <span class="air"><span>${esc(t('passHead.' + modeOf(tr)))}</span><b>${esc(st === 'now' ? t('ongoing') : t('next'))}</b></span>
       <span class="route"><span class="apc">${esc(codeFrom(tr))}<small>${esc(cityFrom(tr))}</small></span><span class="plane">${modeSvg(modeOf(tr))}</span>
-        <span class="apc r">${esc(codeTo(tr))}<small>${esc(tr.icon || '')} ${esc(placeName(tr.title))}</small></span></span>
+        <span class="apc r">${esc(codeTo(tr))}<small>${esc(tr.icon || '')} ${esc(tx(tr, placeName(tr.title)))}</small></span></span>
       ${todoLine(tr)}
     </span>
     <span class="stub"><span class="grid"><span><small>DATE</small>${esc(mmdd(tr.start))}</span><span><small>RETURN</small>${esc(mmdd(tr.end))}</span>
@@ -844,7 +845,7 @@ function ticket(tr) {
 // Kleiner Abschnitt für weitere kommende Reisen / 다가오는 여행은 작은 탑승권 조각
 function stubCard(tr) {
   return `<button class="stubc" data-act="open" data-id="${tr.id}"><span class="c">${esc(codeTo(tr))}<small>${esc(mmdd(tr.start) === '—' ? String(tr.year || '') : mmdd(tr.start))}</small></span>
-    <b>${esc(tr.icon || '✈️')} ${esc(placeName(tr.title))}<small>${esc([fmtRange(tr), nightsLabel(tr)].filter(Boolean).join(' · '))}</small>${todoLine(tr)}</b>
+    <b>${esc(tr.icon || '✈️')} ${esc(tx(tr, placeName(tr.title)))}<small>${esc([fmtRange(tr), nightsLabel(tr)].filter(Boolean).join(' · '))}</small>${todoLine(tr)}</b>
     <span class="d">${esc(dLabel(tr) || t('undated'))}</span></button>`;
 }
 // Nur der Ortsname für Stempel: Daten/Jahre am Anfang oder Ende des Notion-Titels weg ("2026.09.04-06 스트라스부르" → "스트라스부르")
@@ -869,7 +870,7 @@ function passport(past) {
     const ink = STAMP_INK[i++ % STAMP_INK.length];
     const d = isDate(x.start) ? `${x.start.slice(2, 4)}.${x.start.slice(5, 7)}.${x.start.slice(8)}` : String(x.year || '');
     h += `<button class="st ${shape}" style="--stamp:${ink};transform:rotate(${rot}deg)" data-act="open" data-id="${x.id}">
-      <span>${modeSvg(modeOf(x), 'stm')}<b>${esc(codeTo(x))}</b><span class="stn">${esc(placeName(x.title))}</span>${esc(d)}</span></button>`;
+      <span>${modeSvg(modeOf(x), 'stm')}<b>${esc(codeTo(x))}</b><span class="stn">${esc(tx(x, placeName(x.title)))}</span>${esc(d)}</span></button>`;
   }
   if (y !== null) h += '</div>';
   // Leerer Stempel zum Nachtragen einer Reise ohne Notion-Seite / 노션 없이 지난 여행을 넣는 빈 도장
@@ -887,7 +888,7 @@ function tripView(tr) {
   // 묶음(노션 하위 페이지)이 대주제: 고르면 모든 탭과 탑승권이 그 묶음 기준
   const groups = resolveGroup(tr);
   const gs = ui.grp != null ? groupSpan(tr, ui.grp) : null;
-  const glabel = (g) => { const s = groupSpan(tr, g); return esc(g || t('grpMain')) + (s ? `<small>${esc(md(s[0]))}${s[1] !== s[0] ? '–' + esc(md(s[1])) : ''}</small>` : ''); };
+  const glabel = (g) => { const s = groupSpan(tr, g); return esc(g ? tx(tr, g) : t('grpMain')) + (s ? `<small>${esc(md(s[0]))}${s[1] !== s[0] ? '–' + esc(md(s[1])) : ''}</small>` : ''); };
   const grpBar = groups.some((g) => g) ? `<div class="tpl grps top-grps">${[...groups, null].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${g == null ? esc(t('mapAll')) : glabel(g)}</button>`).join('')}</div>` : '';
   const v = scopeOf(tr);
   const d = dLabel(v);
@@ -898,7 +899,7 @@ function tripView(tr) {
     <span class="set-row">${window.notionSync ? window.notionSync.statusHtml() : ''}${tr.album ? `<a class="icon-btn" href="${esc(tr.album)}" target="_blank" rel="noopener" aria-label="${esc(t('photos'))}">${ms('photo_library')}</a>` : ''}${tr.notion ? `<a class="icon-btn nbtn" href="${esc(notionUrl(tr.notion.page))}" target="_blank" rel="noopener" aria-label="${esc(t('nOpen'))}">N</a>` : ''}
     <button class="icon-btn" data-act="edit-trip" aria-label="${esc(t('tripInfo'))}">${ms('edit')}</button></span></div>
     <div class="tk tk-head">${tr.cover ? `<span class="tk-img"${coverStyle(tr)}></span>` : ''}${d ? `<span class="dday">${esc(d)}</span>` : ''}
-      <div class="tk-main"><div class="air"><span>${esc(tr.icon || '✈️')} ${esc(placeName(tr.title))}${ui.grp != null ? ' · ' + esc(ui.grp || t('grpMain')) : ''}</span><b>${esc(nightsLabel(v))}</b></div>
+      <div class="tk-main"><div class="air"><span>${esc(tr.icon || '✈️')} ${esc(tx(tr, placeName(tr.title)))}${ui.grp != null ? ' · ' + esc(ui.grp ? tx(tr, ui.grp) : t('grpMain')) : ''}</span><b>${esc(nightsLabel(v))}</b></div>
       <div class="route"><span class="apc">${esc(codeFrom(tr))}<small>${esc(tm(v.start))}</small></span><span class="plane">${modeSvg(modeOf(tr))}</span>
         <span class="apc r">${esc(codeTo(tr))}<small>${esc(isDate(v.end) && v.end !== v.start ? tm(v.end) : String(tr.year || ''))}</small></span></div></div></div>
     ${grpBar}<nav class="tabs">${tabs.map((k) => `<button class="tab${ui.tab === k ? ' on' : ''}" data-act="tab" data-tab="${k}">${esc(t('tabs.' + k))}</button>`).join('')}</nav>
@@ -930,7 +931,7 @@ function itemCard(it, tr, day) {
   const meta = [];
   const isOut = it.cat === 'stay' && day && day === it.end;
   const tm = isOut ? (it.time || '').split(/\n|\//).find((s) => /아웃|out/i.test(s)) || '' : (it.time || '').split('\n')[0];
-  if (tm) meta.push(`<span class="tm">${esc(tm.trim())}</span>`);
+  if (tm) meta.push(`<span class="tm">${esc(tx(tr, tm.trim()))}</span>`);
   if (it.cat === 'stay' && isDate(it.date) && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} – ${md(it.end)} · ${nightsText(diff(it.date, it.end))}`));
   if (it.cat === 'move' && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} · ${md(it.end)}`));
   if (!isOut) {
@@ -945,9 +946,9 @@ function itemCard(it, tr, day) {
   const notes = (it.notes || '').replace(URL_RE, '').trim();
   return `<button class="it c-${it.cat || 'etc'}${it.done && !isOut ? ' done' : ''}" data-act="edit-item" data-id="${it.id}">${it.booked && !isOut ? `<span class="cf" aria-hidden="true">CONFIRMED</span>` : ''}
     <span class="ic" aria-hidden="true">${ms(isOut ? 'luggage' : icon(it))}</span>
-    <span class="ib"><span class="t">${isOut ? esc(t('checkout')) + ' · ' : ''}${esc(it.title || '—')}</span>
+    <span class="ib"><span class="t">${isOut ? esc(t('checkout')) + ' · ' : ''}${it.title ? txo(tr, it.title) : '—'}</span>
     ${meta.length ? `<span class="m">${meta.join('')}</span>` : ''}
-    ${notes && !isOut ? `<span class="nt">${esc(notes)}</span>` : ''}</span></button>`;
+    ${notes && !isOut ? `<span class="nt">${esc(tx(tr, notes))}</span>` : ''}</span></button>`;
 }
 
 // Notion-Unterseiten als Gruppen / 노션 하위 페이지 = 묶음
@@ -1010,12 +1011,13 @@ function planTab(tr) {
       const noLoc = dayStops(tr, d).filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title));
       h += `<div class="map day-map" data-day="${d}"></div>${noLoc.length ? `<button class="btn small ghost find-day" data-act="find-day" data-day="${d}">${ms('location_on')} ${esc(t('findDay', { n: noLoc.length }))}</button>` : ''}`;
     }
-    for (const s of mid) h += `<div class="night">${ms('bed')}<span>${esc(t('night', { a: diff(s.date, d) + 1, b: diff(s.date, s.end) }))} · ${esc(s.title)}</span></div>`;
+    for (const s of mid) h += `<div class="night">${ms('bed')}<span>${esc(t('night', { a: diff(s.date, d) + 1, b: diff(s.date, s.end) }))} · ${esc(tx(tr, s.title))}</span></div>`;
     h += `<div class="items" data-dnd="${d}">${orderDay([...outs, ...list], d).map((x) => itemCard(x, tr, d)).join('')}</div>
       ${d <= now ? recordHtml(tr, d) : ''}<button class="add-day" data-act="new-item" data-day="${d}">${esc(t('addHere'))}</button></div>`;
   });
   const set = new Set(days);
-  const cand = all.filter((x) => !set.has(x.date) && !(x.cat === 'move' && set.has(x.end))).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  // Nur zum Buchen angelegt (Skipass …) und ohne Datum: nicht im Plan / 예약 탭에서 만든 날짜 없는 것(스키패스 등)은 일정에 안 나옴
+  const cand = all.filter((x) => !x.bookOnly && !set.has(x.date) && !(x.cat === 'move' && set.has(x.end))).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   // Leere 날짜 미정-Fläche nur beim Ziehen zeigen / 비어 있는 날짜 미정 칸은 끄는 동안만 보임
   if (cand.length || all.some(canChangeDay)) h += `<div class="${cand.length ? '' : 'cand-drop'}"><h2>${esc(t('cand'))}</h2><div class="items cand" data-dnd="cand">${cand.map((x) => itemCard(x, tr)).join('')}</div></div>`;
   return h;
@@ -1043,7 +1045,7 @@ function bookTab(tr) {
     for (let d = sc.start; d < sc.end; d = addDays(d, 1)) {
       if (!allStays.some((s) => isDate(s.date) && s.date <= d && d < (isDate(s.end) ? s.end : addDays(s.date, 1)))) gaps.push(d);
     }
-    h += `<div class="card">${gaps.length ? `<b>${esc(t('gaps'))}</b><div class="gaps">${gaps.map((d) => `<span>${esc(dayName(d, { month: 'numeric', day: 'numeric', weekday: 'short' }))}</span>`).join('')}</div>` : esc(t('allNights'))}</div>`;
+    if (gaps.length) h += `<div class="card"><b>${esc(t('gaps'))}</b><div class="gaps">${gaps.map((d) => `<span>${esc(dayName(d, { month: 'numeric', day: 'numeric', weekday: 'short' }))}</span>`).join('')}</div></div>`;
   }
   if (!stays.length && !moves.length && !others.length) h += `<p class="empty">${esc(t('noBook'))}</p>`;
   const sec = (title, list) => (list.length ? `<h2>${esc(title)}</h2><div class="items">${list.map((x) => `<div class="bk">${itemCard(x, tr)}
@@ -1107,7 +1109,7 @@ const spendsOf = (tr) => Object.values(tr.spend || {}).filter((s) => s && s.id &
 const SP_ICON = { food: 'restaurant', move: 'local_taxi', stay: 'bed', shop: 'shopping_bag', see: 'confirmation_number', etc: 'payments' };
 function spendLine(s, tr, withDate) {
   const e = eurOf(s, tr);
-  return `<li>${withDate ? `<span class="dt">${s.date ? esc(md(s.date)) : '–'}</span>` : ''}<span class="x">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}</span>
+  return `<li>${withDate ? `<span class="dt">${s.date ? esc(md(s.date)) : '–'}</span>` : ''}<span class="x">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title ? tx(tr, s.title) : t('sp.' + (s.cat || 'etc')))}</span>
     <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
     <button class="rm" data-act="del-spend" data-id="${s.id}" aria-label="${esc(t('del'))}">×</button></li>`;
 }
@@ -1157,8 +1159,8 @@ function todayTab(tr) {
       cd = m <= 5 ? t('nowish') : m < 60 ? t('inM', { m }) : t('inHM', { h: Math.floor(m / 60), m: m % 60 });
     }
     const dir = dirUrl(next), tm = (next.time || '').split('\n')[0];
-    h += `<div class="next"><div class="lb">${esc(t('nextUp'))}</div><span class="nt-title">${ms(icon(next))} ${esc(next.title)}</span>
-      ${tm ? `<span class="nt-when">${esc(tm)}</span>` : ''}${cd ? ` <span class="cd">${esc(cd)}</span>` : ''}
+    h += `<div class="next"><div class="lb">${esc(t('nextUp'))}</div><span class="nt-title">${ms(icon(next))} ${txo(tr, next.title)}</span>
+      ${tm ? `<span class="nt-when">${esc(tx(tr, tm))}</span>` : ''}${cd ? ` <span class="cd">${esc(cd)}</span>` : ''}
       <div class="row-btns">${dir ? `<a class="btn small" href="${esc(dir)}" target="_blank" rel="noopener">${dirIcon(next)} ${esc(dirLabel(next))}</a>` : ''}
       <button class="btn small" data-act="toggle-done" data-id="${next.id}">${esc(t('markDone'))}</button>
       <button class="btn small" data-act="edit-item" data-id="${next.id}" aria-label="${esc(t('editItem'))}">${ms('edit')}</button></div></div>`;
@@ -1167,13 +1169,13 @@ function todayTab(tr) {
   }
   for (const s of outs) {
     const tm = (s.time || '').split(/\n|\//).find((x) => /아웃|out/i.test(x)) || '';
-    h += `<div class="mini"><b>${ms('luggage')} ${esc(t('checkoutToday'))}</b> · ${esc(s.title)}${tm ? ` · ${esc(tm.replace(/체크아웃|check-?out/i, '').trim())}` : ''}</div>`;
+    h += `<div class="mini"><b>${ms('luggage')} ${esc(t('checkoutToday'))}</b> · ${esc(tx(tr, s.title))}${tm ? ` · ${esc(tm.replace(/체크아웃|check-?out/i, '').trim())}` : ''}</div>`;
   }
   if (tonight) {
     const tm = d === tonight.date ? (tonight.time || '').split(/\n|\//).find((x) => /인|in\b|\d/i.test(x)) || '' : '';
     const dir = dirUrl(tonight);
     h += `<div class="mini"><b>${ms('bed')} ${esc(t('tonight'))}</b><div style="font-weight:700;font-size:17px;margin-top:2px">${esc(tonight.title)}</div>
-      ${tm ? `<div class="note" style="margin:2px 0 0">${esc(tm.trim())}</div>` : ''}
+      ${tm ? `<div class="note" style="margin:2px 0 0">${esc(tx(tr, tm.trim()))}</div>` : ''}
       <div class="row-btns" style="margin-top:8px">${dir ? `<a class="btn small ghost" href="${esc(dir)}" target="_blank" rel="noopener">${dirIcon(tonight)} ${esc(dirLabel(tonight))}</a>` : ''}
       ${tonight.code ? `<button class="code" data-act="copy" data-v="${esc(tonight.code)}">${esc(tonight.code)} ⧉</button>` : ''}</div></div>`;
   }
@@ -1326,7 +1328,7 @@ function mapList(tr, day) {
 }
 function popupHtml(x) {
   const when = [x.date ? dayName(x.date, { month: 'short', day: 'numeric', weekday: 'short' }) : '', (x.time || '').split('\n')[0]].filter(Boolean).join(' · ');
-  return `<div class="pop"><b>${ms(icon(x))} ${esc(x.title)}</b>${esc(when)}<div class="row-btns"><a class="btn small" href="${esc(dirUrl(x))}" target="_blank" rel="noopener">${dirIcon(x)} ${esc(dirLabel(x))}</a>
+  return `<div class="pop"><b>${ms(icon(x))} ${esc(tx(trips[ui.trip], x.title))}</b>${esc(when)}<div class="row-btns"><a class="btn small" href="${esc(dirUrl(x))}" target="_blank" rel="noopener">${dirIcon(x)} ${esc(dirLabel(x))}</a>
     <button class="btn small ghost" data-act="edit-item" data-id="${x.id}" aria-label="${esc(t('editItem'))}">${ms('edit')}</button></div></div>`;
 }
 // ---------- Karten zeichnen (mehrere gleichzeitig) / 지도 그리기 (여러 개 동시에) ----------
@@ -1678,12 +1680,12 @@ function moneyTab(tr) {
   h += `<ul class="lines">${rows.map(({ s, x }) => {
     if (s) {
       const e = eurOf(s, tr), split = (s.split || []).map((id) => pName(tr, id));
-      return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}
+      return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title ? tx(tr, s.title) : t('sp.' + (s.cat || 'etc')))}
         ${multi ? `<small>${ms('credit_card')} ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ` · ${ms('group')} ` + esc(split.join(', ')) : ''}</small>` : ''}</button>
         <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
     }
     const e = eurOf(x.cost, tr);
-    return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${ms(icon(x))} ${esc(x.title)}<small>${ms('push_pin')} ${esc(t('plannedTag'))}</small></button>
+    return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${ms(icon(x))} ${esc(tx(tr, x.title))}<small>${ms('push_pin')} ${esc(t('plannedTag'))}</small></button>
       <span class="am">${esc(money(x.cost.amount, x.cost.cur))}${x.cost.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
       <button class="to-spend" data-act="plan-to-spend" data-id="${x.id}">${esc(t('toSpend'))}</button></li>`;
   }).join('')}</ul>`;
@@ -1750,6 +1752,64 @@ function personSheet(tr, person) {
       closeSheet();
     });
   });
+}
+
+
+// ---------- Deutsch: eingegebene Texte automatisch übersetzen / 독일어: 입력한 글 자동 번역 ----------
+// Nur in der deutschen Ansicht und nur Text mit Hangul. Übersetzt wird, was gerade auf dem Bildschirm steht (MyMemory, frei,
+// wie im 우리가족 app). Ergebnis je Reise in trip.trx[hashId(Text)] – für die ganze Familie gespeichert, nicht in Notion.
+// 독일어 화면에서만, 한글이 있는 글만. 지금 화면에 나온 글부터 번역 (우리가족 앱과 같은 무료 MyMemory).
+// 결과는 여행마다 trip.trx[hashId(글)]에 저장해서 가족이 같이 씀. 노션에는 안 넣음. 한국어를 고치면 새 글이라 다시 번역.
+const HANGUL = /[가-힣]/;
+const trQ = new Map(), trFail = new Set();
+let trBusy = false, trTimer = 0;
+function tx(tr, s) {
+  if (!s || ui.lang !== 'de' || !HANGUL.test(s) || !tr || !tr.id) return s;
+  if (s.includes('\n')) return s.split('\n').map((l) => tx(tr, l)).join('\n');
+  const t0 = s.trim(), d = tr.trx && tr.trx[hashId(t0)];
+  if (d) return d;
+  trWant(tr.id, t0);
+  return s;
+}
+// Übersetzung mit kleinem Original darunter / 번역 + 원문 작게
+const txo = (tr, s) => { const d = tx(tr, s); return d !== s ? `${esc(d)}<small class="orig">${esc(s)}</small>` : esc(s); };
+function trWant(tid, s) {
+  const k = tid + '|' + hashId(s);
+  if (trQ.has(k) || trFail.has(k)) return;
+  trQ.set(k, { tid, h: hashId(s), s });
+  clearTimeout(trTimer); trTimer = setTimeout(trRun, 400);
+}
+async function trOne(s) {
+  const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(s.slice(0, 450))}&langpair=ko|de`);
+  const d = await r.json().catch(() => null);
+  const out = d && d.responseData && d.responseData.translatedText;
+  if (r.status === 429 || (d && Number(d.responseStatus) === 429) || /MYMEMORY WARNING|USED ALL AVAILABLE/i.test(out || '')) throw new Error('limit');
+  if (!r.ok || !d || Number(d.responseStatus) !== 200 || !out || /QUERY LENGTH LIMIT|INVALID/i.test(out)) throw new Error('translate');
+  return out;
+}
+async function trRun() {
+  if (trBusy || !navigator.onLine || Date.now() < store.get('trPause', 0)) return;
+  trBusy = true;
+  const out = [];
+  try {
+    // Aktuelle Reise zuerst / 지금 보는 여행 먼저
+    const jobs = [...trQ.entries()].sort(([, a], [, b]) => (b.tid === ui.trip) - (a.tid === ui.trip)).slice(0, 25);
+    for (const [k, j] of jobs) {
+      trQ.delete(k);
+      if (!trips[j.tid]) continue;
+      try { out.push([['trips', j.tid, 'trx', j.h], await trOne(j.s)]); }
+      catch (e) {
+        trFail.add(k);
+        // Tageskontingent aufgebraucht: 6 Stunden Pause / 하루 무료 한도를 다 쓰면 6시간 쉼
+        if (e.message === 'limit') { store.put('trPause', Date.now() + 6 * 3600e3); trQ.clear(); break; }
+      }
+      if (out.length >= 10) write(out.splice(0), { sync: true });
+    }
+  } finally {
+    if (out.length) write(out, { sync: true });
+    trBusy = false;
+    if (trQ.size && Date.now() >= store.get('trPause', 0)) trTimer = setTimeout(trRun, 800);
+  }
 }
 
 // ---------- Wetter und Ortszeit (Open-Meteo, frei, ohne Schlüssel) / 날씨와 현지 시각 ----------
@@ -1820,7 +1880,7 @@ const kidSticker = (id) => { const s = KID_ST.find((x) => x[0] === id); return s
 function recordHtml(tr, d) {
   const r = (tr.log || {})[d];
   if (!r || (!r.text && !r.davin && !r.arin)) return `<button class="rec-add" data-act="rec" data-day="${d}">${ms('edit_note')} ${esc(t('recAdd'))}</button>`;
-  return `<button class="rec" data-act="rec" data-day="${d}">${ms('edit_note', 'rec-i')}${r.text ? `<span class="rec-t">${esc(r.text)}</span>` : ''}
+  return `<button class="rec" data-act="rec" data-day="${d}">${ms('edit_note', 'rec-i')}${r.text ? `<span class="rec-t">${txo(tr, r.text)}</span>` : ''}
     <span class="rec-k">${KIDS.filter(([k]) => r[k]).map(([k]) => `<span class="rec-kid"><span class="face">${kidFace(k)}</span>${kidSticker(r[k])}</span>`).join('')}</span></button>`;
 }
 function recordSheet(tr, d) {
@@ -1871,7 +1931,7 @@ function checkTab(tr) {
   if (!list.length) return h + `<p class="empty">${esc(t('noChecks'))}</p>`;
   h += `<div class="stat" style="margin:0 2px"><span>${esc(t('checkProg', { a: done, b: list.length }))}</span></div><div class="progress"><span style="width:${Math.round((done / list.length) * 100)}%"></span></div>`;
   h += `<ul class="checks">${list.map((x) => `<li class="${x.done ? 'done' : ''}"><button class="cb" data-act="check" data-id="${x.id}" role="checkbox" aria-checked="${!!x.done}">
-    <span class="box">${x.done ? '✓' : ''}</span>${x.who ? `<span class="pk" style="--k:${kidColor(x.who)}">${ms(packIcon(x.text))}</span>` : ''}<span class="tx">${esc(x.text)}${x.who && !who ? `<small> · ${esc(kidName(x.who))}</small>` : ''}</span></button>
+    <span class="box">${x.done ? '✓' : ''}</span>${x.who ? `<span class="pk" style="--k:${kidColor(x.who)}">${ms(packIcon(x.text))}</span>` : ''}<span class="tx">${txo(tr, x.text)}${x.who && !who ? `<small> · ${esc(kidName(x.who))}</small>` : ''}</span></button>
     <button class="rm" data-act="rm-check" data-id="${x.id}" aria-label="${esc(t('del'))}">×</button></li>`).join('')}</ul>`;
   return h;
 }
@@ -1995,7 +2055,7 @@ const FLAGS = [['🇰🇷', 'KRW'], ['🇯🇵', 'JPY'], ['🇫🇷', 'EUR'], ['
 
 function itemSheet(tr, it, defaults = {}) {
   const isNew = !it;
-  it = it || { id: uid('i'), cat: defaults.cat || 'see', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false, ...(defaults.need && { need: true }) };
+  it = it || { id: uid('i'), cat: defaults.cat || 'see', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false, ...(defaults.need && { need: true, bookOnly: true }) };
   // Neuer Eintrag in einer Notion-Reise mit mehreren Tabellen: in welche? / 노션에 표가 여러 개면 어느 표에 넣을지
   const dbs = tr.notion && tr.notion.dbs ? Object.entries(tr.notion.dbs) : [];
   const dbPick = isNew && dbs.length > 1
