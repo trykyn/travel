@@ -875,6 +875,15 @@ function loadGoogle() {
   return gmapsP;
 }
 const useGoogle = () => !!GM() && !ui.gmFailed;
+// Zweite Sicherung neben den Limits in der Cloud Console: höchstens 100 Kartenaufrufe und 50 Suchen pro Gerät und Tag,
+// danach OpenStreetMap. 3 Handys × 31 Tage: 9.300 Karten / 4.650 Suchen, unter den Freimengen (10.000 / 5.000).
+// 구글 쪽 상한과 별도로 앱 안에서도: 기기마다 하루 지도 100번, 검색 50번까지. 넘으면 기본 지도.
+function gmBudget(kind, max) {
+  const k = 'gm:' + kind + ':' + today(), n = store.get(k, 0);
+  if (n >= max) return false;
+  store.put(k, n + 1);
+  return true;
+}
 async function googleSearch(q, tr, limit, extra) {
   const gm = await loadGoogle();
   const { Place } = await gm.importLibrary('places');
@@ -887,7 +896,7 @@ async function googleSearch(q, tr, limit, extra) {
   return (places || []).map((p) => ({ lat: p.location.lat(), lng: p.location.lng(), pid: p.id, name: [p.displayName, p.formattedAddress].filter(Boolean).join(', ') }));
 }
 async function geocode(q, tr, limit = 1, extra = []) {
-  if (useGoogle()) return googleSearch(q, tr, limit, extra);
+  if (useGoogle() && gmBudget('search', 50)) return googleSearch(q, tr, limit, extra);
   const p = new URLSearchParams({ q, format: 'jsonv2', limit: String(limit), 'accept-language': ui.lang === 'de' ? 'de,en' : 'ko,en' });
   const cc = flagCC(tr.icon);
   if (cc) p.set('countrycodes', cc);
@@ -977,7 +986,8 @@ async function initMap(tr) {
   const box = $('#map');
   if (!box) return;
   const days = tripDays(tr), day = ui.mapDay || '', list = mapList(tr, day);
-  if (useGoogle()) {
+  // Jedes Zeichnen der Karte ist bei Google ein Kartenaufruf / 지도를 그릴 때마다 구글에서는 1번으로 셈
+  if (useGoogle() && gmBudget('map', 100)) {
     try { await initGoogleMap(tr, box, list, day, days); return; } catch (e) { console.warn(e); ui.gmFailed = true; }
   }
   let L;
