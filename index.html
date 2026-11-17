@@ -136,6 +136,13 @@ h2:first-child { margin-top: 2px; }
 .settle span[aria-hidden] { color: var(--coral); font-weight: 900; }
 .settle .amt { justify-self: end; font-weight: 900; font-size: 17px; }
 .c-pp { --c: var(--brand); }
+.people.small { gap: 5px; margin: 0 0 10px; }
+.people.small .person { padding: 3px 10px 3px 3px; font-size: 13px; gap: 5px; box-shadow: none; border: 1px solid var(--line); }
+.people.small .av { width: 20px; height: 20px; font-size: 11px; }
+.people.small .person.add { padding: 3px 10px; font-size: 14px; border: 1px solid var(--line); box-shadow: none; color: var(--muted); }
+.link-btn { display: block; margin: 10px 0 0; padding: 2px 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.lines li.plan .x { color: var(--muted); }
+.lines li .to-spend { flex: none; align-self: center; padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--line); }
 .st .stm { display: block; width: 17px; height: 17px; margin: 0 auto 2px; }
 .plane svg { display: block; width: 24px; height: 24px; }
 .modes span { gap: 5px; }
@@ -761,6 +768,7 @@ const hashId = (s) => { let h = 7; for (const c of String(s)) h = (h * 31 + c.ch
 
 function tripView(tr) {
   const tabs = tabsOf(tr);
+  if (ui.tab === 'ledger') ui.tab = 'money'; // früherer eigener Tab / 예전 가계부 탭 주소
   if (!tabs.includes(ui.tab)) ui.tab = 'plan';
   // Gruppen (Notion-Unterseiten) sind das Hauptthema: gewählt gilt sie für alle Tabs und die Bordkarte
   // 묶음(노션 하위 페이지)이 대주제: 고르면 모든 탭과 탑승권이 그 묶음 기준
@@ -784,16 +792,16 @@ function tripView(tr) {
     </header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
   if (window.notionSync) h += window.notionSync.bannerHtml();
-  h += { today: todayTab, plan: planTab, book: bookTab, cmp: cmpTab, map: mapTab, money: moneyTab, ledger: ledgerTab, check: checkTab, memo: memoTab }[ui.tab](tr);
+  h += { today: todayTab, plan: planTab, book: bookTab, cmp: cmpTab, map: mapTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
   h += '</section>';
   if (ui.tab === 'plan') h += `<button class="fab" data-act="new-item">${esc(t('addItem'))}</button>`;
   if (ui.tab === 'book') h += `<button class="fab" data-act="new-item" data-cat="stay">${esc(t('addItem'))}</button>`;
   if (ui.tab === 'cmp') h += `<button class="fab" data-act="new-opt">${esc(t('addOpt'))}</button>`;
-  if (ui.tab === 'ledger') h += `<button class="fab" data-act="new-spend">${esc(t('addSpend'))}</button>`;
+  if (ui.tab === 'money') h += `<button class="fab" data-act="new-spend">${esc(t('addSpend'))}</button>`;
   return h;
 }
 // "오늘" gibt es nur während der Reise / '오늘' 탭은 여행 중에만
-const tabsOf = (tr) => [...(status(tr) === 'now' ? ['today'] : []), 'plan', 'book', 'cmp', 'map', 'money', 'ledger', 'check', 'memo'];
+const tabsOf = (tr) => [...(status(tr) === 'now' ? ['today'] : []), 'plan', 'book', 'cmp', 'map', 'money', 'check', 'memo'];
 
 function itemCard(it, tr, day) {
   const meta = [];
@@ -913,64 +921,11 @@ function bookTab(tr) {
   return h;
 }
 
-function moneyTab(tr) {
-  const all = itemsG(tr).filter((x) => x.cost && x.cost.amount);
-  let total = 0, local = 0, missing = 0;
-  const by = {};
-  for (const x of all) {
-    const e = eurOf(x.cost, tr);
-    if (e == null) missing++; else { total += e; by[x.cat] = (by[x.cat] || 0) + e; }
-    if (x.cost.cur === tr.cur) local += x.cost.amount;
-  }
-  // Ausgaben unterwegs (Heute-Seite) / 여행 중 지출 ('오늘' 화면에서 기록)
-  const scm = ui.grp != null ? groupSpan(tr, ui.grp) : null;
-  const spends = spendsOf(tr).filter((s) => !scm || (s.date >= scm[0] && s.date <= scm[1]));
-  const plannedTotal = total;
-  let spentTotal = 0;
-  for (const s of spends) {
-    const e = eurOf(s, tr);
-    if (e == null) missing++; else { spentTotal += e; by[s.cat] = (by[s.cat] || 0) + e; }
-    if (s.cur === tr.cur) local += s.amount;
-  }
-  total += spentTotal;
-  let h = `<div class="card"><div class="stat"><span>${esc(t('total'))}</span><b>${esc(money(total, 'EUR'))}</b></div>`;
-  if (spends.length) h += `<div class="note" style="margin:2px 0 0">${esc(t('planned'))} ${esc(money(plannedTotal, 'EUR'))} · ${esc(t('spent'))} ${esc(money(spentTotal, 'EUR'))}</div>`;
-  if (tr.cur && tr.cur !== 'EUR' && local) h += `<div class="note" style="margin:2px 0 0">${esc(t('inLocal', { x: money(local, tr.cur) }))}</div>`;
-  if (tr.budget) {
-    const pct = Math.min(100, Math.round((total / tr.budget) * 100)), over = total > tr.budget;
-    h += `<div class="progress${over ? ' over' : ''}"><span style="width:${pct}%"></span></div>
-      <div class="stat"><span>${esc(t('budgetOf', { b: money(tr.budget, 'EUR') }))}</span><span class="${over ? 'todo' : 'ok'}">${esc(t(over ? 'over' : 'left', { x: money(Math.abs(tr.budget - total), 'EUR') }))}</span></div>`;
-  }
-  if (missing) h += `<p class="note">${esc(t('noRate'))}</p>`;
-  h += '</div>';
-  const max = Math.max(1, ...Object.values(by));
-  if (Object.keys(by).length) {
-    h += `<div class="card"><b>${esc(t('byCat'))}</b><div class="bars">${[...CAT_ORDER, 'shop'].filter((c) => by[c]).map((c) => `<div class="row c-${c}">
-      <span>${esc(t('cats.' + c))}</span><i style="width:${Math.round((by[c] / max) * 100)}%"></i><b>${esc(money(by[c], 'EUR'))}</b></div>`).join('')}</div></div>`;
-  }
-  if (tr.cur && tr.cur !== 'EUR') {
-    h += `<div class="card"><div class="rate"><span>${esc(t('rate'))}: ${tr.rate ? `1 ${esc(tr.cur)} = ${esc(String(+tr.rate.toPrecision(4)))} €` : '—'}</span>
-      <button class="btn small ghost" data-act="fetch-rate">${esc(t('fetchRate'))}</button></div>
-      ${tr.rate ? `<div class="conv"><input class="in" id="conv" inputmode="decimal" placeholder="${esc(money(1000, tr.cur))}" aria-label="${esc(t('conv'))}"><output id="conv-out">€</output></div>` : ''}</div>`;
-  }
-  h += `<h2>${esc(t('costList'))}</h2>`;
-  if (!all.length && !spends.length) h += `<p class="empty">${esc(t('noCosts'))}</p>`;
-  else {
-    const rows = [...all.map((x) => ({ d: x.date, x })), ...spends.map((s) => ({ d: s.date, s }))]
-      .sort((a, b) => (a.d || '9').localeCompare(b.d || '9') || (a.s ? 1 : 0) - (b.s ? 1 : 0));
-    h += `<ul class="lines">${rows.map(({ x, s }) => {
-      if (s) return spendLine(s, tr, true);
-      const e = eurOf(x.cost, tr);
-      return `<li><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${icon(x)} ${esc(x.title)}</button>
-        <span class="am">${esc(money(x.cost.amount, x.cost.cur))}${x.cost.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
-    }).join('')}</ul>`;
-  }
-  return h;
-}
-
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
-Object.assign(T.ko.tabs, { ledger: '가계부' });
-Object.assign(T.de.tabs, { ledger: 'Abrechnung' });
+Object.assign(T.ko.tabs, { money: '가계부' });
+Object.assign(T.de.tabs, { money: 'Kosten' });
+Object.assign(T.ko, { splitFriends: '👥 일행과 나누기', toSpend: '지출로', plannedTag: '예약·계획', history: '내역', spent: '실제 지출', planned: '예약·계획', noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.' });
+Object.assign(T.de, { splitFriends: '👥 Mit anderen teilen', toSpend: 'Bezahlt', plannedTag: 'geplant', history: 'Einträge', spent: 'ausgegeben', planned: 'geplant', noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.' });
 Object.assign(T.ko, { us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수', personNote: '나눌 때 인원 수만큼 몫을 가져요. 예: 우리 가족 4명, 지민네 2명이면 4:2로 나눠요.',
   personDelQ: '"{n}"을(를) 일행에서 뺄까요?', personUsed: '이 일행이 들어간 지출이 있어서 뺄 수 없어요', ledgerTotal: '총 지출', paid: '낸 돈', share: '몫', gets: '받을 돈 {x}', owes: '낼 돈 {x}',
   settle: '정산', settleNone: '정산할 게 없어요 👍', copySettle: '정산 내용 복사', settleCopied: '복사했어요. 메신저에 붙여 보내세요', addSpend: '+ 지출', spendNew: '지출 기록', spendEdit: '지출 고치기',
@@ -1450,35 +1405,82 @@ function settle(bal) {
   }
   return out;
 }
-function ledgerTab(tr) {
-  const ppl = peopleOf(tr);
-  const spends = ledgerSpends(tr).sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.t || 0) - (a.t || 0));
-  const { bal, total, skipped } = balances(tr, spends);
-  let h = `<div class="people">${ppl.map((p, i) => `<button class="person" data-act="edit-person" data-id="${esc(p.id)}"><span class="av" style="background:${P_COLORS[i % P_COLORS.length]}">${esc([...p.name][0] || '?')}</span>${esc(p.name)}${(p.n || 1) > 1 ? `<small>${p.n}${esc(t('ppl'))}</small>` : ''}</button>`).join('')}
-    <button class="person add" data-act="add-person">${esc(t('addPerson'))}</button></div>`;
-  if (!spends.length) return h + `<p class="empty">${esc(t('noSpends'))}</p>`;
-  h += `<div class="card"><div class="stat"><span>${esc(t('ledgerTotal'))}</span><b>${esc(money(total, 'EUR'))}</b></div>`;
-  if (ppl.length > 1) {
-    h += `<ul class="lines bal">${ppl.map((p) => {
+// Ein Tab für Geld: geplante Kosten aus dem Plan + echte Ausgaben, Budget, Kurs; Abrechnung nur mit Mitreisenden.
+// Ein geplanter Betrag, der als Ausgabe eingetragen wurde ("지출로"), zählt nur noch einmal.
+// 돈 탭 하나: 일정의 예약·계획 금액 + 실제 지출, 예산, 환율. 정산은 일행이 있을 때만.
+// 계획 금액을 '지출로' 옮기면 한 번만 셈.
+function moneyTab(tr) {
+  const ppl = peopleOf(tr), multi = ppl.length > 1;
+  const spends = ledgerSpends(tr);
+  const recorded = new Set(spendsOf(tr).map((s) => s.item).filter(Boolean));
+  const plans = itemsG(tr).filter((x) => x.cost && x.cost.amount && !recorded.has(x.id));
+  let planned = 0, spent = 0, local = 0, missing = 0;
+  const by = {};
+  for (const x of plans) {
+    const e = eurOf(x.cost, tr);
+    if (e == null) missing++; else { planned += e; by[x.cat] = (by[x.cat] || 0) + e; }
+    if (x.cost.cur === tr.cur) local += x.cost.amount;
+  }
+  for (const s of spends) {
+    const e = eurOf(s, tr);
+    if (e == null) missing++; else { spent += e; by[s.cat] = (by[s.cat] || 0) + e; }
+    if (s.cur === tr.cur) local += s.amount;
+  }
+  const total = planned + spent;
+  let h = '';
+  // Mitreisende nur, wenn es welche gibt – klein / 일행은 있을 때만, 작게
+  if (multi) {
+    h += `<div class="people small">${ppl.map((p, i) => `<button class="person" data-act="edit-person" data-id="${esc(p.id)}"><span class="av" style="background:${P_COLORS[i % P_COLORS.length]}">${esc([...p.name][0] || '?')}</span>${esc(p.name)}${(p.n || 1) > 1 ? `<small>${p.n}${esc(t('ppl'))}</small>` : ''}</button>`).join('')}
+      <button class="person add" data-act="add-person" aria-label="${esc(t('addPerson'))}">+</button></div>`;
+  }
+  h += `<div class="card"><div class="stat"><span>${esc(t('total'))}</span><b>${esc(money(total, 'EUR'))}</b></div>`;
+  if (spent && planned) h += `<div class="note" style="margin:2px 0 0">${esc(t('spent'))} ${esc(money(spent, 'EUR'))} · ${esc(t('planned'))} ${esc(money(planned, 'EUR'))}</div>`;
+  if (tr.cur && tr.cur !== 'EUR' && local) h += `<div class="note" style="margin:2px 0 0">${esc(t('inLocal', { x: money(local, tr.cur) }))}</div>`;
+  if (tr.budget) {
+    const pct = Math.min(100, Math.round((total / tr.budget) * 100)), over = total > tr.budget;
+    h += `<div class="progress${over ? ' over' : ''}"><span style="width:${pct}%"></span></div>
+      <div class="stat"><span>${esc(t('budgetOf', { b: money(tr.budget, 'EUR') }))}</span><span class="${over ? 'todo' : 'ok'}">${esc(t(over ? 'over' : 'left', { x: money(Math.abs(tr.budget - total), 'EUR') }))}</span></div>`;
+  }
+  if (missing) h += `<p class="note">${esc(t('noRate'))}</p>`;
+  if (!multi) h += `<button class="link-btn" data-act="add-person">${esc(t('splitFriends'))}</button>`;
+  h += '</div>';
+  // Abrechnung / 정산
+  if (multi && spends.length) {
+    const { bal } = balances(tr, spends), tx = settle(bal);
+    h += `<div class="card"><b>${esc(t('settle'))}</b><ul class="lines bal">${ppl.map((p) => {
       const b = bal[p.id], v = b.paid - b.share;
       return `<li><span class="x">${esc(p.name)}<small>${esc(t('paid'))} ${esc(money(b.paid, 'EUR'))} · ${esc(t('share'))} ${esc(money(b.share, 'EUR'))}</small></span>
         <span class="${v >= 0 ? 'ok' : 'todo'}">${esc(v >= 0.005 ? t('gets', { x: money(v, 'EUR') }) : v <= -0.005 ? t('owes', { x: money(-v, 'EUR') }) : '±0')}</span></li>`;
-    }).join('')}</ul>`;
+    }).join('')}</ul>
+      ${tx.map(([a, b, x]) => `<div class="settle"><b>${esc(pName(tr, a))}</b><span aria-hidden="true">→</span><b>${esc(pName(tr, b))}</b><span class="amt">${esc(money(x, 'EUR'))}</span></div>`).join('') || `<p class="note">${esc(t('settleNone'))}</p>`}
+      ${tx.length ? `<div class="set-row" style="margin-top:8px"><button class="btn small ghost" data-act="copy-settle">${esc(t('copySettle'))}</button></div>` : ''}</div>`;
   }
-  if (skipped) h += `<p class="note">${esc(t('noRate'))}</p>`;
-  h += '</div>';
-  if (ppl.length > 1) {
-    const tx = settle(bal);
-    h += `<h2>${esc(t('settle'))}</h2><div class="card">${tx.length
-      ? tx.map(([a, b, x]) => `<div class="settle"><b>${esc(pName(tr, a))}</b><span aria-hidden="true">→</span><b>${esc(pName(tr, b))}</b><span class="amt">${esc(money(x, 'EUR'))}</span></div>`).join('')
-        + `<div class="set-row" style="margin-top:10px"><button class="btn small ghost" data-act="copy-settle">${esc(t('copySettle'))}</button></div>`
-      : esc(t('settleNone'))}</div>`;
+  const max = Math.max(1, ...Object.values(by));
+  if (Object.keys(by).length) {
+    h += `<div class="card"><b>${esc(t('byCat'))}</b><div class="bars">${[...CAT_ORDER, 'shop'].filter((c) => by[c]).map((c) => `<div class="row c-${c}">
+      <span>${esc(t('cats.' + c))}</span><i style="width:${Math.round((by[c] / max) * 100)}%"></i><b>${esc(money(by[c], 'EUR'))}</b></div>`).join('')}</div></div>`;
   }
-  h += `<h2>${esc(t('spendList'))}</h2><ul class="lines">${spends.map((s) => {
-    const e = eurOf(s, tr), split = (s.split || []).map((id) => pName(tr, id));
-    return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${SP_ICON[s.cat] || '💳'} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}
-      ${ppl.length > 1 ? `<small>💳 ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ' · 👥 ' + esc(split.join(', ')) : ''}</small>` : ''}</button>
-      <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
+  if (tr.cur && tr.cur !== 'EUR') {
+    h += `<div class="card"><div class="rate"><span>${esc(t('rate'))}: ${tr.rate ? `1 ${esc(tr.cur)} = ${esc(String(+tr.rate.toPrecision(4)))} €` : '—'}</span>
+      <button class="btn small ghost" data-act="fetch-rate">${esc(t('fetchRate'))}</button></div>
+      ${tr.rate ? `<div class="conv"><input class="in" id="conv" inputmode="decimal" placeholder="${esc(money(1000, tr.cur))}" aria-label="${esc(t('conv'))}"><output id="conv-out">€</output></div>` : ''}</div>`;
+  }
+  // Alles nach Datum: Ausgaben und geplante Beträge / 내역: 지출과 계획 금액을 날짜순으로
+  h += `<h2>${esc(t('history'))}</h2>`;
+  if (!plans.length && !spends.length) return h + `<p class="empty">${esc(t('noMoney'))}</p>`;
+  const rows = [...spends.map((s) => ({ d: s.date, s })), ...plans.map((x) => ({ d: x.date, x }))]
+    .sort((a, b) => (a.d || '9').localeCompare(b.d || '9') || (a.s ? 0 : 1) - (b.s ? 0 : 1));
+  h += `<ul class="lines">${rows.map(({ s, x }) => {
+    if (s) {
+      const e = eurOf(s, tr), split = (s.split || []).map((id) => pName(tr, id));
+      return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${SP_ICON[s.cat] || '💳'} ${esc(s.title || t('sp.' + (s.cat || 'etc')))}
+        ${multi ? `<small>💳 ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ' · 👥 ' + esc(split.join(', ')) : ''}</small>` : ''}</button>
+        <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
+    }
+    const e = eurOf(x.cost, tr);
+    return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${icon(x)} ${esc(x.title)}<small>📌 ${esc(t('plannedTag'))}</small></button>
+      <span class="am">${esc(money(x.cost.amount, x.cost.cur))}${x.cost.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
+      <button class="to-spend" data-act="plan-to-spend" data-id="${x.id}">${esc(t('toSpend'))}</button></li>`;
   }).join('')}</ul>`;
   return h;
 }
@@ -1489,10 +1491,10 @@ function settleText(tr) {
   for (const [a, b, x] of settle(bal)) lines.push(`→ ${pName(tr, a)} ➜ ${pName(tr, b)}: ${money(x, 'EUR')}`);
   return lines.join('\n');
 }
-function spendSheet(tr, s) {
+function spendSheet(tr, s, pre) {
   const isNew = !s, ppl = peopleOf(tr), sc = scopeOf(tr), now = today();
   const def = isDate(sc.start) && now >= sc.start && now <= (sc.end || sc.start) ? now : isDate(sc.start) ? sc.start : now;
-  s = s || { id: uid('s'), date: def, amount: '', cur: tr.cur || 'EUR', cat: 'food', title: '', payer: ppl[0].id, split: ppl.map((p) => p.id) };
+  s = s || { id: uid('s'), date: def, amount: '', cur: tr.cur || 'EUR', cat: 'food', title: '', payer: ppl[0].id, split: ppl.map((p) => p.id), ...(pre || {}) };
   const curs = [...new Set([tr.cur || 'EUR', 'EUR', s.cur || 'EUR'])];
   const split = s.split && s.split.length ? s.split : [s.payer || 'me'];
   openSheet(`<h3>${esc(t(isNew ? 'spendNew' : 'spendEdit'))}</h3><form data-form="spendx">
@@ -1923,6 +1925,12 @@ const ACT = {
   'rm-check': (b) => write([[['trips', ui.trip, 'checks', b.dataset.id], null], touch(ui.trip)]),
   'toggle-done': (b) => { const it = cur().items[b.dataset.id]; write([[['trips', ui.trip, 'items', it.id, 'done'], !it.done], touch(ui.trip)]); },
   'new-spend': () => spendSheet(cur()),
+  // Geplanten Betrag als bezahlt eintragen (zählt dann nur als Ausgabe) / 계획 금액을 지출로 (그러면 지출로만 셈)
+  'plan-to-spend': (b) => {
+    const tr = cur(), x = tr.items[b.dataset.id];
+    if (!x || !x.cost) return;
+    spendSheet(tr, null, { date: isDate(x.date) ? x.date : today(), amount: x.cost.amount, cur: x.cost.cur, cat: ['move', 'stay', 'food', 'see'].includes(x.cat) ? x.cat : 'etc', title: x.title, item: x.id });
+  },
   'edit-spend': (b) => spendSheet(cur(), cur().spend[b.dataset.id]),
   'del-spendx': (b) => { if (!confirm(t('spendDelQ'))) return; write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); closeSheet(); },
   'add-person': () => personSheet(cur()),
