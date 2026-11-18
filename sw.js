@@ -3,7 +3,7 @@
 // alte Kopien, und die installierte App zeigt nach dem Neustart noch die alte Version.
 // 앱 파일은 매번 서버에 "바뀌었나요?"를 물어봄. GitHub Pages의 10분 저장 표시 때문에 홈 화면 앱이
 // 껐다 켜도 예전 화면을 보여 주는 일을 막음.
-const CACHE = 'travel-v29';
+const CACHE = 'travel-v30';
 const PINNED = ['https://www.gstatic.com', 'https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com', 'https://fonts.gstatic.com'];
 
 self.addEventListener('install', e => {

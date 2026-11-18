@@ -15,7 +15,7 @@
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=attractions,backpack,beach_access,bed,bedtime,castle,check,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_cafe,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,open_in_new,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=add,attractions,backpack,beach_access,bed,bedtime,castle,check,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,event,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_cafe,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,open_in_new,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
 <title>여행</title>
 <style>
 /* Aussehen „Bordkarte“: hellblauer Himmel, weiße Tickets mit Abrisskante und Strichcode, Navy-Schrift, Koralle als Akzent.
@@ -353,6 +353,13 @@ input[type="date"].in { min-height: 46px; }
 .seg.bk input:checked + span { background: var(--sheet); color: var(--ink); box-shadow: var(--shadow); }
 .seg.bk input:focus-visible + span { outline: 2px solid var(--accent); }
 .md-n { padding: 0 7px; border-radius: 6px; background: var(--soft); color: var(--accent); font-size: 12.5px; font-weight: 800; }
+.map.eat-map { height: 260px; min-height: 0; margin: 0 0 10px; }
+.eat-list { margin-top: 6px; }
+.eat-row { position: relative; }
+.eat-no { position: absolute; z-index: 1; left: -6px; top: -6px; display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 999px; background: var(--c); color: #fff; font-size: 12px; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,.18); }
+.eat-act { display: flex; justify-content: flex-end; margin: 4px 2px 2px; }
+.eat-when { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; color: var(--ok); }
+.eat-when .ms, .eat-act .ms { font-size: 17px; vertical-align: 0; }
 .bk-go { display: inline-flex; align-items: center; gap: 3px; padding: 2px 10px 2px 8px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 13px; font-weight: 800; }
 .bk-go .ms { font-size: 15px; vertical-align: 0; }
 .bk-todo .ms { font-size: 15px; vertical-align: -.15em; }
@@ -445,7 +452,7 @@ let unsynced = new Set(store.get('unsynced', []));
 const T = {
   ko: {
     app: '여행', upcoming: '다가오는 여행', newTrip: '+ 새 여행', noTrips: '아직 여행이 없어요. 아래 버튼으로 첫 여행을 만들어 보세요.', undated: '날짜 미정', ongoing: '여행 중', dayN: '{n}일째', nights: '{n}박',
-    next: '다음 여행', back: '여행', tabs: { plan: '일정', book: '예약', money: '가계부', check: '할 일·짐', memo: '메모', today: '오늘' },
+    next: '다음 여행', back: '여행', tabs: { plan: '일정', book: '예약', money: '가계부', check: '할 일·짐', memo: '메모', today: '오늘', eat: '맛집' },
     cats: { move: '이동', stay: '숙소', food: '맛집', cafe: '카페', see: '관광', shop: '쇼핑', etc: '기타' }, dayNo: '{n}일차', today: '오늘', cand: '날짜 미정 · 후보', addHere: '+ 추가',
     addItem: '+ 일정', noItems: '아직 일정이 없어요', night: '숙박 {a}/{b}박', checkout: '체크아웃', booked: '예약완료', newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란',
     date: '일정 (날짜)', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)', time: '시간', timePh: '예: 15:00-16:30', isBooked: '예약 완료', cost: '비용', notes: '주요내용', save: '저장',
@@ -467,7 +474,7 @@ const T = {
     locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요', locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치',
     pickOne: '맞는 곳을 고르세요', grpShow: '소여행 (노션 하위 페이지)', grpShowNote: '체크를 끈 페이지는 소여행으로 안 쓰고 일정·체크리스트에서도 숨겨요. 노션에는 그대로 있어요.', splitHow: '나누는 방법', split_eq: '가족마다 똑같이',
     split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요',
-    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkGo: '예약하러 가기', multiDay: '여러 날이면 날짜를 더 눌러 주세요', dayOf: '{a}/{b}일', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
+    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkGo: '예약하러 가기', eatFood: '음식점', eatCafe: '카페', addEat: '+ 맛집', toPlan: '일정에 추가', pickDayT: '언제 갈까요?', noEat: '가고 싶은 음식점·카페를 + 맛집으로 모아 두세요. 지도에 한눈에 보이고, 일정에 바로 넣을 수 있어요.', eatPlanned: '{d} 일정', eatNoLoc: '위치가 없는 곳 {n}개', multiDay: '여러 날이면 날짜를 더 눌러 주세요', dayOf: '{a}/{b}일', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
     addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록',
     recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진', todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인',
     nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개', mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라',
@@ -488,7 +495,7 @@ const T = {
   de: {
     app: 'Reisen', upcoming: 'Kommende Reisen', newTrip: '+ Neue Reise', noTrips: 'Noch keine Reisen. Leg unten die erste an.', undated: 'ohne Datum', ongoing: 'Unterwegs',
     dayN: 'Tag {n}', nights: '{n} Nächte', next: 'Nächste Reise', back: 'Reisen',
-    tabs: { plan: 'Plan', book: 'Buchungen', money: 'Kosten', check: 'To-do & Packen', memo: 'Notizen', today: 'Heute' },
+    tabs: { plan: 'Plan', book: 'Buchungen', money: 'Kosten', check: 'To-do & Packen', memo: 'Notizen', today: 'Heute', eat: 'Essen' },
     cats: { move: 'Fahrt', stay: 'Unterkunft', food: 'Essen', cafe: 'Café', see: 'Ausflug', shop: 'Einkauf', etc: 'Sonstiges' }, dayNo: 'Tag {n}', today: 'Heute',
     cand: 'Ohne Datum · Ideen', addHere: '+ Hinzufügen', addItem: '+ Eintrag', noItems: 'Noch keine Einträge', night: 'Nacht {a}/{b}', checkout: 'Check-out',
     booked: 'gebucht', newItem: 'Neuer Eintrag', editItem: 'Eintrag bearbeiten', title: 'Name', titlePh: 'z. B. Mittagessen – Ichiran', date: 'Datum', endStay: 'Abreise',
@@ -521,7 +528,7 @@ const T = {
     grpShow: 'Teilreisen (Notion-Unterseiten)', grpShowNote: 'Abgewählte Seiten sind keine Teilreise und werden im Plan und in Listen ausgeblendet. In Notion bleiben sie.',
     splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}',
     amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben',
-    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkGo: 'Jetzt buchen', multiDay: 'Mehrere Tage? Einfach weitere Tage antippen', dayOf: 'Tag {a}/{b}', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
+    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkGo: 'Jetzt buchen', eatFood: 'Restaurants', eatCafe: 'Cafés', addEat: '+ Lokal', toPlan: 'In den Plan', pickDayT: 'Wann?', noEat: 'Sammle hier Restaurants und Cafés mit + Lokal. Sie stehen auf der Karte und lassen sich direkt in den Plan legen.', eatPlanned: 'am {d}', eatNoLoc: '{n} ohne Ort', multiDay: 'Mehrere Tage? Einfach weitere Tage antippen', dayOf: 'Tag {a}/{b}', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
     addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)',
     dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch',
     recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos', todoN: '{n} Aufgaben offen',
@@ -943,12 +950,13 @@ function tripView(tr) {
     </header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
   if (window.notionSync) h += window.notionSync.bannerHtml();
-  h += { today: todayTab, plan: planTab, book: bookTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
+  h += { today: todayTab, plan: planTab, eat: eatTab, book: bookTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
   h += '</section>';
   if (ui.tab === 'plan') h += `<button class="fab" data-act="new-item">${esc(t('addItem'))}</button>`;
   // 예약 탭: 스키패스·스키학교처럼 예약할 것을 바로 추가 / Buchungen: direkt etwas „zu buchen“ anlegen
   if (ui.tab === 'book') h += `<button class="fab" data-act="new-item" data-need="1">${esc(t('addBook'))}</button>`;
   if (ui.tab === 'money') h += `<button class="fab" data-act="new-spend">${esc(t('addSpend'))}</button>`;
+  if (ui.tab === 'eat') h += `<button class="fab" data-act="new-eat">${esc(t('addEat'))}</button>`;
   return h;
 }
 // "오늘" gibt es nur während der Reise / '오늘' 탭은 여행 중에만
@@ -958,9 +966,9 @@ function tripView(tr) {
 //  danach (지난 여행): 일정 → 가계부 → 메모 → 예약 → 체크리스트
 //  (Karte steckt jetzt in jedem Tag des Plans / 지도는 일정의 날짜마다)
 const TAB_ORDER = {
-  up: ['plan', 'book', 'check', 'money', 'memo'],
-  now: ['today', 'plan', 'money', 'check', 'book', 'memo'],
-  past: ['plan', 'money', 'memo', 'book', 'check'],
+  up: ['plan', 'eat', 'book', 'check', 'money', 'memo'],
+  now: ['today', 'plan', 'eat', 'money', 'check', 'book', 'memo'],
+  past: ['plan', 'eat', 'money', 'memo', 'book', 'check'],
 };
 const tabsOf = (tr) => TAB_ORDER[status(tr)] || TAB_ORDER.up;
 
@@ -1061,7 +1069,7 @@ function planTab(tr) {
   });
   const set = new Set(days);
   // Nur zum Buchen angelegt (Skipass …) und ohne Datum: nicht im Plan / 예약 탭에서 만든 날짜 없는 것(스키패스 등)은 일정에 안 나옴
-  const cand = all.filter((x) => !x.bookOnly && !set.has(x.date) && !(x.cat === 'move' && set.has(x.end))).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const cand = all.filter((x) => !x.bookOnly && !(isEat(x) && !isDate(x.date)) && !set.has(x.date) && !(x.cat === 'move' && set.has(x.end))).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   // Leere 날짜 미정-Fläche nur beim Ziehen zeigen / 비어 있는 날짜 미정 칸은 끄는 동안만 보임
   if (cand.length || all.some(canChangeDay)) h += `<div class="${cand.length ? '' : 'cand-drop'}"><h2>${esc(t('cand'))}</h2><div class="items cand" data-dnd="cand">${cand.map((x) => itemCard(x, tr)).join('')}</div></div>`;
   return h;
@@ -1456,6 +1464,37 @@ function visitedSheet() {
     }).filter(Boolean);
     drawMap(box, pts, { keep: true });
   });
+}
+
+// ---------- 맛집 ----------
+const isEat = (x) => x.cat === 'food' || x.cat === 'cafe';
+const eatList = (tr) => itemsG(tr).filter(isEat).filter((x) => !ui.eatK || x.cat === ui.eatK)
+  .sort((a, b) => (isDate(a.date) ? 0 : 1) - (isDate(b.date) ? 0 : 1) || (a.date || '').localeCompare(b.date || '') || (a.order ?? 0) - (b.order ?? 0));
+function eatPoints(tr) {
+  return eatList(tr).filter((x) => x.loc && isFinite(x.loc.lat))
+    .map((x, i) => ({ lat: x.loc.lat, lng: x.loc.lng, label: i + 1, cls: `pin c-${x.cat}`, title: x.title, html: popupHtml(x) }));
+}
+function eatTab(tr) {
+  const list = eatList(tr), all = itemsG(tr).filter(isEat);
+  const noLoc = list.filter((x) => !x.loc && cleanName(x.title));
+  let h = `<div class="tpl">${[['', t('whoAll')], ['food', t('eatFood')], ['cafe', t('eatCafe')]].map(([k, l]) => `<button class="pill${(ui.eatK || '') === k ? ' on' : ''}" data-act="eat-k" data-k="${k}">${k ? ms(CAT_ICON[k]) + ' ' : ''}${esc(l)}<small> ${all.filter((x) => !k || x.cat === k).length}</small></button>`).join('')}</div>`;
+  if (!all.length) return h + `<p class="empty">${esc(t('noEat'))}</p>`;
+  if (list.some((x) => x.loc)) h += '<div class="map eat-map"></div>';
+  if (noLoc.length) h += `<button class="btn small ghost find-day" data-act="find-eat">${ms('location_on')} ${esc(t('findDay', { n: noLoc.length }))}</button>`;
+  // Nummer = Nummer auf der Karte / 번호는 지도 핀 번호와 같음
+  let n = 0;
+  h += `<div class="items eat-list">${list.map((x) => {
+    const no = x.loc && isFinite(x.loc.lat) ? ++n : 0;
+    const when = isDate(x.date) ? `<span class="eat-when">${ms('event')} ${esc(t('eatPlanned', { d: md(x.date) }))}</span>` : `<button class="btn small ghost" data-act="to-plan" data-id="${x.id}">${ms('add')} ${esc(t('toPlan'))}</button>`;
+    return `<div class="eat-row">${no ? `<span class="eat-no c-${x.cat}">${no}</span>` : ''}${itemCard(x, tr)}<div class="eat-act">${when}</div></div>`;
+  }).join('')}</div>`;
+  return h;
+}
+// Tag wählen → Datum setzen (bleibt in der Liste und erscheint im Plan) / 날짜 고르면 일정에도 나옴
+function pickDaySheet(tr, it) {
+  const days = scopeDays(tr).length ? scopeDays(tr) : tripDays(tr);
+  openSheet(`<h3>${esc(t('pickDayT'))}</h3><p class="note" style="margin:0 2px 10px">${esc(it.title)}</p>
+    <div class="picks">${days.map((d) => `<button type="button" class="pill" data-act="set-day" data-id="${it.id}" data-day="${d}">${esc(dayName(d, { month: 'numeric', day: 'numeric', weekday: 'short' }))}</button>`).join('')}</div>`);
 }
 
 // ---------- Kasse mit Abrechnung / 가계부와 정산 ----------
@@ -1924,6 +1963,14 @@ function afterRender() {
     drawMap(box, pts, { route: true, keep: true });
     keepMaps.set(key, box);
   }
+  const eb = ui.view === 'trip' && ui.tab === 'eat' && document.querySelector('.eat-map');
+  if (eb) {
+    const pts = eatPoints(trips[ui.trip]);
+    const key = [ui.trip, ui.lang, 'eat', ui.grp, JSON.stringify(pts.map((p) => [p.lat, p.lng, p.label, p.title, p.cls]))].join('|');
+    const old = dayMapCache.get(key);
+    if (old) eb.replaceWith(old); else drawMap(eb, pts, { keep: true });
+    keepMaps.set(key, old || eb);
+  }
   dayMapCache = keepMaps;
   const conv = $('#conv');
   if (conv) conv.addEventListener('input', () => {
@@ -2017,7 +2064,7 @@ function itemSheet(tr, it, defaults = {}) {
   const links = (it.links || []).join('\n');
   const dateMin = isDate(tr.start) ? tr.start : '';
   openSheet(`<h3>${esc(t(isNew ? 'newItem' : 'editItem'))}</h3><form data-form="item">${dbPick}
-    <div class="cats">${CAT_ORDER.map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${it.cat === c ? 'checked' : ''}><span>${ms(CAT_ICON[c])} ${esc(t('cats.' + c))}</span></label>`).join('')}</div>
+    <div class="cats">${(defaults.eat ? ['food', 'cafe'] : CAT_ORDER).map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${it.cat === c ? 'checked' : ''}><span>${ms(CAT_ICON[c])} ${esc(t('cats.' + c))}</span></label>`).join('')}</div>
     <label class="fld"><span>${esc(t('title'))}</span><input class="in" name="title" value="${esc(it.title)}" placeholder="${esc(t('titlePh'))}" autocomplete="off"></label>
     <div class="two"><label class="fld"><span>${esc(t('date'))}</span><input class="in" type="date" name="date" value="${esc(it.date)}" ${dateMin ? `min="${addDays(dateMin, -60)}"` : ''}></label>
     <label class="fld" data-end><span data-endl>${esc(t(it.cat === 'stay' ? 'endStay' : 'endMove'))}</span><input class="in" type="date" name="end" value="${esc(it.end || '')}"></label></div>
@@ -2112,7 +2159,7 @@ function itemSheet(tr, it, defaults = {}) {
       e.preventDefault();
       const amount = parseAmount(f.amount.value);
       const x = {
-        ...it, cat: f.cat.value || 'etc', days: isSpanCat(f.cat.value) ? [] : [...picked].filter((d) => d !== f.date.value).sort(), title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
+        ...it, cat: f.cat.value || (defaults.eat ? 'food' : 'etc'), days: isSpanCat(f.cat.value) ? [] : [...picked].filter((d) => d !== f.date.value).sort(), title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
         time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.booked.checked, code: it.code || '',
         links: f.links.value.split(/\s+/).map((s) => s.trim()).filter((s) => /^https?:\/\//.test(s)),
         order: it.order ?? Date.now() / 1000,
@@ -2319,6 +2366,11 @@ const ACT = {
   'copy-settle': async () => { try { await navigator.clipboard.writeText(settleText(cur())); toast(t('settleCopied')); } catch { toast(t('copied')); } },
   'del-spend': (b) => { if (confirm(t('spendDelQ'))) write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); },
   'book-link': (b) => { if (/^https?:\/\//i.test(b.dataset.url)) window.open(b.dataset.url, '_blank', 'noopener'); },
+  'new-eat': () => itemSheet(cur(), null, { cat: ui.eatK || '', eat: true }),
+  'eat-k': (b) => { ui.eatK = b.dataset.k; render(true); },
+  'to-plan': (b) => { const tr = cur(), it = tr.items[b.dataset.id]; if (it) pickDaySheet(tr, it); },
+  'set-day': (b) => { const tr = cur(), it = tr.items[b.dataset.id]; if (!it) return; write([[['trips', tr.id, 'items', it.id, 'date'], b.dataset.day], touch(tr.id)]); closeSheet(); toast(t('movedTo', { d: dayName(b.dataset.day, { month: 'long', day: 'numeric', weekday: 'short' }) })); },
+  'find-eat': (b) => { const tr = cur(); findAll(eatList(tr).filter((x) => !x.loc && cleanName(x.title)), b); },
   rec: (b) => recordSheet(cur(), b.dataset.day),
   who: (b) => { ui.who = b.dataset.k; render(true); },
   ck: (b) => { ui.ck = b.dataset.k; render(true); },
