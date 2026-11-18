@@ -357,9 +357,9 @@ input[type="date"].in { min-height: 46px; }
 .eat-list { margin-top: 6px; }
 .eat-row { position: relative; }
 .eat-no { position: absolute; z-index: 1; left: -6px; top: -6px; display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 999px; background: var(--c); color: #fff; font-size: 12px; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,.18); }
-.eat-act { display: flex; justify-content: flex-end; margin: 4px 2px 2px; }
-.eat-when { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; color: var(--ok); }
-.eat-when .ms, .eat-act .ms { font-size: 17px; vertical-align: 0; }
+.eat-when { display: inline-flex; align-items: center; gap: 3px; padding: 2px 10px 2px 8px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 13px; font-weight: 800; }
+.eat-when.on { background: var(--ok-bg); color: var(--ok); }
+.eat-when .ms { font-size: 15px; vertical-align: 0; }
 .bk-go { display: inline-flex; align-items: center; gap: 3px; padding: 2px 10px 2px 8px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 13px; font-weight: 800; }
 .bk-go .ms { font-size: 15px; vertical-align: 0; }
 .bk-todo .ms { font-size: 15px; vertical-align: -.15em; }
@@ -972,7 +972,7 @@ const TAB_ORDER = {
 };
 const tabsOf = (tr) => TAB_ORDER[status(tr)] || TAB_ORDER.up;
 
-function itemCard(it, tr, day) {
+function itemCard(it, tr, day, extra) {
   const meta = [];
   const isOut = it.cat === 'stay' && day && day === it.end;
   const tm = isOut ? (it.time || '').split(/\n|\//).find((s) => /아웃|out/i.test(s)) || '' : (it.time || '').split('\n')[0];
@@ -992,6 +992,7 @@ function itemCard(it, tr, day) {
   URL_RE.lastIndex = 0;
   // Unterseite in Notion (서울여행, 가르다호 …), wenn nicht schon danach gefiltert / 노션 하위 페이지 이름
   if (it.grp && !ui.grp) meta.push(`<span class="grp">${esc(it.grp)}</span>`);
+  if (extra) meta.push(extra);
   const notes = (it.notes || '').replace(URL_RE, '').trim();
   return `<button class="it c-${it.cat || 'etc'}${it.done && !isOut ? ' done' : ''}" data-act="edit-item" data-id="${it.id}">${it.booked && !isOut ? `<span class="cf" aria-hidden="true">CONFIRMED</span>` : ''}
     <span class="ic" aria-hidden="true">${ms(isOut ? 'luggage' : icon(it))}</span>
@@ -1485,8 +1486,9 @@ function eatTab(tr) {
   let n = 0;
   h += `<div class="items eat-list">${list.map((x) => {
     const no = x.loc && isFinite(x.loc.lat) ? ++n : 0;
-    const when = isDate(x.date) ? `<span class="eat-when">${ms('event')} ${esc(t('eatPlanned', { d: md(x.date) }))}</span>` : `<button class="btn small ghost" data-act="to-plan" data-id="${x.id}">${ms('event')} ${esc(t('toPlan'))}</button>`;
-    return `<div class="eat-row">${no ? `<span class="eat-no c-${x.cat}">${no}</span>` : ''}${itemCard(x, tr)}<div class="eat-act">${when}</div></div>`;
+    // Datum als kleiner Knopf in der Karte (Tippen: Tag wählen/ändern) / 날짜는 카드 안의 작은 버튼 (누르면 날짜 고르기·바꾸기)
+    const when = `<span class="eat-when${isDate(x.date) ? ' on' : ''}" role="button" data-act="to-plan" data-id="${x.id}">${ms('event')} ${esc(isDate(x.date) ? md(x.date) : t('toPlan'))}</span>`;
+    return `<div class="eat-row">${no ? `<span class="eat-no c-${x.cat}">${no}</span>` : ''}${itemCard(x, tr, undefined, when)}</div>`;
   }).join('')}</div>`;
   return h;
 }
