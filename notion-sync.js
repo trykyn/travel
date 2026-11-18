@@ -277,11 +277,11 @@
   }
 
   // ---------- Notion → App ----------
-  const CATMAP = { 이동: 'move', 교통: 'move', 숙소: 'stay', 숙박: 'stay', 맛집: 'food', 끼니: 'food', 식사: 'food', 카페: 'cafe', 관광: 'see', 쇼핑: 'shop', 장보기: 'shop', 체험: 'see', 놀거리: 'see' };
+  const CATMAP = { 이동: 'move', 교통: 'move', 숙소: 'stay', 숙박: 'stay', 맛집: 'food', 끼니: 'food', 식사: 'food', 카페: 'cafe', 관광: 'see', 쇼핑: 'shop', 장보기: 'shop', 체험: 'see', 놀거리: 'see', 기타: 'etc' };
   const STAYRE = /(호텔|hotel|resort|리조트|숙소|agroturismo|airbnb|에어비앤비|宿|yado|료칸|ryokan|apartment|아파트|체크인|check-in|글램핑|펜션|콘도)/i;
   function appCat(r) {
     let c = CATMAP[r.ncat];
-    if (!c) c = /^(카페|cafe|café)/i.test(r.title) ? 'cafe' : /^(점심|저녁|아침|조식)/.test(r.title) ? 'food' : r.ncat ? 'see' : 'etc';
+    if (!c) c = /^(카페|cafe|café)/i.test(r.title) ? 'cafe' : /^(점심|저녁|아침|조식)/.test(r.title) ? 'food' : 'etc'; // Unbekannt = 기타 (nicht 관광) / 모르는 구분은 기타로 (관광 아님)
     // Hotels stehen in Notion oft als "이동" / 노션에는 호텔이 '이동'으로 적힌 경우가 많음
     if (c === 'move' && !/\S\s*(-|→|–)\s*\S/.test(r.title) && (STAYRE.test(r.title + ' ' + r.time) || (r.dn.length > 1 && /체크인|체크아웃|조식|check/i.test(r.time + r.notes)))) c = 'stay';
     return c;
