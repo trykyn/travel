@@ -57,15 +57,13 @@
     for (let i = 0; i < calls.length; i += 20) out.push(...await batch(calls.slice(i, i + 20)));
     return out;
   }
-  async function children(id) {
+  // Alle Seiten einer Notion-Liste holen / 노션 목록을 끝까지 넘겨 가며 모두 가져오기
+  async function paged(get, first) {
     const all = [];
-    let c = null;
-    do {
-      const d = await call('GET', `blocks/${id}/children?page_size=100${c ? '&start_cursor=' + c : ''}`);
-      all.push(...d.results); c = d.has_more ? d.next_cursor : null;
-    } while (c);
-    return all;
+    let d = first || await get(null);
+    for (;;) { all.push(...d.results); if (!d.has_more) return all; d = await get(d.next_cursor); }
   }
+  const children = (id) => paged((c) => call('GET', `blocks/${id}/children?page_size=100${c ? '&start_cursor=' + c : ''}`));
   async function childrenMany(ids) {
     const out = {};
     if (!ids.length) return out;
@@ -75,22 +73,11 @@
       // 404 = keine Inhalte; andere Fehler (429 …) → abbrechen statt leer lesen / 404만 빈 내용, 다른 오류는 중단
       if (!d && res[i] && res[i].status !== 404) throw new NErr('notion', res[i].data);
       if (!d) { out[ids[i]] = []; continue; }
-      const list = d.results.slice();
-      let c = d.has_more ? d.next_cursor : null;
-      while (c) { const e = await call('GET', `blocks/${ids[i]}/children?page_size=100&start_cursor=${c}`); list.push(...e.results); c = e.has_more ? e.next_cursor : null; }
-      out[ids[i]] = list;
+      out[ids[i]] = await paged((c) => call('GET', `blocks/${ids[i]}/children?page_size=100&start_cursor=${c}`), d);
     }
     return out;
   }
-  async function queryAll(db) {
-    const all = [];
-    let c = null;
-    do {
-      const d = await call('POST', `databases/${db}/query`, { page_size: 100, sorts: [{ timestamp: 'created_time', direction: 'ascending' }], ...(c && { start_cursor: c }) });
-      all.push(...d.results); c = d.has_more ? d.next_cursor : null;
-    } while (c);
-    return all;
-  }
+  const queryAll = (db) => paged((c) => call('POST', `databases/${db}/query`, { page_size: 100, sorts: [{ timestamp: 'created_time', direction: 'ascending' }], ...(c && { start_cursor: c }) }));
 
   // ---------- Notion lesen / 노션 읽기 ----------
   const CURF = { yen: 'JPY', won: 'KRW', euro: 'EUR', dollar: 'USD', pound: 'GBP', franc: 'CHF', koruna: 'CZK', yuan: 'CNY', baht: 'THB', forint: 'HUF', krona: 'SEK', zloty: 'PLN', lira: 'TRY' };
@@ -599,8 +586,7 @@
   }
   async function runOp(op) {
     const tr = trips[op.tid];
-    if (op.k === 'delTrip') { await call('PATCH', `pages/${op.nid}`, { archived: true }); return false; }
-    if (op.k === 'delItem') { await call('PATCH', `pages/${op.nid}`, { archived: true }); return false; }
+    if (op.k === 'delTrip' || op.k === 'delItem') { await call('PATCH', `pages/${op.nid}`, { archived: true }); return false; }
     if (op.k === 'delCheck') { await call('DELETE', `blocks/${op.nid}`); return false; }
     if (op.k === 'newTrip') {
       if (!tr || tr.notion || tr.from === 'notion' || tr.local) return false;

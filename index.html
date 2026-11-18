@@ -75,7 +75,6 @@ a { color: var(--accent); }
 .lang button { font-size: 14px; color: var(--muted); padding: 4px 0; border-bottom: 2px solid transparent; }
 .lang button.on { color: var(--ink); font-weight: 800; border-bottom-color: var(--coral); }
 h1 { margin: 0; font-size: 30px; font-weight: 900; line-height: 1.15; letter-spacing: -.035em; }
-.chip-d { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--coral); color: #fff; font-weight: 800; font-size: 14px; }
 .tabs { display: flex; gap: 6px; overflow-x: auto; margin: 12px -16px 0; padding: 0 16px 6px; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tab { flex: none; padding: 7px 14px; white-space: nowrap; font-size: 15px; font-weight: 700; border-radius: 999px; background: var(--sheet); color: var(--muted); box-shadow: var(--shadow); }
@@ -125,7 +124,6 @@ h2:first-child { margin-top: 2px; }
   background-color: var(--paper);
   background-image: repeating-radial-gradient(circle at 15% 25%, rgba(42, 93, 176, .055) 0 1.5px, transparent 1.5px 10px), repeating-radial-gradient(circle at 85% 80%, rgba(255, 107, 74, .045) 0 1.5px, transparent 1.5px 12px); }
 .pp-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 -14px 4px; padding: 11px 16px; background: var(--paper-head); color: #fff; font-weight: 900; font-size: 15.5px; }
-.pp-head b { font: 700 11px var(--mono); letter-spacing: .14em; color: #c9d6ee; }
 .pp-year { margin: 14px 2px 8px; font: 700 12px var(--mono); letter-spacing: .22em; color: var(--paper-ink); opacity: .8; }
 .stamps { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px 8px; }
 .st { aspect-ratio: 1.1; display: grid; place-items: center; text-align: center; padding: 5px; border: 2.5px solid var(--stamp); border-radius: 50%; color: var(--stamp); font: 700 10px/1.25 var(--mono); letter-spacing: .04em; mix-blend-mode: multiply; }
@@ -157,7 +155,6 @@ h2:first-child { margin-top: 2px; }
 .today-strip { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin: 0 2px 10px; font-size: 14px; color: var(--muted); }
 .today-strip b { color: var(--ink); }
 .todo-line { display: flex; flex-wrap: wrap; gap: 2px 6px; align-items: center; margin-top: 8px; font-size: 12.5px; font-weight: 700; color: var(--warn); }
-.todo-line i { font-style: normal; color: var(--muted); }
 .todo-line .ms { font-size: 15px; vertical-align: -.15em; }
 .stubc b .todo-line { margin-top: 2px; font-weight: 700; }
 .nst { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; }
@@ -193,7 +190,6 @@ h2:first-child { margin-top: 2px; }
 .ck-seg .ms { font-size: 18px; vertical-align: 0; }
 .ck-seg .n { min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 12px; line-height: 20px; }
 .checks .tx small { color: var(--muted); font-size: 12.5px; }
-.dh { flex-wrap: wrap; }
 .dh-act { margin-left: auto; display: inline-flex; gap: 6px; }
 .dh .now + .dh-act { margin-left: 8px; }
 .dbtn { display: inline-flex; align-items: center; gap: 3px; padding: 3px 10px; border-radius: 999px; background: var(--sheet); box-shadow: var(--shadow); font-size: 13px; font-weight: 700; color: var(--accent); text-decoration: none; }
@@ -231,7 +227,7 @@ h2:first-child { margin-top: 2px; }
 .days button.today { background: var(--coral); color: #fff; }
 .days button.today b { color: #fff; }
 .day { scroll-margin-top: 80px; margin-bottom: 18px; }
-.dh { display: flex; align-items: baseline; gap: 8px; margin: 0 2px 8px; }
+.dh { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 0 2px 8px; }
 .dh .n { font-weight: 900; font-size: 18px; letter-spacing: -.02em; }
 .dh .d { color: var(--muted); font-size: 15px; font-weight: 600; }
 .dh .now { margin-left: auto; padding: 1px 9px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 13px; font-weight: 800; }
@@ -288,7 +284,7 @@ h2:first-child { margin-top: 2px; }
 .conv output { font-weight: 800; font-size: 20px; min-width: 90px; text-align: right; font-variant-numeric: tabular-nums; }
 .lines { list-style: none; margin: 0; padding: 0; }
 .lines li { display: flex; gap: 10px; align-items: baseline; padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: 15px; }
-.lines li .x { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lines li .x { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
 .lines li .dt { color: var(--muted); font-size: 13px; width: 44px; flex: none; }
 .lines li .am { text-align: right; font-variant-numeric: tabular-nums; }
 .lines li .am small { display: block; color: var(--muted); font-size: 12px; }
@@ -341,7 +337,6 @@ input[type="date"].in { min-height: 46px; }
 .sb-t { font-size: 17px; font-weight: 800; letter-spacing: -.01em; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; }
 .sb-l { justify-self: start; padding: 8px 2px; color: var(--muted); font-weight: 600; font-size: 16px; }
 .sb-r { justify-self: end; padding: 8px 18px; border-radius: 12px; background: var(--brand); color: #fff; font-weight: 800; font-size: 16px; }
-.panel h3 { margin: 4px 0 14px; font-size: 21px; font-weight: 800; letter-spacing: -.02em; }
 .panel h4 { margin: 20px 0 8px; font-size: 15px; color: var(--muted); }
 .fld { display: block; margin-bottom: 12px; }
 .fld > span { display: block; margin: 0 0 5px 2px; font-size: 14px; font-weight: 600; color: var(--muted); }
@@ -356,17 +351,12 @@ input[type="date"].in { min-height: 46px; }
 .seg.bk input { position: absolute; opacity: 0; pointer-events: none; }
 .seg.bk label > span { display: block; padding: 9px 4px; border-radius: 11px; text-align: center; font-size: 14.5px; font-weight: 800; color: var(--muted); }
 .seg.bk input:checked + span { background: var(--sheet); color: var(--ink); box-shadow: var(--shadow); }
-.seg.bk input[value=need]:checked + span { color: var(--warn); }
-.seg.bk input[value=done]:checked + span { color: var(--ok); }
 .seg.bk input:focus-visible + span { outline: 2px solid var(--accent); }
 .bk-todo .ms { font-size: 15px; vertical-align: -.15em; }
 .orig { display: block; margin-top: 1px; font-size: 12px; font-weight: 500; color: var(--muted); }
 .amts .amt-row { display: grid; grid-template-columns: 1fr 130px; align-items: center; gap: 10px; margin: 0 0 6px; }
 .amts .amt-row[hidden] { display: none; }
 .amts .amt-row > span { font-weight: 700; }
-.nobk { margin: 18px 2px 0; }
-.nobk summary { cursor: pointer; color: var(--muted); font-weight: 700; font-size: 14px; padding: 6px 0; }
-.nobk .items { margin-top: 8px; opacity: .75; }
 .items[data-dnd] > .it { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .cand-drop { display: none; }
 body.dnd-on .cand-drop { display: block; }
@@ -406,7 +396,6 @@ a.btn { text-decoration: none; }
 .spend select { flex: none; width: 100px; }
 .spend .cats label > span { padding: 6px 11px; font-size: 14px; }
 .lines .rm { flex: none; width: 32px; height: 32px; color: var(--muted); font-size: 20px; border-radius: 9px; align-self: center; }
-.lines li .x { text-align: left; }
 .it.done { opacity: .5; }
 .it.done .t { text-decoration: line-through; }
 .map { position: relative; z-index: 0; height: 60vh; min-height: 320px; border-radius: 18px; overflow: hidden; background: var(--field); }
@@ -417,18 +406,8 @@ a.btn { text-decoration: none; }
 .pop .row-btns { margin-top: 8px; }
 .pop .btn.small { color: #fff; }
 .pop .btn.ghost { color: var(--accent); }
-.opt { padding: 14px; border-radius: 18px; border: 1px solid var(--line); background: var(--sheet); box-shadow: var(--shadow); }
-.opt + .opt { margin-top: 8px; }
-.opt.chosen { border: 2px solid var(--ok); }
-.opt .on1 { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-.opt .nm { font-weight: 700; font-size: 17px; line-height: 1.35; overflow-wrap: anywhere; }
-.opt .pr { font-weight: 800; font-size: 18px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.opt .pn { color: var(--muted); font-size: 13px; text-align: right; white-space: nowrap; }
-.opt .row-btns { margin-top: 10px; }
 .grp { padding: 0 7px; border-radius: 6px; background: var(--field); color: var(--muted); font-size: 12.5px; font-weight: 600; }
 .nbtn { font: 800 17px/1 Georgia, "Times New Roman", serif; color: #fff; text-decoration: none; }
-.badge { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--ok-bg); color: var(--ok); font-size: 12px; font-weight: 800; vertical-align: 2px; }
-.badge.low { background: var(--sun); color: var(--sun-ink); }
 .geo-res { display: grid; gap: 6px; margin-top: 8px; }
 .geo-res button { padding: 9px 12px; border-radius: 12px; background: var(--field); font-size: 14px; text-align: left; }
 #toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); z-index: 30; max-width: calc(100% - 32px);
@@ -462,86 +441,110 @@ let unsynced = new Set(store.get('unsynced', []));
 // ---------- Texte / 문구 ----------
 const T = {
   ko: {
-    app: '여행', upcoming: '다가오는 여행', past: '지난 여행', newTrip: '+ 새 여행', noTrips: '아직 여행이 없어요. 아래 버튼으로 첫 여행을 만들어 보세요.',
-    undated: '날짜 미정', ongoing: '여행 중', dayN: '{n}일째', nights: '{n}박', next: '다음 여행', back: '여행',
-    tabs: { plan: '일정', book: '예약', money: '돈', check: '할 일·짐', memo: '메모' },
-    cats: { move: '이동', stay: '숙소', food: '맛집', cafe: '카페', see: '관광', shop: '쇼핑', etc: '기타' },
-    dayNo: '{n}일차', today: '오늘', cand: '날짜 미정 · 후보', addHere: '+ 추가', addItem: '+ 일정', noItems: '아직 일정이 없어요',
-    night: '숙박 {a}/{b}박', checkout: '체크아웃', booked: '예약완료', notBooked: '예약 전', items: '일정 {n}',
-    newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란', date: '날짜', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)',
-    time: '시간', timePh: '예: 15:00-16:30', isBooked: '예약 완료', code: '예약번호', cost: '비용', notes: '메모', links: '링크 (한 줄에 하나)',
-    save: '저장', cancel: '취소', del: '삭제', delItemQ: '"{t}" 일정을 지울까요?', map: '지도에서 찾기', copied: '복사했어요',
-    bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '그 밖의 예약', gaps: '숙소가 없는 밤', allNights: '모든 밤에 숙소가 있어요', noBook: '예약할 것이 없어요. 아래 ‘+ 예약할 것’으로 넣거나, 일정 창에서 ‘예약할 것’을 고르면 여기 모여요.',
-    total: '총 비용', inLocal: '현지 통화로 {x}', budgetOf: '예산 {b}', left: '{x} 남음', over: '{x} 초과', byCat: '종류별', rate: '환율', fetchRate: '오늘 환율로', rateOk: '오늘 환율로 바꿨어요', rateFail: '환율을 불러오지 못했어요',
-    noRate: '환율이 없어서 유로로 못 바꾼 비용이 있어요', conv: '바로 환산', costList: '비용 목록', noCosts: '비용을 넣은 일정이 없어요', setRate: '환율 넣기',
-    addCheckPh: '준비물이나 할 일', add: '추가', tplTitle: '목록 넣기', addedN: '{n}개 넣었어요', noneAdded: '이미 다 들어 있어요', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요.',
-    tpl: { basic: '기본', kids: '아이', flight: '비행기', beach: '해변', ski: '스키', before: '출발 전 할 일' },
-    edit: '편집', memoEmpty: '메모가 없어요', memoPh: '숙소 후보, 교통권, 참고 링크…',
-    tripInfo: '여행 정보', newTripT: '새 여행', tripTitle: '여행 이름', tripTitlePh: '예: 가을방학 파리', icon: '아이콘', start: '출발', end: '돌아오는 날', year: '연도 (날짜 미정일 때)',
-    cur: '현지 통화', rateL: '1 {c} = ? €', budget: '예산 (€, 선택)', cover: '커버 사진 링크 (선택)', delTrip: '여행 지우기', delTripQ: '"{t}" 여행을 지울까요? 되돌릴 수 없어요.', needTitle: '여행 이름을 넣어 주세요',
-    settings: '설정', sync: '함께 보기', syncInfo: '장보기·주간식단과 같은 가족 코드를 쓰면 가족 모두의 폰에 같은 여행이 보여요.', signin: '구글로 로그인', signout: '로그아웃',
-    codePh: '가족 코드', join: '참여', create: '새 가족 코드 만들기', connected: '가족 코드 {c} 에 연결됨', connecting: '연결을 준비하고 있어요…', unavailable: '이 버전에서는 함께 보기를 쓸 수 없어요.',
-    badCode: '그 가족 코드를 찾지 못했어요', localOnly: '지금은 이 기기에만 저장돼요.', backup: '백업', exportBtn: '파일로 저장', importBtn: '파일에서 가져오기', importNote: '노션에서 옮긴 여행 파일이나 백업 파일을 넣을 수 있어요. 같은 여행은 파일 내용으로 바뀌어요.',
-    imported: '{n}개 여행을 가져왔어요', importBad: '여행 파일이 아니에요', replaceQ: '이미 있는 여행 {n}개가 파일 내용으로 바뀌어요. 계속할까요?', lang: '언어',
-    saveFail: '서버에 저장하지 못했어요. 인터넷 연결을 확인해 주세요', signinFail: '로그인하지 못했어요. 다시 시도해 주세요', joinFail: '연결하지 못했어요. 인터넷 연결을 확인해 주세요',
+    app: '여행', upcoming: '다가오는 여행', newTrip: '+ 새 여행', noTrips: '아직 여행이 없어요. 아래 버튼으로 첫 여행을 만들어 보세요.', undated: '날짜 미정', ongoing: '여행 중', dayN: '{n}일째', nights: '{n}박',
+    next: '다음 여행', back: '여행', tabs: { plan: '일정', book: '예약', money: '가계부', check: '할 일·짐', memo: '메모', today: '오늘' },
+    cats: { move: '이동', stay: '숙소', food: '맛집', cafe: '카페', see: '관광', shop: '쇼핑', etc: '기타' }, dayNo: '{n}일차', today: '오늘', cand: '날짜 미정 · 후보', addHere: '+ 추가',
+    addItem: '+ 일정', noItems: '아직 일정이 없어요', night: '숙박 {a}/{b}박', checkout: '체크아웃', booked: '예약완료', newItem: '새 일정', editItem: '일정 고치기', title: '이름', titlePh: '예: 점심 - 이치란',
+    date: '일정 (날짜)', endStay: '체크아웃 날짜', endMove: '돌아오는 날 (왕복이면)', time: '시간', timePh: '예: 15:00-16:30', isBooked: '예약 완료', cost: '비용', notes: '주요내용', save: '저장',
+    cancel: '취소', del: '삭제', delItemQ: '"{t}" 일정을 지울까요?', map: '구글 지도', copied: '복사했어요', bookDone: '예약 완료', bookOf: '{a} / {b}', stays: '숙소', moves: '이동', others: '그 밖의 예약',
+    gaps: '숙소가 없는 밤', noBook: '예약할 것이 없어요. 아래 ‘+ 예약할 것’으로 넣거나, 일정 창에서 ‘예약할 것’을 고르면 여기 모여요.', total: '총 비용', inLocal: '현지 통화로 {x}', budgetOf: '예산 {b}', left: '{x} 남음',
+    over: '{x} 초과', byCat: '종류별', rate: '환율', fetchRate: '오늘 환율로', rateOk: '오늘 환율로 바꿨어요', rateFail: '환율을 불러오지 못했어요', noRate: '환율이 없어서 유로로 못 바꾼 비용이 있어요', conv: '바로 환산',
+    add: '추가', checkProg: '{a} / {b} 완료', noChecks: '아직 비어 있어요.', edit: '편집', memoEmpty: '메모가 없어요', memoPh: '숙소 후보, 교통권, 참고 링크…', tripInfo: '여행 정보', newTripT: '새 여행',
+    tripTitle: '여행 이름', tripTitlePh: '예: 가을방학 파리', icon: '아이콘', start: '출발', end: '돌아오는 날', year: '연도 (날짜 미정일 때)', cur: '현지 통화', rateL: '1 {c} = ? €', budget: '예산 (€, 선택)',
+    cover: '커버 사진 링크 (선택)', delTrip: '여행 지우기', delTripQ: '"{t}" 여행을 지울까요? 노션 페이지도 휴지통으로 옮겨져요 (노션 휴지통에서 30일 안에 되살릴 수 있어요).', needTitle: '여행 이름을 넣어 주세요', settings: '설정',
+    sync: '함께 보기', syncInfo: '장보기·주간식단과 같은 가족 코드를 쓰면 가족 모두의 폰에 같은 여행이 보여요.', signin: '구글로 로그인', signout: '로그아웃', codePh: '가족 코드', join: '참여', create: '새 가족 코드 만들기',
+    connected: '가족 코드 {c} 에 연결됨', connecting: '연결을 준비하고 있어요…', unavailable: '이 버전에서는 함께 보기를 쓸 수 없어요.', badCode: '그 가족 코드를 찾지 못했어요', localOnly: '지금은 이 기기에만 저장돼요.',
+    backup: '백업', exportBtn: '파일로 저장', importBtn: '파일에서 가져오기', importNote: '노션에서 옮긴 여행 파일이나 백업 파일을 넣을 수 있어요. 같은 여행은 파일 내용으로 바뀌어요.', imported: '{n}개 여행을 가져왔어요',
+    importBad: '여행 파일이 아니에요', replaceQ: '이미 있는 여행 {n}개가 파일 내용으로 바뀌어요. 계속할까요?', lang: '언어', signinFail: '로그인하지 못했어요. 다시 시도해 주세요', joinFail: '연결하지 못했어요. 인터넷 연결을 확인해 주세요',
+    nextUp: '다음 일정', allDone: '오늘 남은 일정이 없어요', noToday: '오늘은 정해진 일정이 없어요', inHM: '{h}시간 {m}분 후', inM: '{m}분 후', nowish: '곧', tonight: '오늘 밤 숙소', checkoutToday: '오늘 체크아웃',
+    tomorrow: '내일', dir: '길찾기', todayPlan: '오늘 일정', dayOfTrip: '{n}일째', spendT: '지출 기록', spendPh: '무엇에? (선택)', spendAdd: '기록', spendToday: '오늘 쓴 돈 {x}',
+    spendDelQ: '이 지출을 지울까요?', sp: { food: '식비', move: '교통', stay: '숙박', shop: '쇼핑', see: '입장료', etc: '기타' }, planned: '예약·계획', spent: '실제 지출', foundAll: '{a}개 모두 찾았어요',
+    mapAll: '전체', finding: '찾는 중… {a}/{b}', found: '{a}개 찾았어요 · 못 찾은 {b}개는 일정을 눌러 현지 이름으로 찾아 주세요', locQPh: '찾을 이름 (현지 이름이 잘 찾아져요)',
+    gmFail: '구글 지도를 쓸 수 없어서 기본 지도로 보여 줘요 (오늘 사용 상한에 닿았을 수 있어요)', mapFail: '지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요', loc: '위치', locNone: '위치 없음', locSearch: '이름으로 찾기',
+    locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요', locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치',
+    pickOne: '맞는 곳을 고르세요', grpShow: '소여행 (노션 하위 페이지)', grpShowNote: '체크를 끈 페이지는 소여행으로 안 쓰고 일정·체크리스트에서도 숨겨요. 노션에는 그대로 있어요.', splitHow: '나누는 방법', split_eq: '가족마다 똑같이',
+    split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요',
+    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
+    addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록',
+    recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진', todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인',
+    nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개', mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라',
+    visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기', bookLink: '예약 링크 (한 줄에 하나)', splitFriends: '일행과 나누기', toSpend: '지출로', plannedTag: '예약·계획', history: '내역',
+    noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.', us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수',
+    personNote: '‘인원수대로’ 나눌 때 쓰는 숫자예요. 어린아이는 0.5명으로 적어도 돼요. 예: 우리 가족 3.5명, 지민네 2명 → 3.5:2. 숙소·교통은 기본이 ‘가족마다 똑같이’라 인원 수와 상관없이 반반이에요.', personDelQ: '"{n}"을(를) 일행에서 뺄까요?',
+    personUsed: '이 일행이 들어간 지출이 있어서 뺄 수 없어요', ledgerTotal: '총 지출', paid: '낸 돈', share: '몫', gets: '받을 돈 {x}', owes: '낼 돈 {x}', settle: '정산', settleNone: '정산할 게 없어요',
+    copySettle: '정산 내용 복사', settleCopied: '복사했어요. 메신저에 붙여 보내세요', addSpend: '+ 지출', spendNew: '지출 기록', spendEdit: '지출 고치기', payer: '낸 사람', splitWith: '나눌 사람', spendTitle: '내용',
+    spendDate: '날짜', mode: '이동 수단', modeAuto: '자동', modes: { plane: '비행기', car: '자동차', train: '기차', ship: '배' },
+    passHead: { plane: 'BOARDING PASS · 탑승권', car: 'ROAD TRIP · 자동차 여행', train: 'TRAIN TICKET · 승차권', ship: 'BOARDING PASS · 승선권' }, addRecord: '지난 여행', recordT: '지난 여행 기록',
+    recordNote: '짧은 기록', recordPh: '어땠는지 한두 줄 (선택)', toNotion: '노션에도 페이지 만들기', recorded: '여권에 도장을 찍었어요', markDone: '✓ 다녀옴', close: '닫기', naver: '네이버 지도',
+    pastPass: '여권 · 지난 여행', apFrom: '출발 공항', apTo: '도착 공항', apPh: '예: MUC', nOpen: '노션에서 열기', nEditMemo: '노션에서 고치기', nBody: '노션 페이지 안 내용', whichTable: '어느 표에 넣을까요',
+    grpMain: '기본 표', nSec: '노션', nInfo: '노션 여행 페이지와 양방향으로 맞춰요. 앱에서 고치면 바로 노션에, 노션에서 고치면 몇 분 안에 앱에 들어와요.', nOk: '✓ 노션과 연결됨', nLast: '마지막으로 맞춘 때: {x}', nNow: '지금 맞추기',
+    nFull: '노션에서 전부 다시 가져오기', nFullQ: '노션의 모든 여행을 다시 읽어요. 1–2분 걸려요. 계속할까요?', nPulling: '노션에서 가져오는 중… {a}/{b}', nPushing: '노션에 저장하는 중…', nPending: '노션에 아직 못 보낸 변경 {n}개',
+    nNeedLogin: '노션과 맞추려면 위에서 구글로 로그인해 주세요.', nChecking: '노션 연결을 확인하는 중…', nJustNow: '방금',
+    nErr: { not_configured: '노션 연결 서버에 비밀 값이 아직 없어요.', other_family: '이 가족 코드는 노션 연결이 허락되지 않았어요.', unauthorized: '로그인을 다시 해 주세요.', no_house: '먼저 가족 코드에 연결해 주세요.', net: '노션 연결 서버에 닿지 못했어요. 인터넷을 확인해 주세요.', notion: '노션이 요청을 거절했어요. 여행 페이지에 \'여행 앱\' 연결이 되어 있는지 확인해 주세요.' },
   },
   de: {
-    app: 'Reisen', upcoming: 'Kommende Reisen', past: 'Vergangene Reisen', newTrip: '+ Neue Reise', noTrips: 'Noch keine Reisen. Leg unten die erste an.',
-    undated: 'ohne Datum', ongoing: 'Unterwegs', dayN: 'Tag {n}', nights: '{n} Nächte', next: 'Nächste Reise', back: 'Reisen',
-    tabs: { plan: 'Plan', book: 'Buchungen', money: 'Kosten', check: 'To-do & Packen', memo: 'Notizen' },
-    cats: { move: 'Fahrt', stay: 'Unterkunft', food: 'Essen', cafe: 'Café', see: 'Ausflug', shop: 'Einkaufen', etc: 'Sonstiges' },
-    dayNo: 'Tag {n}', today: 'Heute', cand: 'Ohne Datum · Ideen', addHere: '+ Hinzufügen', addItem: '+ Eintrag', noItems: 'Noch keine Einträge',
-    night: 'Nacht {a}/{b}', checkout: 'Check-out', booked: 'gebucht', notBooked: 'nicht gebucht', items: '{n} Einträge',
-    newItem: 'Neuer Eintrag', editItem: 'Eintrag bearbeiten', title: 'Name', titlePh: 'z. B. Mittagessen – Ichiran', date: 'Datum', endStay: 'Abreise', endMove: 'Rückweg (bei Hin und Zurück)',
-    time: 'Uhrzeit', timePh: 'z. B. 15:00-16:30', isBooked: 'gebucht', code: 'Buchungsnummer', cost: 'Kosten', notes: 'Notiz', links: 'Links (einer pro Zeile)',
-    save: 'Speichern', cancel: 'Abbrechen', del: 'Löschen', delItemQ: '„{t}“ löschen?', map: 'In Karte suchen', copied: 'Kopiert',
-    bookDone: 'Gebucht', bookOf: '{a} von {b}', stays: 'Unterkünfte', moves: 'Fahrten', others: 'Weitere Buchungen', gaps: 'Nächte ohne Unterkunft', allNights: 'Jede Nacht hat eine Unterkunft', noBook: 'Nichts zu buchen. Wähle im Eintrag „zu buchen“, dann erscheint er hier.',
-    total: 'Gesamt', inLocal: 'in Landeswährung {x}', budgetOf: 'Budget {b}', left: '{x} übrig', over: '{x} drüber', byCat: 'Nach Art', rate: 'Kurs', fetchRate: 'Heutiger Kurs', rateOk: 'Heutigen Kurs übernommen', rateFail: 'Kurs nicht abrufbar',
-    noRate: 'Ohne Kurs konnten nicht alle Kosten in Euro umgerechnet werden', conv: 'Umrechner', costList: 'Alle Kosten', noCosts: 'Noch keine Kosten eingetragen', setRate: 'Kurs eintragen',
-    addCheckPh: 'Mitnehmen oder erledigen', add: 'Hinzufügen', tplTitle: 'Liste einfügen', addedN: '{n} eingefügt', noneAdded: 'Schon alles drin', checkProg: '{a} von {b} erledigt', noChecks: 'Noch leer.',
-    tpl: { basic: 'Grundausstattung', kids: 'Kinder', flight: 'Flug', beach: 'Strand', ski: 'Ski', before: 'Vor der Abreise' },
-    edit: 'Bearbeiten', memoEmpty: 'Keine Notizen', memoPh: 'Hotelideen, Fahrkarten, Links …',
-    tripInfo: 'Reise', newTripT: 'Neue Reise', tripTitle: 'Name der Reise', tripTitlePh: 'z. B. Herbstferien Paris', icon: 'Symbol', start: 'Hinreise', end: 'Rückreise', year: 'Jahr (ohne Datum)',
-    cur: 'Landeswährung', rateL: '1 {c} = ? €', budget: 'Budget (€, optional)', cover: 'Link zum Titelbild (optional)', delTrip: 'Reise löschen', delTripQ: '„{t}“ löschen? Das lässt sich nicht rückgängig machen.', needTitle: 'Bitte einen Namen eingeben',
-    settings: 'Einstellungen', sync: 'Gemeinsam nutzen', syncInfo: 'Mit demselben Familiencode wie Einkaufsliste und Wochenplan sieht die ganze Familie dieselben Reisen.', signin: 'Mit Google anmelden', signout: 'Abmelden',
-    codePh: 'Familiencode', join: 'Beitreten', create: 'Neuen Familiencode anlegen', connected: 'Verbunden mit Familiencode {c}', connecting: 'Verbindung wird vorbereitet …', unavailable: 'In dieser Version nicht verfügbar.',
-    badCode: 'Diesen Familiencode gibt es nicht', localOnly: 'Gerade nur auf diesem Gerät gespeichert.', backup: 'Sicherung', exportBtn: 'Als Datei speichern', importBtn: 'Aus Datei laden', importNote: 'Reise-Datei aus Notion oder eine Sicherung. Gleiche Reisen werden ersetzt.',
-    imported: '{n} Reisen geladen', importBad: 'Keine Reise-Datei', replaceQ: '{n} vorhandene Reisen werden ersetzt. Weiter?', lang: 'Sprache',
-    saveFail: 'Speichern fehlgeschlagen. Bitte Internetverbindung prüfen', signinFail: 'Anmeldung fehlgeschlagen. Bitte nochmal versuchen', joinFail: 'Verbindung fehlgeschlagen. Bitte Internet prüfen',
+    app: 'Reisen', upcoming: 'Kommende Reisen', newTrip: '+ Neue Reise', noTrips: 'Noch keine Reisen. Leg unten die erste an.', undated: 'ohne Datum', ongoing: 'Unterwegs',
+    dayN: 'Tag {n}', nights: '{n} Nächte', next: 'Nächste Reise', back: 'Reisen',
+    tabs: { plan: 'Plan', book: 'Buchungen', money: 'Kosten', check: 'To-do & Packen', memo: 'Notizen', today: 'Heute' },
+    cats: { move: 'Fahrt', stay: 'Unterkunft', food: 'Essen', cafe: 'Café', see: 'Ausflug', shop: 'Einkauf', etc: 'Sonstiges' }, dayNo: 'Tag {n}', today: 'Heute',
+    cand: 'Ohne Datum · Ideen', addHere: '+ Hinzufügen', addItem: '+ Eintrag', noItems: 'Noch keine Einträge', night: 'Nacht {a}/{b}', checkout: 'Check-out',
+    booked: 'gebucht', newItem: 'Neuer Eintrag', editItem: 'Eintrag bearbeiten', title: 'Name', titlePh: 'z. B. Mittagessen – Ichiran', date: 'Datum', endStay: 'Abreise',
+    endMove: 'Rückweg (bei Hin und Zurück)', time: 'Uhrzeit', timePh: 'z. B. 15:00-16:30', isBooked: 'gebucht', cost: 'Kosten', notes: 'Notiz', save: 'Speichern',
+    cancel: 'Abbrechen', del: 'Löschen', delItemQ: '„{t}“ löschen?', map: 'Google Maps', copied: 'Kopiert', bookDone: 'Gebucht', bookOf: '{a} von {b}', stays: 'Unterkünfte',
+    moves: 'Fahrten', others: 'Weitere Buchungen', gaps: 'Nächte ohne Unterkunft', noBook: 'Nichts zu buchen. Wähle im Eintrag „zu buchen“, dann erscheint er hier.',
+    total: 'Gesamt', inLocal: 'in Landeswährung {x}', budgetOf: 'Budget {b}', left: '{x} übrig', over: '{x} drüber', byCat: 'Nach Art', rate: 'Kurs',
+    fetchRate: 'Heutiger Kurs', rateOk: 'Heutigen Kurs übernommen', rateFail: 'Kurs nicht abrufbar', noRate: 'Ohne Kurs konnten nicht alle Kosten in Euro umgerechnet werden',
+    conv: 'Umrechner', add: 'Hinzufügen', checkProg: '{a} von {b} erledigt', noChecks: 'Noch leer.', edit: 'Bearbeiten', memoEmpty: 'Keine Notizen',
+    memoPh: 'Hotelideen, Fahrkarten, Links …', tripInfo: 'Reise', newTripT: 'Neue Reise', tripTitle: 'Name der Reise', tripTitlePh: 'z. B. Herbstferien Paris', icon: 'Symbol',
+    start: 'Hinreise', end: 'Rückreise', year: 'Jahr (ohne Datum)', cur: 'Landeswährung', rateL: '1 {c} = ? €', budget: 'Budget (€, optional)',
+    cover: 'Link zum Titelbild (optional)', delTrip: 'Reise löschen', delTripQ: '„{t}“ löschen? Die Notion-Seite kommt in den Papierkorb (30 Tage wiederherstellbar).',
+    needTitle: 'Bitte einen Namen eingeben', settings: 'Einstellungen', sync: 'Gemeinsam nutzen',
+    syncInfo: 'Mit demselben Familiencode wie Einkaufsliste und Wochenplan sieht die ganze Familie dieselben Reisen.', signin: 'Mit Google anmelden', signout: 'Abmelden',
+    codePh: 'Familiencode', join: 'Beitreten', create: 'Neuen Familiencode anlegen', connected: 'Verbunden mit Familiencode {c}', connecting: 'Verbindung wird vorbereitet …',
+    unavailable: 'In dieser Version nicht verfügbar.', badCode: 'Diesen Familiencode gibt es nicht', localOnly: 'Gerade nur auf diesem Gerät gespeichert.',
+    backup: 'Sicherung', exportBtn: 'Als Datei speichern', importBtn: 'Aus Datei laden',
+    importNote: 'Reise-Datei aus Notion oder eine Sicherung. Gleiche Reisen werden ersetzt.', imported: '{n} Reisen geladen', importBad: 'Keine Reise-Datei',
+    replaceQ: '{n} vorhandene Reisen werden ersetzt. Weiter?', lang: 'Sprache', signinFail: 'Anmeldung fehlgeschlagen. Bitte nochmal versuchen',
+    joinFail: 'Verbindung fehlgeschlagen. Bitte Internet prüfen', nextUp: 'Als Nächstes', allDone: 'Heute steht nichts mehr an', noToday: 'Heute ist nichts geplant',
+    inHM: 'in {h} Std. {m} Min.', inM: 'in {m} Min.', nowish: 'gleich', tonight: 'Heute Nacht', checkoutToday: 'Heute Check-out', tomorrow: 'Morgen', dir: 'Route',
+    todayPlan: 'Heute', dayOfTrip: 'Tag {n}', spendT: 'Ausgabe eintragen', spendPh: 'Wofür? (optional)', spendAdd: 'Eintragen', spendToday: 'Heute ausgegeben {x}',
+    spendDelQ: 'Diese Ausgabe löschen?', sp: { food: 'Essen', move: 'Verkehr', stay: 'Unterkunft', shop: 'Einkauf', see: 'Eintritt', etc: 'Sonstiges' }, planned: 'geplant',
+    spent: 'ausgegeben', foundAll: 'Alle {a} gefunden', mapAll: 'Alle', finding: 'Suche … {a}/{b}',
+    found: '{a} gefunden · {b} fehlen: im Eintrag mit dem Namen in Landessprache suchen', locQPh: 'Suchbegriff (Name in Landessprache klappt am besten)',
+    gmFail: 'Google Maps nicht verfügbar – zeige die einfache Karte (vielleicht ist das Tageslimit erreicht)', mapFail: 'Karte nicht ladbar. Bitte Internet prüfen',
+    loc: 'Ort', locNone: 'Kein Ort', locSearch: 'Nach Namen suchen', locPaste: 'Google-Maps-Link oder Koordinaten einfügen',
+    locBad: 'Keine Koordinaten im Link. Kurze Teilen-Links gehen nicht – such lieber nach dem Namen', locClear: 'Entfernen',
+    locNoRes: 'Nichts gefunden. Versuch einen anderen Namen', locAuto: 'Automatisch gefundener Ort', pickOne: 'Richtigen Ort wählen',
+    grpShow: 'Teilreisen (Notion-Unterseiten)', grpShowNote: 'Abgewählte Seiten sind keine Teilreise und werden im Plan und in Listen ausgeblendet. In Notion bleiben sie.',
+    splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}',
+    amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben',
+    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
+    addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)',
+    dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch',
+    recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos', todoN: '{n} Aufgaben offen',
+    whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion',
+    mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …',
+    openTrip: 'Reise öffnen', bookLink: 'Buchungslink (einer pro Zeile)', splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', plannedTag: 'geplant', history: 'Einträge',
+    noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.', us: 'Wir', ppl: ' P.', addPerson: '+ Mitreisende', personT: 'Mitreisende',
+    personName: 'Name', personPh: 'z. B. Familie Kim', personN: 'Personen',
+    personNote: 'Zählt beim Teilen „nach Personen“. Kleine Kinder gern als 0,5. Beispiel: wir 3,5, Familie Kim 2 → 3,5:2. Unterkunft und Fahrten werden standardmäßig je Familie gleich geteilt.',
+    personDelQ: '„{n}“ entfernen?', personUsed: 'Kommt in Ausgaben vor – kann nicht entfernt werden', ledgerTotal: 'Ausgaben gesamt', paid: 'bezahlt', share: 'Anteil',
+    gets: 'bekommt {x}', owes: 'zahlt {x}', settle: 'Ausgleich', settleNone: 'Alles ausgeglichen', copySettle: 'Abrechnung kopieren',
+    settleCopied: 'Kopiert – im Messenger einfügen', addSpend: '+ Ausgabe', spendNew: 'Ausgabe eintragen', spendEdit: 'Ausgabe bearbeiten', payer: 'Bezahlt von',
+    splitWith: 'Geteilt mit', spendTitle: 'Wofür', spendDate: 'Datum', mode: 'Reisemittel', modeAuto: 'Automatisch',
+    modes: { plane: 'Flugzeug', car: 'Auto', train: 'Zug', ship: 'Schiff' },
+    passHead: { plane: 'BOARDING PASS · Bordkarte', car: 'ROAD TRIP · Autoreise', train: 'TRAIN TICKET · Fahrkarte', ship: 'BOARDING PASS · Schiff' },
+    addRecord: 'Vergangene Reise', recordT: 'Vergangene Reise eintragen', recordNote: 'Kurze Notiz', recordPh: 'Wie war es? (optional)',
+    toNotion: 'Auch als Notion-Seite anlegen', recorded: 'Stempel im Pass', markDone: '✓ Erledigt', close: 'Schließen', naver: 'Naver Map',
+    pastPass: 'Reisepass · vergangene Reisen', apFrom: 'Abflughafen', apTo: 'Zielflughafen', apPh: 'z. B. MUC', nOpen: 'In Notion öffnen', nEditMemo: 'In Notion bearbeiten',
+    nBody: 'Inhalt der Notion-Seite', whichTable: 'In welche Tabelle?', grpMain: 'Haupttabelle', nSec: 'Notion',
+    nInfo: 'Gleicht mit den Notion-Reiseseiten in beide Richtungen ab. Änderungen in der App gehen sofort nach Notion, Änderungen in Notion kommen in ein paar Minuten in die App.',
+    nOk: '✓ Mit Notion verbunden', nLast: 'Zuletzt abgeglichen: {x}', nNow: 'Jetzt abgleichen', nFull: 'Alles neu aus Notion laden',
+    nFullQ: 'Alle Reisen aus Notion neu lesen? Dauert 1–2 Minuten.', nPulling: 'Lade aus Notion … {a}/{b}', nPushing: 'Speichere in Notion …',
+    nPending: '{n} Änderungen noch nicht in Notion', nNeedLogin: 'Für Notion bitte oben mit Google anmelden.', nChecking: 'Prüfe Notion-Verbindung …', nJustNow: 'gerade eben',
+    nErr: { not_configured: 'Der Notion-Server ist noch nicht eingerichtet.', other_family: 'Dieser Familiencode darf Notion nicht nutzen.', unauthorized: 'Bitte neu anmelden.', no_house: 'Bitte zuerst einen Familiencode verbinden.', net: 'Notion-Server nicht erreichbar. Bitte Internet prüfen.', notion: 'Notion hat die Anfrage abgelehnt. Ist die Integration „여행 앱“ mit der Reiseseite verbunden?' },
   },
 };
-// 2단계: 오늘, 지도, 비교 / Stufe 2: Heute, Karte, Vergleich
-Object.assign(T.ko.tabs, { today: '오늘', cmp: '비교', map: '지도' });
-Object.assign(T.de.tabs, { today: 'Heute', cmp: 'Vergleich', map: 'Karte' });
-T.ko.cats.shop = '쇼핑'; T.de.cats.shop = 'Einkauf';
-Object.assign(T.ko, {
-  nextUp: '다음 일정', allDone: '오늘 남은 일정이 없어요', noToday: '오늘은 정해진 일정이 없어요', inHM: '{h}시간 {m}분 후', inM: '{m}분 후', nowish: '곧',
-  tonight: '오늘 밤 숙소', checkinAt: '체크인', checkoutToday: '오늘 체크아웃', tomorrow: '내일', dir: '길찾기', todayPlan: '오늘 일정', dayOfTrip: '{n}일째',
-  spendT: '지출 기록', spendPh: '무엇에? (선택)', spendAdd: '기록', spendToday: '오늘 쓴 돈 {x}', spendDelQ: '이 지출을 지울까요?',
-  sp: { food: '식비', move: '교통', stay: '숙박', shop: '쇼핑', see: '입장료', etc: '기타' }, planned: '계획한 비용', spent: '여행 중 지출',
-  foundAll: '{a}개 모두 찾았어요', mapAll: '전체', noLoc: '위치가 없는 일정 {n}개', findAll: '이름으로 위치 찾기', finding: '찾는 중… {a}/{b}', found: '{a}개 찾았어요 · 못 찾은 {b}개는 일정을 눌러 현지 이름으로 찾아 주세요', locQPh: '찾을 이름 (현지 이름이 잘 찾아져요)',
-  geoNote: '장소 이름으로 OpenStreetMap에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.', geoNoteG: '장소 이름으로 구글 지도에서 찾아요. 틀린 곳은 일정을 눌러 고칠 수 있어요.',  gmFail: '구글 지도를 쓸 수 없어서 기본 지도로 보여 줘요 (오늘 사용 상한에 닿았을 수 있어요)', mapFail: '지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요', noPins: '아직 지도에 표시할 곳이 없어요',
-  loc: '위치', locNone: '위치 없음', locSearch: '이름으로 찾기', locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요',
-  locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치', pickOne: '맞는 곳을 고르세요',
-  kinds: { stay: '숙소', car: '렌트카', etc: '기타' }, addOpt: '+ 후보', newOpt: '새 후보', editOpt: '후보 고치기', optName: '이름', optNamePh: '예: VIVA Cala Mesquida Resort',
-  price: '가격 (전체 기간)', perNight: '1박 {x}', perDay: '1일 {x}', link: '링크', choose: '이걸로 결정', chosen: '결정', unchoose: '결정 취소', cheapest: '최저가',
-  noOpts: '후보를 넣고 가격을 비교해 보세요. 결정하면 일정과 예약에 바로 들어가요.', addedToPlan: '일정에 넣었어요', removedFromPlan: '결정을 취소했어요', period: '기간 미정', carTitle: '렌트카 · {n}', from: '시작', to: '끝',
-  keepBookedQ: '"{t}"은(는) 이미 예약 완료로 되어 있어요. 일정에서 뺄까요?',
-});
-Object.assign(T.de, {
-  nextUp: 'Als Nächstes', allDone: 'Heute steht nichts mehr an', noToday: 'Heute ist nichts geplant', inHM: 'in {h} Std. {m} Min.', inM: 'in {m} Min.', nowish: 'gleich',
-  tonight: 'Heute Nacht', checkinAt: 'Check-in', checkoutToday: 'Heute Check-out', tomorrow: 'Morgen', dir: 'Route', todayPlan: 'Heute', dayOfTrip: 'Tag {n}',
-  spendT: 'Ausgabe eintragen', spendPh: 'Wofür? (optional)', spendAdd: 'Eintragen', spendToday: 'Heute ausgegeben {x}', spendDelQ: 'Diese Ausgabe löschen?',
-  sp: { food: 'Essen', move: 'Verkehr', stay: 'Unterkunft', shop: 'Einkauf', see: 'Eintritt', etc: 'Sonstiges' }, planned: 'Geplante Kosten', spent: 'Ausgaben unterwegs',
-  foundAll: 'Alle {a} gefunden', mapAll: 'Alle', noLoc: '{n} Einträge ohne Ort', findAll: 'Orte nach Namen suchen', finding: 'Suche … {a}/{b}', found: '{a} gefunden · {b} fehlen: im Eintrag mit dem Namen in Landessprache suchen', locQPh: 'Suchbegriff (Name in Landessprache klappt am besten)',
-  geoNote: 'Sucht die Namen bei OpenStreetMap. Falsche Orte kannst du im Eintrag ändern.', geoNoteG: 'Sucht die Namen bei Google Maps. Falsche Orte kannst du im Eintrag ändern.', gmFail: 'Google Maps nicht verfügbar – zeige die einfache Karte (vielleicht ist das Tageslimit erreicht)', mapFail: 'Karte nicht ladbar. Bitte Internet prüfen', noPins: 'Noch keine Orte auf der Karte',
-  loc: 'Ort', locNone: 'Kein Ort', locSearch: 'Nach Namen suchen', locPaste: 'Google-Maps-Link oder Koordinaten einfügen', locBad: 'Keine Koordinaten im Link. Kurze Teilen-Links gehen nicht – such lieber nach dem Namen',
-  locClear: 'Entfernen', locNoRes: 'Nichts gefunden. Versuch einen anderen Namen', locAuto: 'Automatisch gefundener Ort', pickOne: 'Richtigen Ort wählen',
-  kinds: { stay: 'Unterkunft', car: 'Mietwagen', etc: 'Sonstiges' }, addOpt: '+ Option', newOpt: 'Neue Option', editOpt: 'Option bearbeiten', optName: 'Name', optNamePh: 'z. B. VIVA Cala Mesquida Resort',
-  price: 'Preis (ganzer Zeitraum)', perNight: '{x} pro Nacht', perDay: '{x} pro Tag', link: 'Link', choose: 'Diese nehmen', chosen: 'Gewählt', unchoose: 'Wahl aufheben', cheapest: 'Günstigste',
-  noOpts: 'Trag Optionen ein und vergleiche die Preise. Die gewählte kommt direkt in Plan und Buchungen.', addedToPlan: 'In den Plan übernommen', removedFromPlan: 'Wahl aufgehoben', period: 'ohne Zeitraum', carTitle: 'Mietwagen · {n}', from: 'Von', to: 'Bis',
-  keepBookedQ: '„{t}“ ist schon als gebucht markiert. Trotzdem aus dem Plan nehmen?',
-});
 const ui = { lang: store.get('lang', 'ko'), view: 'home', trip: null, tab: 'plan', scrolled: '' };
 const L = () => T[ui.lang];
 function t(k, args) {
@@ -589,8 +592,7 @@ function linkify(text) {
   let out = '', last = 0;
   String(text || '').replace(URL_RE, (u, i) => {
     out += esc(text.slice(last, i));
-    let host = u; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch {}
-    out += `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(host)}</a>`;
+    out += `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(hostOf(u))}</a>`;
     last = i + u.length; return u;
   });
   return out + esc(String(text || '').slice(last));
@@ -603,7 +605,13 @@ function toast(msg) {
 // ---------- Daten ändern / 데이터 바꾸기 ----------
 const valid = (tr) => tr && tr.title;
 const allTrips = () => Object.values(trips).filter(valid);
-function persist() { store.put('trips', trips); }
+// Im Gerät speichern: kurz gesammelt statt bei jeder einzelnen Änderung; beim Verlassen sofort
+// 기기에 저장: 바뀔 때마다 전체를 쓰지 않고 잠깐 모아서 한 번에. 앱을 닫거나 숨길 때는 바로 저장
+let persistT = 0;
+function persist() { clearTimeout(persistT); persistT = setTimeout(flushPersist, 300); }
+function flushPersist() { if (persistT) { clearTimeout(persistT); persistT = 0; } store.put('trips', trips); }
+addEventListener('pagehide', flushPersist);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushPersist(); });
 const connected = () => !!(window.cloud && window.cloud.user && window.cloud.house);
 // Ein Pfad wie ['trips', id, 'items', itemId]; value null = löschen. Mehrere Änderungen gehen zusammen hoch.
 // 경로 예: ['trips', 여행ID, 'items', 일정ID]. 값이 null 이면 지움. 여러 변경은 한 번에 올림.
@@ -640,13 +648,21 @@ const put = (path, value) => write([[path, value]]);
 // Reisen erscheinen im Familienkalender (우리가족) als Urlaub vacations['trip-…'] – nur eigene Einträge werden geändert
 // 여행을 우리가족 앱 캘린더에 가족 휴가로 표시 (vacations['trip-…']) — 이 앱이 넣은 것만 고치고 지움
 let vacTimer = 0;
-function scheduleVac() { clearTimeout(vacTimer); vacTimer = setTimeout(() => { if (connected() && window.cloud.live && window.cloud.syncVacations) window.cloud.syncVacations(vacationsWanted()).catch((e) => console.warn('vacations', e)); }, 4000); }
+let vacSent = '';
+function scheduleVac() {
+  clearTimeout(vacTimer);
+  vacTimer = setTimeout(() => {
+    if (!connected() || !window.cloud.live || !window.cloud.syncVacations) return;
+    const want = vacationsWanted(), key = window.cloud.house + JSON.stringify(want);
+    if (key !== vacSent) window.cloud.syncVacations(want).then(() => { vacSent = key; }, (e) => console.warn('vacations', e));
+  }, 4000);
+}
 function vacationsWanted() {
   const out = {}, now = addDays(today(), -60); // wie 우리가족 aufräumt / 우리가족이 지우는 기준과 같게
   for (const tr of allTrips()) {
     // Reise mit Datum = ein Eintrag; ohne Datum je Gruppe (zwei Skireisen in einer Seite = zwei Einträge, ohne doppelten Gesamteintrag)
     // 날짜 있는 여행은 한 개, 날짜 없는 여행은 묶음별로 (한 페이지에 스키 두 번이면 두 개, 전체 묶음과 겹치지 않게)
-    const named = groupsOf(tr).filter((g) => g).map((g) => [g, groupSpan(tr, g)]).filter(([, s]) => s);
+    const named = groupSpans(tr).filter(([g, s]) => g && s);
     const whole = isDate(tr.start) ? [tr.start, isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start] : groupSpan(tr, '');
     const spans = isDate(tr.start) || !named.length ? (whole ? [['', whole]] : []) : named;
     for (const [g, [s, e]] of spans) {
@@ -665,13 +681,10 @@ function touch(tid) { return [['trips', tid, 'mt'], Date.now()]; }
 // 진행 중이거나 다음에 올 묶음의 기간, 다 지났으면 마지막 묶음의 기간.
 function effSpan(tr) {
   if (isDate(tr.start)) return [tr.start, isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start];
-  const spans = groupsOf(tr).map((g) => groupSpan(tr, g)).filter(Boolean);
-  if (!spans.length) return null;
-  const now = today();
-  const cur = spans.find(([s, e]) => s <= now && now <= e);
-  if (cur) return cur;
-  const next = spans.filter(([s]) => s > now).sort((a, b) => a[0].localeCompare(b[0]))[0];
-  return next || spans.sort((a, b) => b[1].localeCompare(a[1]))[0];
+  const list = groupSpans(tr).filter(([, s]) => s);
+  if (!list.length) return null;
+  const p = pickSpan(list);
+  return p ? p[1] : list.map(([, s]) => s).sort((a, b) => b[1].localeCompare(a[1]))[0];
 }
 // Für Anzeigen: die Reise mit diesem Zeitraum als start/end / 화면용: 위 기간을 start/end로 넣은 사본
 const viewOf = (tr) => { if (isDate(tr.start)) return tr; const sp = effSpan(tr); return sp ? { ...tr, start: sp[0], end: sp[1] } : tr; };
@@ -683,7 +696,10 @@ function status(tr) {
 // Ausgeblendete Unterseiten (trip.hideGrps, z. B. Listen der Kinder) zählen nicht als Teilreise und bleiben überall weg
 // 숨긴 하위 페이지(trip.hideGrps, 예: 아이들 목록 페이지)는 소여행이 아니고 어디에도 안 나옴
 const hiddenGrp = (tr, g) => !!g && (tr.hideGrps || []).includes(g);
-const items = (tr) => Object.values(tr.items || {}).filter((x) => x && x.id && !hiddenGrp(tr, x.grp));
+// Gespeicherte Listen ohne Löcher / 저장된 목록에서 빈 칸 빼기
+const vals = (o) => Object.values(o || {}).filter((x) => x && x.id);
+const items = (tr) => vals(tr.items).filter((x) => !hiddenGrp(tr, x.grp));
+const checksOf = (tr) => vals(tr.checks).filter((c) => !hiddenGrp(tr, c.grp));
 const rawGroups = (tr) => [...new Set([...Object.values(tr.items || {}), ...Object.values(tr.checks || {})].map((x) => x && x.grp).filter(Boolean))];
 function tripDays(tr) {
   if (isDate(tr.start)) {
@@ -700,6 +716,7 @@ const eurOf = (cost, tr) => {
   return null;
 };
 const CAT_ORDER = ['move', 'stay', 'food', 'cafe', 'see', 'shop', 'etc'];
+const CAT_ICON = { move: 'flight', stay: 'bed', food: 'restaurant', cafe: 'local_cafe', see: 'location_on', shop: 'shopping_bag', etc: 'sticky_note_2' };
 function icon(it) {
   if (it.cat === 'move') {
     const s = (it.title + ' ' + (it.notes || '')).toLowerCase();
@@ -711,7 +728,7 @@ function icon(it) {
     if (/로프웨이|케이블|gondel|seilbahn/.test(s)) return 'gondola_lift';
     return 'directions_car';
   }
-  return { stay: 'bed', food: 'restaurant', cafe: 'local_cafe', see: 'location_on', shop: 'shopping_bag', etc: 'sticky_note_2' }[it.cat] || 'sticky_note_2';
+  return CAT_ICON[it.cat] || 'sticky_note_2';
 }
 // Sortierschlüssel im Tag: erste Uhrzeit; Mahlzeiten ohne Uhrzeit nach Tageszeit; sonst bleibt es hinter dem vorigen Eintrag.
 // 하루 안의 순서: 적힌 시간 → 시간 없으면 아침/점심/저녁 → 그것도 없으면 앞 일정 바로 뒤.
@@ -737,7 +754,15 @@ function dayItems(tr, day) {
 // ---------- Darstellung / 화면 ----------
 const app = $('#app');
 let pending = false;
+let drawQ = 0;
+// Kurzer Timer statt requestAnimationFrame: läuft auch, wenn der Bildschirm gerade keine Frames zeichnet / rAF 대신 짧은 타이머 (화면이 프레임을 안 그릴 때도 실행됨)
+const nextFrame = (f) => setTimeout(f, 30);
 function render(force) {
+  if (!force) { if (!drawQ) { drawQ = 1; nextFrame(() => { if (!drawQ) return; drawQ = 0; draw(false); }); } return; }
+  drawQ = 0;
+  draw(true);
+}
+function draw(force) {
   const a = document.activeElement;
   if (!force && a && app.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { pending = true; return; }
   if (window.__dnd) { pending = true; return; }
@@ -835,7 +860,7 @@ function homeView() {
 // Großer Bordkarte für die nächste Reise / 다음 여행은 큰 탑승권
 function ticket(tr) {
   const st = status(tr);
-  const badge = st === 'now' ? `${t('ongoing')} · ${t('dayN', { n: diff(tr.start, today()) + 1 })}` : dLabel(tr);
+  const badge = dLabel(tr);
   const n = isDate(tr.start) && isDate(tr.end) ? diff(tr.start, tr.end) : 0;
   return `<button class="tk tk-big" data-act="open" data-id="${tr.id}">
     ${tr.cover ? `<span class="tk-img"${coverStyle(tr)}></span>` : ''}
@@ -894,7 +919,6 @@ function tripView(tr) {
   // Gruppen (Notion-Unterseiten) sind das Hauptthema: gewählt gilt sie für alle Tabs und die Bordkarte
   // 묶음(노션 하위 페이지)이 대주제: 고르면 모든 탭과 탑승권이 그 묶음 기준
   const groups = resolveGroup(tr);
-  const gs = ui.grp != null ? groupSpan(tr, ui.grp) : null;
   const glabel = (g) => { const s = groupSpan(tr, g); return esc(g ? tx(tr, g) : t('grpMain')) + (s ? `<small>${esc(md(s[0]))}${s[1] !== s[0] ? '–' + esc(md(s[1])) : ''}</small>` : ''); };
   const grpBar = groups.some((g) => g) ? `<div class="tpl grps top-grps">${[...groups, null].map((g) => `<button class="pill${(ui.grp ?? null) === g ? ' on' : ''}" data-act="grp" data-g="${g == null ? '*' : esc(g)}">${g == null ? esc(t('mapAll')) : glabel(g)}</button>`).join('')}</div>` : '';
   const v = scopeOf(tr);
@@ -913,7 +937,7 @@ function tripView(tr) {
     </header><section class="sheet">`;
   if (window.cloud && window.cloud.error) h += `<div class="banner">${esc(window.cloud.error)}</div>`;
   if (window.notionSync) h += window.notionSync.bannerHtml();
-  h += { today: todayTab, plan: planTab, book: bookTab, cmp: cmpTab, map: mapTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
+  h += { today: todayTab, plan: planTab, book: bookTab, money: moneyTab, check: checkTab, memo: memoTab }[ui.tab](tr);
   h += '</section>';
   if (ui.tab === 'plan') h += `<button class="fab" data-act="new-item">${esc(t('addItem'))}</button>`;
   // 예약 탭: 스키패스·스키학교처럼 예약할 것을 바로 추가 / Buchungen: direkt etwas „zu buchen“ anlegen
@@ -961,16 +985,19 @@ function itemCard(it, tr, day) {
 // Notion-Unterseiten als Gruppen / 노션 하위 페이지 = 묶음
 // Reihenfolge: nach Datum (frühere Reise zuerst), ohne Datum danach, die Haupttabelle zuletzt
 // 순서: 날짜가 빠른 묶음 먼저, 날짜 없는 묶음 다음, 기본 표는 맨 뒤
-function groupsOf(tr) {
-  const gs = [...new Set([...items(tr).map((x) => x.grp || ''), ...Object.values(tr.checks || {}).filter((c) => c && c.grp && !hiddenGrp(tr, c.grp)).map((c) => c.grp)])];
-  const sp = Object.fromEntries(gs.map((g) => [g, groupSpan(tr, g)]));
-  return gs.sort((a, b) => (sp[a] ? 0 : 1) - (sp[b] ? 0 : 1) || (sp[a] && sp[b] ? sp[a][0].localeCompare(sp[b][0]) : 0) || (a === '' ? 1 : 0) - (b === '' ? 1 : 0));
+// [[Gruppe, Zeitraum|null]] in Anzeige-Reihenfolge / [[묶음, 기간|null]] 보여줄 순서대로
+function groupSpans(tr) {
+  const gs = [...new Set([...items(tr).map((x) => x.grp || ''), ...checksOf(tr).filter((c) => c.grp).map((c) => c.grp)])];
+  return gs.map((g) => [g, groupSpan(tr, g)]).sort(([a, sa], [b, sb]) => (sa ? 0 : 1) - (sb ? 0 : 1) || (sa && sb ? sa[0].localeCompare(sb[0]) : 0) || (a === '' ? 1 : 0) - (b === '' ? 1 : 0));
 }
+const groupsOf = (tr) => groupSpans(tr).map(([g]) => g);
+// Läuft gerade oder kommt als nächstes / 진행 중이거나 다음에 오는 것
+const pickSpan = (list) => { const now = today(); return list.find(([, [s, e]]) => s <= now && now <= e) || list.filter(([, [s]]) => s > now).sort((a, b) => a[1][0].localeCompare(b[1][0]))[0]; };
 const itemsG = (tr) => items(tr).filter(inGrp);
 // Zeitraum der gewählten Gruppe bzw. der Reise / 고른 묶음(없으면 여행)의 기간
 const scopeOf = (tr) => { const s = ui.grp != null ? groupSpan(tr, ui.grp) : null; return s ? { ...tr, start: s[0], end: s[1] } : viewOf(tr); };
 const scopeDays = (tr) => { const s = ui.grp != null ? groupSpan(tr, ui.grp) : null; return s ? spanDays(s[0], s[1]) : ui.grp != null ? [] : tripDays(tr); };
-const inGrp = (x) => ui.grp == null || ui.grp === '*' || (x.grp || '') === ui.grp;
+const inGrp = (x) => ui.grp == null || (x.grp || '') === ui.grp;
 // Zeitraum einer Gruppe aus ihren Einträgen (zwei Skireisen in einer Notion-Seite = zwei Gruppen mit eigenen Tagen)
 // 묶음의 기간은 그 묶음 일정들의 날짜로 (노션 한 페이지에 스키 여행 두 번 = 묶음 두 개, 날짜·일차도 따로)
 function groupSpan(tr, g) {
@@ -981,19 +1008,17 @@ function groupSpan(tr, g) {
 }
 const spanDays = (s, e) => { const out = []; for (let d = s; d <= e && out.length < 60; d = addDays(d, 1)) out.push(d); return out; };
 // Beim Öffnen: die Gruppe, die gerade läuft oder als nächste kommt; sonst alle / 처음 열 때: 진행 중이거나 다음 묶음, 없으면 전체
-function autoGroup(tr, groups) {
-  const now = today(), spans = groups.map((g) => [g, groupSpan(tr, g)]).filter(([, s]) => s);
-  if (spans.length < 2) return null;
-  const cur = spans.find(([, [s, e]]) => s <= now && now <= e);
-  if (cur) return cur[0];
-  const next = spans.filter(([, [s]]) => s > now).sort((a, b) => a[1][0].localeCompare(b[1][0]))[0];
-  return next ? next[0] : null;
+function autoGroup(tr) {
+  const list = groupSpans(tr).filter(([, s]) => s);
+  if (list.length < 2) return null;
+  const p = pickSpan(list);
+  return p ? p[0] : null;
 }
 // Gruppe festlegen (beim ersten Öffnen automatisch) / 묶음 정하기 (처음 열 때는 자동)
 function resolveGroup(tr) {
   const groups = groupsOf(tr);
   if (!groups.some((g) => g)) ui.grp = null; // keine Unterseite → keine Gruppen / 하위 페이지가 없으면 묶음 없음
-  else if (ui.grp === undefined) ui.grp = autoGroup(tr, groups);
+  else if (ui.grp === undefined) ui.grp = autoGroup(tr);
   return groups;
 }
 function planTab(tr) {
@@ -1051,7 +1076,7 @@ function bookTab(tr) {
   if (isDate(sc.start) && isDate(sc.end) && sc.end > sc.start) {
     const gaps = [];
     for (let d = sc.start; d < sc.end; d = addDays(d, 1)) {
-      if (!allStays.some((s) => isDate(s.date) && s.date <= d && d < (isDate(s.end) ? s.end : addDays(s.date, 1)))) gaps.push(d);
+      if (!allStays.some((s) => staysOn(s, d))) gaps.push(d);
     }
     if (gaps.length) h += `<div class="card"><b>${esc(t('gaps'))}</b><div class="gaps">${gaps.map((d) => `<span>${esc(dayName(d, { month: 'numeric', day: 'numeric', weekday: 'short' }))}</span>`).join('')}</div></div>`;
   }
@@ -1064,56 +1089,11 @@ function bookTab(tr) {
 }
 
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
-Object.assign(T.ko.tabs, { money: '가계부' });
-Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { grpShow: '소여행 (노션 하위 페이지)', grpShowNote: '체크를 끈 페이지는 소여행으로 안 쓰고 일정·체크리스트에서도 숨겨요. 노션에는 그대로 있어요.', splitHow: '나누는 방법', split_eq: '가족마다 똑같이', split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkLabel: '예약', bkNo: '필요 없음', bkNeed: '예약할 것', bkDone: '예약 완료', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
-  todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
-Object.assign(T.de, { grpShow: 'Teilreisen (Notion-Unterseiten)', grpShowNote: 'Abgewählte Seiten sind keine Teilreise und werden im Plan und in Listen ausgeblendet. In Notion bleiben sie.', splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}', amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', bkLabel: 'Buchung', bkNo: 'nicht nötig', bkNeed: 'zu buchen', bkDone: 'gebucht', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
-  todoN: '{n} Aufgaben offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
-Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
-Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
-Object.assign(T.ko, { bookLink: '예약 링크 (한 줄에 하나)' });
-Object.assign(T.de, { bookLink: 'Buchungslink (einer pro Zeile)' });
-Object.assign(T.ko, { splitFriends: '일행과 나누기', toSpend: '지출로', plannedTag: '예약·계획', history: '내역', spent: '실제 지출', planned: '예약·계획', noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.' });
-Object.assign(T.de, { splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', plannedTag: 'geplant', history: 'Einträge', spent: 'ausgegeben', planned: 'geplant', noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.' });
-Object.assign(T.ko, { us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수', personNote: '‘인원수대로’ 나눌 때 쓰는 숫자예요. 어린아이는 0.5명으로 적어도 돼요. 예: 우리 가족 3.5명, 지민네 2명 → 3.5:2. 숙소·교통은 기본이 ‘가족마다 똑같이’라 인원 수와 상관없이 반반이에요.',
-  personDelQ: '"{n}"을(를) 일행에서 뺄까요?', personUsed: '이 일행이 들어간 지출이 있어서 뺄 수 없어요', ledgerTotal: '총 지출', paid: '낸 돈', share: '몫', gets: '받을 돈 {x}', owes: '낼 돈 {x}',
-  settle: '정산', settleNone: '정산할 게 없어요', copySettle: '정산 내용 복사', settleCopied: '복사했어요. 메신저에 붙여 보내세요', addSpend: '+ 지출', spendNew: '지출 기록', spendEdit: '지출 고치기',
-  payer: '낸 사람', splitWith: '나눌 사람', spendTitle: '내용', spendDate: '날짜', spendList: '지출 목록', noSpends: '아직 지출이 없어요. 쓴 돈을 적으면 일행끼리 누가 얼마 보내면 되는지 계산해 줘요.' });
-Object.assign(T.de, { us: 'Wir', ppl: ' P.', addPerson: '+ Mitreisende', personT: 'Mitreisende', personName: 'Name', personPh: 'z. B. Familie Kim', personN: 'Personen', personNote: 'Zählt beim Teilen „nach Personen“. Kleine Kinder gern als 0,5. Beispiel: wir 3,5, Familie Kim 2 → 3,5:2. Unterkunft und Fahrten werden standardmäßig je Familie gleich geteilt.',
-  personDelQ: '„{n}“ entfernen?', personUsed: 'Kommt in Ausgaben vor – kann nicht entfernt werden', ledgerTotal: 'Ausgaben gesamt', paid: 'bezahlt', share: 'Anteil', gets: 'bekommt {x}', owes: 'zahlt {x}',
-  settle: 'Ausgleich', settleNone: 'Alles ausgeglichen', copySettle: 'Abrechnung kopieren', settleCopied: 'Kopiert – im Messenger einfügen', addSpend: '+ Ausgabe', spendNew: 'Ausgabe eintragen', spendEdit: 'Ausgabe bearbeiten',
-  payer: 'Bezahlt von', splitWith: 'Geteilt mit', spendTitle: 'Wofür', spendDate: 'Datum', spendList: 'Alle Ausgaben', noSpends: 'Noch keine Ausgaben. Trag sie ein, dann rechnet die App aus, wer wem was überweist.' });
-Object.assign(T.ko, { mode: '이동 수단', modeAuto: '자동', modes: { plane: '비행기', car: '자동차', train: '기차', ship: '배' }, passHead: { plane: 'BOARDING PASS · 탑승권', car: 'ROAD TRIP · 자동차 여행', train: 'TRAIN TICKET · 승차권', ship: 'BOARDING PASS · 승선권' } });
-Object.assign(T.de, { mode: 'Reisemittel', modeAuto: 'Automatisch', modes: { plane: 'Flugzeug', car: 'Auto', train: 'Zug', ship: 'Schiff' }, passHead: { plane: 'BOARDING PASS · Bordkarte', car: 'ROAD TRIP · Autoreise', train: 'TRAIN TICKET · Fahrkarte', ship: 'BOARDING PASS · Schiff' } });
-Object.assign(T.ko, { addRecord: '지난 여행', recordT: '지난 여행 기록', recordNote: '짧은 기록', recordPh: '어땠는지 한두 줄 (선택)', toNotion: '노션에도 페이지 만들기', recorded: '여권에 도장을 찍었어요' });
-Object.assign(T.de, { addRecord: 'Vergangene Reise', recordT: 'Vergangene Reise eintragen', recordNote: 'Kurze Notiz', recordPh: 'Wie war es? (optional)', toNotion: 'Auch als Notion-Seite anlegen', recorded: 'Stempel im Pass' });
-Object.assign(T.ko, { markDone: '✓ 다녀옴', days: '{n}일', close: '닫기', naver: '네이버 지도', map: '구글 지도', pass: '탑승권', pastPass: '여권 · 지난 여행', apFrom: '출발 공항', apTo: '도착 공항', apPh: '예: MUC' });
-Object.assign(T.de, { markDone: '✓ Erledigt', days: '{n} Tage', close: 'Schließen', naver: 'Naver Map', map: 'Google Maps', pass: 'Bordkarte', pastPass: 'Reisepass · vergangene Reisen', apFrom: 'Abflughafen', apTo: 'Zielflughafen', apPh: 'z. B. MUC' });
-// Notion-Abgleich / 노션 연결
-Object.assign(T.ko, {
-  nOpen: '노션에서 열기', nEditMemo: '노션에서 고치기', nBody: '노션 페이지 안 내용', whichTable: '어느 표에 넣을까요', grpMain: '기본 표',
-  notes: '주요내용', date: '일정 (날짜)', links: '파일·링크 (한 줄에 하나)',
-  delTripQ: '"{t}" 여행을 지울까요? 노션 페이지도 휴지통으로 옮겨져요 (노션 휴지통에서 30일 안에 되살릴 수 있어요).',
-  nSec: '노션', nInfo: '노션 여행 페이지와 양방향으로 맞춰요. 앱에서 고치면 바로 노션에, 노션에서 고치면 몇 분 안에 앱에 들어와요.',
-  nOk: '✓ 노션과 연결됨', nLast: '마지막으로 맞춘 때: {x}', nNow: '지금 맞추기', nFull: '노션에서 전부 다시 가져오기', nFullQ: '노션의 모든 여행을 다시 읽어요. 1–2분 걸려요. 계속할까요?',
-  nPulling: '노션에서 가져오는 중… {a}/{b}', nPushing: '노션에 저장하는 중…', nPending: '노션에 아직 못 보낸 변경 {n}개',
-  nNeedLogin: '노션과 맞추려면 위에서 구글로 로그인해 주세요.', nChecking: '노션 연결을 확인하는 중…', nJustNow: '방금',
-  nErr: { not_configured: '노션 연결 서버에 비밀 값이 아직 없어요.', other_family: '이 가족 코드는 노션 연결이 허락되지 않았어요.', unauthorized: '로그인을 다시 해 주세요.', no_house: '먼저 가족 코드에 연결해 주세요.', net: '노션 연결 서버에 닿지 못했어요. 인터넷을 확인해 주세요.', notion: '노션이 요청을 거절했어요. 여행 페이지에 \'여행 앱\' 연결이 되어 있는지 확인해 주세요.' },
-});
-Object.assign(T.de, {
-  nOpen: 'In Notion öffnen', nEditMemo: 'In Notion bearbeiten', nBody: 'Inhalt der Notion-Seite', whichTable: 'In welche Tabelle?', grpMain: 'Haupttabelle',
-  delTripQ: '„{t}“ löschen? Die Notion-Seite kommt in den Papierkorb (30 Tage wiederherstellbar).',
-  nSec: 'Notion', nInfo: 'Gleicht mit den Notion-Reiseseiten in beide Richtungen ab. Änderungen in der App gehen sofort nach Notion, Änderungen in Notion kommen in ein paar Minuten in die App.',
-  nOk: '✓ Mit Notion verbunden', nLast: 'Zuletzt abgeglichen: {x}', nNow: 'Jetzt abgleichen', nFull: 'Alles neu aus Notion laden', nFullQ: 'Alle Reisen aus Notion neu lesen? Dauert 1–2 Minuten.',
-  nPulling: 'Lade aus Notion … {a}/{b}', nPushing: 'Speichere in Notion …', nPending: '{n} Änderungen noch nicht in Notion',
-  nNeedLogin: 'Für Notion bitte oben mit Google anmelden.', nChecking: 'Prüfe Notion-Verbindung …', nJustNow: 'gerade eben',
-  nErr: { not_configured: 'Der Notion-Server ist noch nicht eingerichtet.', other_family: 'Dieser Familiencode darf Notion nicht nutzen.', unauthorized: 'Bitte neu anmelden.', no_house: 'Bitte zuerst einen Familiencode verbinden.', net: 'Notion-Server nicht erreichbar. Bitte Internet prüfen.', notion: 'Notion hat die Anfrage abgelehnt. Ist die Integration „여행 앱“ mit der Reiseseite verbunden?' },
-});
 const notionUrl = (id) => 'https://www.notion.so/' + String(id || '').replace(/-/g, '');
 const parseAmount = (v) => parseFloat(String(v).replace(/\s/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.'));
+const staysOn = (s, d) => isDate(s.date) && s.date <= d && d < (isDate(s.end) ? s.end : addDays(s.date, 1));
 const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
-const spendsOf = (tr) => Object.values(tr.spend || {}).filter((s) => s && s.id && s.amount);
+const spendsOf = (tr) => vals(tr.spend).filter((s) => s.amount);
 const SP_ICON = { food: 'restaurant', move: 'local_taxi', stay: 'bed', shop: 'shopping_bag', see: 'confirmation_number', etc: 'payments' };
 function spendLine(s, tr, withDate) {
   const e = eurOf(s, tr);
@@ -1148,7 +1128,7 @@ function dirUrl(it, google) {
 function todayTab(tr) {
   const d = today(), list = dayItems(tr, d), all = items(tr);
   const stays = all.filter((x) => x.cat === 'stay' && isDate(x.date));
-  const tonight = stays.find((s) => s.date <= d && d < (isDate(s.end) ? s.end : addDays(s.date, 1)));
+  const tonight = stays.find((s) => staysOn(s, d));
   const outs = stays.filter((s) => s.end === d);
   const now = new Date(), nowMin = now.getHours() * 60 + now.getMinutes();
   // Nächster offener Eintrag: Uhrzeit noch nicht (länger als 30 Min.) vorbei, oder ohne Uhrzeit
@@ -1250,7 +1230,7 @@ function loadGoogle() {
     window.__gmapsReady = () => ok(google.maps);
     // Schlüssel abgelehnt (falsche Adresse, Limit erreicht …) / 키 거부 (주소 제한, 상한 도달 등)
     // → für den Rest der Sitzung OpenStreetMap / 이번에는 기본 지도로 다시 그림
-    window.gm_authFailure = () => { ui.gmFailed = true; toast(t('gmFail')); dayMapCache = new Map(); if (ui.view === 'trip' && (ui.tab === 'map' || ui.tab === 'plan')) render(true); };
+    window.gm_authFailure = () => { ui.gmFailed = true; toast(t('gmFail')); dayMapCache = new Map(); if (ui.view === 'trip' && ui.tab === 'plan') render(true); };
     const s = document.createElement('script');
     s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GM().key)}&v=weekly&loading=async&language=${ui.lang}&callback=__gmapsReady`;
     s.onerror = () => { gmapsP = null; no(new Error('google maps')); };
@@ -1299,20 +1279,6 @@ const median = (a) => { const s = [...a].sort((x, y) => x - y); return s[Math.fl
 const km = (a, b) => { const r = Math.PI / 180, x = (b.lng - a.lng) * r * Math.cos(((a.lat + b.lat) / 2) * r), y = (b.lat - a.lat) * r; return Math.sqrt(x * x + y * y) * 6371; };
 const shortName = (s) => String(s || '').split(',').slice(0, 3).join(',').trim();
 
-function mapTab(tr) {
-  const days = scopeDays(tr), all = itemsG(tr);
-  const missing = all.filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title));
-  let h = '';
-  if (days.length > 1) h += `<div class="tpl">${['', ...days].map((d) => `<button class="pill${(ui.mapDay || '') === d ? ' on' : ''}" data-act="map-day" data-day="${d}">${d ? esc(t('dayNo', { n: days.indexOf(d) + 1 })) : esc(t('mapAll'))}</button>`).join('')}</div>`;
-  h += '<div id="map" class="map"></div>';
-  if (!all.some((x) => x.loc)) h += `<p class="note">${esc(t('noPins'))}</p>`;
-  if (missing.length) {
-    h += `<div class="card" style="margin-top:12px"><b>${esc(t('noLoc', { n: missing.length }))}</b><p class="note">${esc(t(useGoogle() ? 'geoNoteG' : 'geoNote'))}</p>
-      <div class="set-row" style="margin-top:10px"><button class="btn small" data-act="find-all" id="find-all" ${ui.finding ? 'disabled' : ''}>${esc(ui.finding ? t('finding', { a: '…', b: missing.length }) : t('findAll'))}</button></div></div>
-      <div class="items" style="margin-top:10px">${missing.map((x) => itemCard(x, tr)).join('')}</div>`;
-  }
-  return h;
-}
 let leafletP = null;
 function loadLeaflet() {
   if (window.L) return Promise.resolve(window.L);
@@ -1326,13 +1292,6 @@ function loadLeaflet() {
     document.head.append(s);
   });
   return leafletP;
-}
-function mapList(tr, day) {
-  if (day) {
-    const stay = items(tr).filter((x) => x.cat === 'stay' && x.loc && isDate(x.date) && x.date < day && day <= (x.end || x.date));
-    return [...stay, ...dayItems(tr, day)].filter((x) => x.loc && isFinite(x.loc.lat) && inGrp(x));
-  }
-  return itemsG(tr).filter((x) => x.loc && isFinite(x.loc.lat)).sort((a, b) => (a.date || '9').localeCompare(b.date || '9') || (a.order ?? 0) - (b.order ?? 0));
 }
 function popupHtml(x) {
   const when = [x.date ? dayName(x.date, { month: 'short', day: 'numeric', weekday: 'short' }) : '', (x.time || '').split('\n')[0]].filter(Boolean).join(' · ');
@@ -1424,13 +1383,13 @@ function routeUrl(tr, d) {
 async function findAll(only, btn) {
   const tr = cur();
   if (ui.finding || !tr) return;
-  const list = only || itemsG(tr).filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title));
+  const list = only || [];
   if (!list.length) return;
   ui.finding = true;
   const found = [], hits = [];
   let miss = 0;
   for (let i = 0; i < list.length; i++) {
-    const b = btn || $('#find-all');
+    const b = btn;
     if (b) { b.textContent = t('finding', { a: i + 1, b: list.length }); b.disabled = true; }
     let hit = null;
     // Mitte der schon bekannten Orte; Treffer weiter als 150 km davon sind wohl gleichnamige Orte woanders
@@ -1489,87 +1448,6 @@ function visitedSheet() {
   });
 }
 
-// ---------- 비교 / Vergleich ----------
-const optsOf = (tr) => Object.values(tr.opts || {}).filter((o) => o && o.id && o.name);
-const optNights = (o) => (isDate(o.start) && isDate(o.end) && o.end > o.start ? diff(o.start, o.end) : 0);
-const optEur = (o, tr) => (o.price ? eurOf({ amount: o.price, cur: o.cur || 'EUR' }, tr) : null);
-function cmpTab(tr) {
-  const kind = ui.cmpKind || 'stay', all = optsOf(tr).filter((o) => ui.grp == null || (o.grp || '') === ui.grp);
-  let h = `<div class="tpl">${['stay', 'car', 'etc'].map((k) => { const n = all.filter((o) => (o.kind || 'stay') === k).length; return `<button class="pill${kind === k ? ' on' : ''}" data-act="cmp-kind" data-k="${k}">${esc(t('kinds.' + k))}${n ? ' ' + n : ''}</button>`; }).join('')}</div>`;
-  const list = all.filter((o) => (o.kind || 'stay') === kind);
-  if (!list.length) return h + `<p class="empty">${esc(t('noOpts'))}</p>`;
-  const groups = new Map();
-  for (const o of list) { const k = (o.start || '') + '|' + (o.end || ''); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(o); }
-  for (const k of [...groups.keys()].sort()) {
-    const g = groups.get(k).sort((a, b) => (optEur(a, tr) ?? 1e12) - (optEur(b, tr) ?? 1e12));
-    const [s, e] = k.split('|'), n = optNights(g[0]);
-    const head = isDate(s) ? `${md(s)}${isDate(e) && e !== s ? ' – ' + md(e) : ''}${n ? ' · ' + (kind === 'stay' ? nightsText(n) : t('days', { n })) : ''}` : t('period');
-    const prices = g.map((o) => optEur(o, tr)).filter((x) => x != null), low = prices.length > 1 ? Math.min(...prices) : null;
-    h += `<h2>${esc(head)}</h2>${g.map((o) => optCard(o, tr, low != null && optEur(o, tr) === low)).join('')}`;
-  }
-  return h;
-}
-function optCard(o, tr, low) {
-  const n = optNights(o), e = optEur(o, tr), c = o.cur || 'EUR';
-  const per = o.price && n ? t(o.kind === 'car' ? 'perDay' : 'perNight', { x: money(o.price / n, c) }) : '';
-  return `<div class="opt${o.chosen ? ' chosen' : ''}"><div class="on1">
-    <button class="nm" data-act="edit-opt" data-id="${o.id}">${esc(o.name)}${o.chosen ? `<span class="badge">✓ ${esc(t('chosen'))}</span>` : ''}${low ? `<span class="badge low">${esc(t('cheapest'))}</span>` : ''}</button>
-    <div>${o.price ? `<div class="pr">${esc(money(o.price, c))}</div>` : ''}${per ? `<div class="pn">${esc(per)}</div>` : ''}${c !== 'EUR' && e != null ? `<div class="pn">${esc(money(e, 'EUR'))}</div>` : ''}</div></div>
-    ${o.notes ? `<div class="memo" style="font-size:14px;color:var(--muted);margin-top:6px">${linkify(o.notes)}</div>` : ''}
-    <div class="row-btns">${o.link ? `<a class="btn small ghost" href="${esc(o.link)}" target="_blank" rel="noopener">${ms('link')} ${esc(hostOf(o.link))}</a>` : ''}
-    ${o.chosen ? `<button class="btn small ghost" data-act="unchoose" data-id="${o.id}">${esc(t('unchoose'))}</button>` : `<button class="btn small" data-act="choose" data-id="${o.id}">${esc(t('choose'))}</button>`}</div></div>`;
-}
-// Die gewählte Option als Eintrag in Plan und Buchungen / 결정한 후보를 일정·예약에 넣기
-function optItemEntries(tr, o) {
-  const kind = o.kind || 'stay', old = o.itemId && tr.items && tr.items[o.itemId];
-  const iid = old ? o.itemId : uid('i');
-  const item = {
-    ...(old || {}), id: iid, cat: kind === 'stay' ? 'stay' : kind === 'car' ? 'move' : 'etc',
-    title: kind === 'car' ? t('carTitle', { n: o.name }) : o.name, date: o.start || '', end: o.end || '', grp: o.grp || '',
-    ...(o.grp && tr.notion && { ndb: (Object.entries(tr.notion.dbs || {}).find(([, s]) => s.grp === o.grp) || [])[0] }),
-    time: (old && old.time) || '', notes: o.notes || '', booked: !!(old && old.booked), order: (old && old.order) ?? Date.now() / 1000,
-  };
-  if (o.price) item.cost = { amount: o.price, cur: o.cur || 'EUR' }; else delete item.cost;
-  if (o.link) item.links = [o.link]; else delete item.links;
-  // Firestore: nie ein Feld und sein Unterfeld im selben Update – darum nur der Eintrag; itemId setzt der Aufrufer.
-  // Firestore는 한 번에 필드와 그 하위 필드를 같이 못 바꿈 → 일정만 돌려주고 itemId는 부르는 쪽에서 넣음.
-  return [iid, [['trips', tr.id, 'items', iid], item]];
-}
-function optSheet(tr, o) {
-  const isNew = !o;
-  const sc = scopeOf(tr);
-  o = o || { id: uid('o'), kind: ui.cmpKind || 'stay', name: '', start: sc.start || '', end: sc.end || '', price: null, cur: 'EUR', notes: '', link: '', grp: ui.grp != null ? ui.grp : '' };
-  const curOpts = [...new Set(['EUR', tr.cur || 'EUR', o.cur || 'EUR'])];
-  openSheet(`<h3>${esc(t(isNew ? 'newOpt' : 'editOpt'))}</h3><form data-form="opt">
-    <div class="cats">${['stay', 'car', 'etc'].map((k) => `<label class="c-${k === 'stay' ? 'stay' : k === 'car' ? 'move' : 'etc'}"><input type="radio" name="kind" value="${k}" ${(o.kind || 'stay') === k ? 'checked' : ''}><span>${esc(t('kinds.' + k))}</span></label>`).join('')}</div>
-    <label class="fld"><span>${esc(t('optName'))}</span><input class="in" name="name" value="${esc(o.name)}" placeholder="${esc(t('optNamePh'))}" autocomplete="off"></label>
-    <div class="two"><label class="fld"><span>${esc(t('from'))}</span><input class="in" type="date" name="start" value="${esc(o.start || '')}"></label>
-      <label class="fld"><span>${esc(t('to'))}</span><input class="in" type="date" name="end" value="${esc(o.end || '')}"></label></div>
-    <div class="fld"><span>${esc(t('price'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="price" inputmode="decimal" value="${o.price ?? ''}" aria-label="${esc(t('price'))}">
-      <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curOpts.map((c) => `<option ${c === (o.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div>
-    <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="3">${esc(o.notes || '')}</textarea></label>
-    <label class="fld"><span>${esc(t('link'))}</span><input class="in" name="link" value="${esc(o.link || '')}" placeholder="https://…" autocomplete="off"></label>
-    <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-opt" data-id="${o.id}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
-  </form>`, (p) => {
-    const f = p.querySelector('form');
-    if (isNew) setTimeout(() => f.name.focus(), 250);
-    f.addEventListener('change', (e) => { if (e.target.name === 'start' && f.start.value && (!f.end.value || f.end.value < f.start.value)) f.end.value = f.start.value; });
-    f.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = f.name.value.trim();
-      if (!name) { f.name.focus(); return; }
-      const price = parseAmount(f.price.value), link = f.link.value.trim();
-      const x = { ...o, kind: f.kind.value, name, start: f.start.value || '', end: f.end.value || '', price: isNaN(price) ? null : price, cur: f.cur.value, notes: f.notes.value.trim(), link: /^https?:\/\//.test(link) ? link : '', order: o.order ?? Date.now() / 1000 };
-      ui.cmpKind = x.kind;
-      const entries = [touch(tr.id)];
-      if (x.chosen) { const [iid, entry] = optItemEntries(tr, x); x.itemId = iid; entries.push(entry); }
-      entries.push([['trips', tr.id, 'opts', x.id], x]);
-      write(entries);
-      closeSheet();
-    });
-  });
-}
-
 // ---------- Kasse mit Abrechnung / 가계부와 정산 ----------
 // Mitreisende (trip.people) mit Personenzahl als Gewicht; Ausgaben (trip.spend) mit Zahler und Teilnehmern.
 // Alles in Euro über den Kurs der Reise; nur in der App (nicht in Notion).
@@ -1577,9 +1455,9 @@ function optSheet(tr, o) {
 // Mitreisende gehören zur Gruppe (Notion-Unterseite), in der sie angelegt wurden; ältere ohne Gruppe erscheinen dort,
 // wo sie in Ausgaben vorkommen (oder überall, wenn noch nirgends). "우리 가족" ist immer dabei.
 // 일행은 추가한 소여행(노션 하위 페이지)에 속함. 예전에 넣은 일행(소여행 없음)은 그 소여행 지출에 나온 곳에만 (아직 지출이 없으면 어디서나). 우리 가족은 늘.
-const curGrp = () => (ui.grp && ui.grp !== '*' ? ui.grp : '');
+const curGrp = () => ui.grp || '';
 const peopleOf = (tr, all) => {
-  let p = Object.values(tr.people || {}).filter((x) => x && x.id).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  let p = vals(tr.people).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const g = curGrp();
   if (!all && g) {
     const used = (id, list) => list.some((s) => s.payer === id || (s.split || []).includes(id));
@@ -1599,10 +1477,10 @@ const SPLIT_DEF = (cat) => (cat === 'stay' || cat === 'move' ? 'eq' : 'n');
 function balances(tr, spends) {
   const ppl = peopleOf(tr), w = (id) => ((ppl.find((p) => p.id === id) || {}).n || 1);
   const bal = Object.fromEntries(ppl.map((p) => [p.id, { paid: 0, share: 0 }]));
-  let total = 0, skipped = 0;
+  let total = 0;
   for (const s of spends) {
     const e = eurOf(s, tr);
-    if (e == null) { skipped++; continue; }
+    if (e == null) continue;
     total += e;
     const payer = bal[s.payer || 'me'] ? (s.payer || 'me') : ppl[0].id;
     bal[payer].paid += e;
@@ -1618,7 +1496,7 @@ function balances(tr, spends) {
       for (const id of split) bal[id].share += (e * w(id)) / sum;
     }
   }
-  return { bal, total, skipped };
+  return { bal, total };
 }
 // Möglichst wenige Überweisungen: größte Schuld an größtes Guthaben / 송금 횟수가 적게: 가장 많이 낼 사람 → 가장 많이 받을 사람
 function settle(bal) {
@@ -1964,7 +1842,7 @@ function recordSheet(tr, d) {
 // Startseite: offene Aufgaben (nicht die Packliste) / 홈: 남은 할 일 개수 (짐 체크리스트는 빼고)
 function todoLine(tr) {
   if (status(tr) !== 'up') return '';
-  const n = Object.values(tr.checks || {}).filter((c) => c && c.id && !c.done && !isPack(c) && !hiddenGrp(tr, c.grp)).length;
+  const n = checksOf(tr).filter((c) => !c.done && !isPack(c)).length;
   return n ? `<span class="todo-line">${ms('checklist')} ${esc(t('todoN', { n }))}</span>` : '';
 }
 
@@ -1980,7 +1858,7 @@ const kidColor = (k) => (KIDS.find((x) => x[0] === k) || [])[3] || 'var(--muted)
 const isPack = (x) => x.kind === 'pack' || !!x.who;
 function checkTab(tr) {
   const ck = ui.ck === 'pack' ? 'pack' : 'todo', who = ck === 'pack' ? ui.who || '' : '';
-  const scoped = Object.values(tr.checks || {}).filter((x) => x && x.id && !hiddenGrp(tr, x.grp) && (ui.grp == null || !x.grp || x.grp === ui.grp));
+  const scoped = checksOf(tr).filter((x) => ui.grp == null || !x.grp || x.grp === ui.grp);
   const open = (k) => scoped.filter((x) => (isPack(x) ? 'pack' : 'todo') === k && !x.done).length;
   const list = scoped.filter((x) => (isPack(x) ? 'pack' : 'todo') === ck && (!who || (who === 'fam' ? !x.who : x.who === who))).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
   const done = list.filter((x) => x.done).length;
@@ -2073,7 +1951,7 @@ function openSheet(html, mount) {
   // Kopfzeile "Abbrechen · Titel · Speichern" bleibt beim Scrollen oben → kein Runterscrollen zum Speichern
   // 맨 위 '취소 · 제목 · 저장' 줄은 스크롤해도 고정 → 저장하려고 끝까지 내려갈 필요 없음
   const h3 = panel.querySelector('h3'), row = panel.querySelector('.sbar-row');
-  const form = panel.querySelector('form[data-form=item], form[data-form=trip], form[data-form=opt], form[data-form=spendx], form[data-form=person], form[data-form=rec]');
+  const form = panel.querySelector('form[data-form=item], form[data-form=trip], form[data-form=spendx], form[data-form=person], form[data-form=rec]');
   row.innerHTML = `<button type="button" class="sb-l" data-act="close">${esc(form ? t('cancel') : t('close'))}</button><b class="sb-t"></b>${form ? `<button type="button" class="sb-r">${esc(t('save'))}</button>` : '<span></span>'}`;
   row.querySelector('.sb-t').textContent = h3 ? h3.textContent : '';
   if (h3) h3.remove();
@@ -2127,9 +2005,9 @@ function itemSheet(tr, it, defaults = {}) {
   const cost = it.cost || {};
   const curOpts = [...new Set([tr.cur || 'EUR', 'EUR', cost.cur].filter(Boolean))];
   const links = (it.links || []).join('\n');
-  const dateMin = isDate(tr.start) ? tr.start : '', dateMax = isDate(tr.end) ? tr.end : '';
+  const dateMin = isDate(tr.start) ? tr.start : '';
   openSheet(`<h3>${esc(t(isNew ? 'newItem' : 'editItem'))}</h3><form data-form="item">${dbPick}
-    <div class="cats">${CAT_ORDER.map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${it.cat === c ? 'checked' : ''}><span>${ms(icon({ cat: c, title: c === 'move' ? 'flug' : '' }))} ${esc(t('cats.' + c))}</span></label>`).join('')}</div>
+    <div class="cats">${CAT_ORDER.map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${it.cat === c ? 'checked' : ''}><span>${ms(CAT_ICON[c])} ${esc(t('cats.' + c))}</span></label>`).join('')}</div>
     <label class="fld"><span>${esc(t('title'))}</span><input class="in" name="title" value="${esc(it.title)}" placeholder="${esc(t('titlePh'))}" autocomplete="off"></label>
     <div class="two"><label class="fld"><span>${esc(t('date'))}</span><input class="in" type="date" name="date" value="${esc(it.date)}" ${dateMin ? `min="${addDays(dateMin, -60)}"` : ''}></label>
     <label class="fld" data-end><span data-endl>${esc(t(it.cat === 'stay' ? 'endStay' : 'endMove'))}</span><input class="in" type="date" name="end" value="${esc(it.end || '')}"></label></div>
@@ -2217,7 +2095,7 @@ function itemSheet(tr, it, defaults = {}) {
       if (!x.links.length) delete x.links;
       if (loc) x.loc = loc; else delete x.loc;
       if (f.ndb) { x.ndb = f.ndb.value; x.grp = (tr.notion.dbs[x.ndb] || {}).grp || ''; }
-      else if (isNew && tr.notion && ui.grp != null && ui.grp !== '*') { const e = dbs.find(([, s]) => (s.grp || '') === ui.grp); if (e) { x.ndb = e[0]; x.grp = ui.grp; } else x.grp = ui.grp; }
+      else if (isNew && tr.notion && ui.grp != null) { const e = dbs.find(([, s]) => (s.grp || '') === ui.grp); if (e) { x.ndb = e[0]; x.grp = ui.grp; } else x.grp = ui.grp; }
       if (!x.title) { f.title.focus(); return; }
       write([[['trips', tr.id, 'items', x.id], x], touch(tr.id)]);
       closeSheet();
@@ -2409,8 +2287,6 @@ const ACT = {
   },
   'copy-settle': async () => { try { await navigator.clipboard.writeText(settleText(cur())); toast(t('settleCopied')); } catch { toast(t('copied')); } },
   'del-spend': (b) => { if (confirm(t('spendDelQ'))) write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); },
-  'map-day': (b) => { ui.mapDay = b.dataset.day; render(true); },
-  'find-all': () => findAll(),
   rec: (b) => recordSheet(cur(), b.dataset.day),
   who: (b) => { ui.who = b.dataset.k; render(true); },
   ck: (b) => { ui.ck = b.dataset.k; render(true); },
@@ -2418,42 +2294,9 @@ const ACT = {
   'find-day': (b) => { const tr = cur(); findAll(dayStops(tr, b.dataset.day).filter((x) => !x.loc && x.cat !== 'move' && cleanName(x.title)), b); },
   'visited-map': () => visitedSheet(),
   'open-from-map': (b) => { closeSheet(); go(`#/t/${b.dataset.id}`); },
-  'cmp-kind': (b) => { ui.cmpKind = b.dataset.k; render(true); },
   grp: (b) => { ui.grp = b.dataset.g === '*' ? null : b.dataset.g; render(true); },
   'n-now': () => window.notionSync && window.notionSync.pull({ manual: true }),
   'n-full': () => { if (window.notionSync && confirm(t('nFullQ'))) window.notionSync.pull({ full: true, manual: true }); },
-  'new-opt': () => optSheet(cur()),
-  'edit-opt': (b) => optSheet(cur(), cur().opts[b.dataset.id]),
-  'del-opt': (b) => {
-    const tr = cur(), o = tr.opts[b.dataset.id];
-    if (!confirm(t('delItemQ', { t: o.name }))) return;
-    const entries = [[['trips', tr.id, 'opts', o.id], null], touch(tr.id)];
-    const it = o.chosen && o.itemId && tr.items && tr.items[o.itemId];
-    if (it && !it.booked) entries.push([['trips', tr.id, 'items', it.id], null]);
-    write(entries); closeSheet();
-  },
-  choose: (b) => {
-    const tr = cur(), o = tr.opts[b.dataset.id], entries = [touch(tr.id)];
-    // Eine andere Wahl im selben Zeitraum aufheben (ungebuchte Einträge fallen weg)
-    // 같은 기간에 이미 고른 후보가 있으면 취소 (예약 전이면 일정에서도 뺌)
-    for (const p of optsOf(tr)) {
-      if (p.id === o.id || !p.chosen || (p.kind || 'stay') !== (o.kind || 'stay') || p.start !== o.start || p.end !== o.end) continue;
-      entries.push([['trips', tr.id, 'opts', p.id, 'chosen'], false]);
-      const it = p.itemId && tr.items && tr.items[p.itemId];
-      if (it && !it.booked) entries.push([['trips', tr.id, 'items', it.id], null]);
-    }
-    const [iid, entry] = optItemEntries(tr, o);
-    entries.push(entry, [['trips', tr.id, 'opts', o.id, 'chosen'], true], [['trips', tr.id, 'opts', o.id, 'itemId'], iid]);
-    write(entries);
-    toast(t('addedToPlan'));
-  },
-  unchoose: (b) => {
-    const tr = cur(), o = tr.opts[b.dataset.id], it = o.itemId && tr.items && tr.items[o.itemId];
-    const entries = [[['trips', tr.id, 'opts', o.id, 'chosen'], false], touch(tr.id)];
-    if (it && (!it.booked || confirm(t('keepBookedQ', { t: it.title })))) entries.push([['trips', tr.id, 'items', it.id], null]);
-    write(entries);
-    toast(t('removedFromPlan'));
-  },
   'memo-edit': () => { ui.memoEdit = true; render(true); const ta = $('textarea[name=memo]'); if (ta) ta.focus(); },
   'memo-cancel': () => { ui.memoEdit = false; render(true); },
   export: () => exportFile(),
@@ -2709,7 +2552,6 @@ if (cfg && APP) {
     }
     async function link(code) {
       cloud.house = code;
-      try { localStorage.setItem('travel-v1:lastHouse', JSON.stringify(code)); } catch {}
       await F.setDoc(F.doc(db, 'users', auth.currentUser.uid), { house: code }, { merge: true });
       listen(); APP.refresh();
     }

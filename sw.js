@@ -3,7 +3,8 @@
 // alte Kopien, und die installierte App zeigt nach dem Neustart noch die alte Version.
 // 앱 파일은 매번 서버에 "바뀌었나요?"를 물어봄. GitHub Pages의 10분 저장 표시 때문에 홈 화면 앱이
 // 껐다 켜도 예전 화면을 보여 주는 일을 막음.
-const CACHE = 'travel-v25';
+const CACHE = 'travel-v26';
+const PINNED = ['https://www.gstatic.com', 'https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com', 'https://fonts.gstatic.com'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', 'index.html', 'manifest.webmanifest', 'icon.svg', 'firebase-config.js', 'maps-config.js', 'notion-sync.js'])));
@@ -19,10 +20,8 @@ self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'GET' || (u.origin !== location.origin && !['https://www.gstatic.com', 'https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com', 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'].includes(u.origin))) return;
   const own = u.origin === location.origin;
-  e.respondWith(
-    (own ? fetch(u.href, { cache: 'no-cache' }) : fetch(e.request)).then(r => {
-      if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
-      return r;
-    }).catch(() => caches.match(e.request, { ignoreSearch: own }))
-  );
+  const save = (r) => { if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); } return r; };
+  // Feste Versionen (Firebase, Schrift, Leaflet): zuerst aus dem Cache / 버전이 고정된 파일(Firebase, 글꼴, Leaflet)은 캐시 먼저
+  if (PINNED.includes(u.origin)) { e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(save))); return; }
+  e.respondWith((own ? fetch(u.href, { cache: 'no-cache' }) : fetch(e.request)).then(save).catch(() => caches.match(e.request, { ignoreSearch: own })));
 });
