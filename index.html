@@ -361,6 +361,9 @@ input[type="date"].in { min-height: 46px; }
 .seg.bk input:focus-visible + span { outline: 2px solid var(--accent); }
 .bk-todo .ms { font-size: 15px; vertical-align: -.15em; }
 .orig { display: block; margin-top: 1px; font-size: 12px; font-weight: 500; color: var(--muted); }
+.amts .amt-row { display: grid; grid-template-columns: 1fr 130px; align-items: center; gap: 10px; margin: 0 0 6px; }
+.amts .amt-row[hidden] { display: none; }
+.amts .amt-row > span { font-weight: 700; }
 .nobk { margin: 18px 2px 0; }
 .nobk summary { cursor: pointer; color: var(--muted); font-weight: 700; font-size: 14px; padding: 6px 0; }
 .nobk .items { margin-top: 8px; opacity: .75; }
@@ -1057,9 +1060,9 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkLabel: '예약', bkNo: '필요 없음', bkNeed: '예약할 것', bkDone: '예약 완료', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
+Object.assign(T.ko, { splitHow: '나누는 방법', split_eq: '가족마다 똑같이', split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkLabel: '예약', bkNo: '필요 없음', bkNeed: '예약할 것', bkDone: '예약 완료', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
   todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
-Object.assign(T.de, { addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', bkLabel: 'Buchung', bkNo: 'nicht nötig', bkNeed: 'zu buchen', bkDone: 'gebucht', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
+Object.assign(T.de, { splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}', amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', bkLabel: 'Buchung', bkNo: 'nicht nötig', bkNeed: 'zu buchen', bkDone: 'gebucht', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
   todoN: '{n} Aufgaben offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
 Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
@@ -1067,11 +1070,11 @@ Object.assign(T.ko, { bookLink: '예약 링크 (한 줄에 하나)' });
 Object.assign(T.de, { bookLink: 'Buchungslink (einer pro Zeile)' });
 Object.assign(T.ko, { splitFriends: '일행과 나누기', toSpend: '지출로', plannedTag: '예약·계획', history: '내역', spent: '실제 지출', planned: '예약·계획', noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.' });
 Object.assign(T.de, { splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', plannedTag: 'geplant', history: 'Einträge', spent: 'ausgegeben', planned: 'geplant', noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.' });
-Object.assign(T.ko, { us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수', personNote: '나눌 때 인원 수만큼 몫을 가져요. 예: 우리 가족 4명, 지민네 2명이면 4:2로 나눠요.',
+Object.assign(T.ko, { us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수', personNote: '‘인원수대로’ 나눌 때 쓰는 숫자예요. 어린아이는 0.5명으로 적어도 돼요. 예: 우리 가족 3.5명, 지민네 2명 → 3.5:2. 숙소·교통은 기본이 ‘가족마다 똑같이’라 인원 수와 상관없이 반반이에요.',
   personDelQ: '"{n}"을(를) 일행에서 뺄까요?', personUsed: '이 일행이 들어간 지출이 있어서 뺄 수 없어요', ledgerTotal: '총 지출', paid: '낸 돈', share: '몫', gets: '받을 돈 {x}', owes: '낼 돈 {x}',
   settle: '정산', settleNone: '정산할 게 없어요', copySettle: '정산 내용 복사', settleCopied: '복사했어요. 메신저에 붙여 보내세요', addSpend: '+ 지출', spendNew: '지출 기록', spendEdit: '지출 고치기',
   payer: '낸 사람', splitWith: '나눌 사람', spendTitle: '내용', spendDate: '날짜', spendList: '지출 목록', noSpends: '아직 지출이 없어요. 쓴 돈을 적으면 일행끼리 누가 얼마 보내면 되는지 계산해 줘요.' });
-Object.assign(T.de, { us: 'Wir', ppl: ' P.', addPerson: '+ Mitreisende', personT: 'Mitreisende', personName: 'Name', personPh: 'z. B. Familie Kim', personN: 'Personen', personNote: 'Beim Teilen zählt jede Person einen Anteil. Wir 4 und Familie Kim 2 → 4:2.',
+Object.assign(T.de, { us: 'Wir', ppl: ' P.', addPerson: '+ Mitreisende', personT: 'Mitreisende', personName: 'Name', personPh: 'z. B. Familie Kim', personN: 'Personen', personNote: 'Zählt beim Teilen „nach Personen“. Kleine Kinder gern als 0,5. Beispiel: wir 3,5, Familie Kim 2 → 3,5:2. Unterkunft und Fahrten werden standardmäßig je Familie gleich geteilt.',
   personDelQ: '„{n}“ entfernen?', personUsed: 'Kommt in Ausgaben vor – kann nicht entfernt werden', ledgerTotal: 'Ausgaben gesamt', paid: 'bezahlt', share: 'Anteil', gets: 'bekommt {x}', owes: 'zahlt {x}',
   settle: 'Ausgleich', settleNone: 'Alles ausgeglichen', copySettle: 'Abrechnung kopieren', settleCopied: 'Kopiert – im Messenger einfügen', addSpend: '+ Ausgabe', spendNew: 'Ausgabe eintragen', spendEdit: 'Ausgabe bearbeiten',
   payer: 'Bezahlt von', splitWith: 'Geteilt mit', spendTitle: 'Wofür', spendDate: 'Datum', spendList: 'Alle Ausgaben', noSpends: 'Noch keine Ausgaben. Trag sie ein, dann rechnet die App aus, wer wem was überweist.' });
@@ -1586,6 +1589,7 @@ function ledgerSpends(tr) {
   const scm = ui.grp != null ? groupSpan(tr, ui.grp) : null;
   return spendsOf(tr).filter((s) => !scm || (s.date >= scm[0] && s.date <= scm[1]));
 }
+const SPLIT_DEF = (cat) => (cat === 'stay' || cat === 'move' ? 'eq' : 'n');
 function balances(tr, spends) {
   const ppl = peopleOf(tr), w = (id) => ((ppl.find((p) => p.id === id) || {}).n || 1);
   const bal = Object.fromEntries(ppl.map((p) => [p.id, { paid: 0, share: 0 }]));
@@ -1597,8 +1601,16 @@ function balances(tr, spends) {
     const payer = bal[s.payer || 'me'] ? (s.payer || 'me') : ppl[0].id;
     bal[payer].paid += e;
     const split = (s.split && s.split.length ? s.split : [payer]).filter((id) => bal[id]);
-    const sum = split.reduce((a, id) => a + w(id), 0) || 1;
-    for (const id of split) bal[id].share += (e * w(id)) / sum;
+    const mode = s.mode || SPLIT_DEF(s.cat);
+    if (mode === 'amt' && s.amts) {
+      const sum = split.reduce((a, id) => a + (+s.amts[id] || 0), 0) || 1;
+      for (const id of split) bal[id].share += (e * (+s.amts[id] || 0)) / sum;
+    } else if (mode === 'eq') {
+      for (const id of split) bal[id].share += e / split.length;
+    } else {
+      const sum = split.reduce((a, id) => a + w(id), 0) || 1;
+      for (const id of split) bal[id].share += (e * w(id)) / sum;
+    }
   }
   return { bal, total, skipped };
 }
@@ -1720,11 +1732,33 @@ function spendSheet(tr, s, pre) {
     <label class="fld"><span>${esc(t('spendTitle'))}</span><input class="in" name="title" value="${esc(s.title || '')}" placeholder="${esc(t('spendPh'))}" autocomplete="off"></label>
     <label class="fld"><span>${esc(t('spendDate'))}</span><input class="in" type="date" name="date" value="${esc(s.date || '')}"></label>
     ${ppl.length > 1 ? `<div class="fld"><span>${esc(t('payer'))}</span><div class="cats">${ppl.map((p) => `<label class="c-pp"><input type="radio" name="payer" value="${esc(p.id)}" ${(s.payer || 'me') === p.id ? 'checked' : ''}><span>${esc(p.name)}</span></label>`).join('')}</div></div>
-      <div class="fld"><span>${esc(t('splitWith'))}</span><div class="cats">${ppl.map((p) => `<label class="c-pp"><input type="checkbox" name="split" value="${esc(p.id)}" ${split.includes(p.id) ? 'checked' : ''}><span>${esc(p.name)}${(p.n || 1) > 1 ? ` · ${p.n}${esc(t('ppl'))}` : ''}</span></label>`).join('')}</div></div>` : ''}
+      <div class="fld"><span>${esc(t('splitWith'))}</span><div class="cats">${ppl.map((p) => `<label class="c-pp"><input type="checkbox" name="split" value="${esc(p.id)}" ${split.includes(p.id) ? 'checked' : ''}><span>${esc(p.name)}${(p.n || 1) !== 1 ? ` · ${p.n}${esc(t('ppl'))}` : ''}</span></label>`).join('')}</div></div>
+      <div class="fld"><span>${esc(t('splitHow'))}</span><div class="seg bk">${['eq', 'n', 'amt'].map((m) => `<label><input type="radio" name="mode" value="${m}" ${(s.mode || SPLIT_DEF(s.cat || 'etc')) === m ? 'checked' : ''}><span>${esc(t('split_' + m))}</span></label>`).join('')}</div></div>
+      <div class="fld amts" data-amts hidden>${ppl.map((p) => `<label class="amt-row" data-pid="${esc(p.id)}"><span>${esc(p.name)}</span><input class="in" name="amt_${esc(p.id)}" inputmode="decimal" value="${s.amts && s.amts[p.id] != null ? s.amts[p.id] : ''}"></label>`).join('')}<p class="note" data-left></p></div>` : ''}
     <div class="acts">${isNew ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-spendx" data-id="${s.id}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
   </form>`, (p) => {
     const f = p.querySelector('form');
     if (isNew) setTimeout(() => f.amount.focus(), 250);
+    // Beträge-Felder nur bei "직접 입력", nur für angehakte Personen; Rest anzeigen / 직접 입력일 때만, 나눌 사람만, 남은 금액 표시
+    let modeTouched = !!s.mode;
+    const syncAmts = () => {
+      const box = p.querySelector('[data-amts]');
+      if (!box || !f.mode) return;
+      box.hidden = f.mode.value !== 'amt';
+      const on = new Set([...f.querySelectorAll('[name=split]:checked')].map((x) => x.value));
+      let sum = 0;
+      box.querySelectorAll('[data-pid]').forEach((row) => { row.hidden = !on.has(row.dataset.pid); if (!row.hidden) sum += parseAmount(row.querySelector('input').value) || 0; });
+      const left = Math.round(((parseAmount(f.amount.value) || 0) - sum) * 100) / 100;
+      p.querySelector('[data-left]').textContent = left ? t('amtLeft', { x: money(left, f.cur.value) }) : '✓';
+    };
+    syncAmts();
+    f.addEventListener('input', syncAmts);
+    f.addEventListener('change', (e) => {
+      if (e.target.name === 'mode') modeTouched = true;
+      // Art geändert, Teilen nicht selbst gewählt: Vorgabe folgen / 종류를 바꿨고 나누기를 직접 안 골랐으면 기본값 따라감
+      if (e.target.name === 'cat' && !modeTouched && f.mode) f.querySelector(`input[name=mode][value=${SPLIT_DEF(f.cat.value)}]`).checked = true;
+      syncAmts();
+    });
     f.addEventListener('submit', (e) => {
       e.preventDefault();
       const amount = parseAmount(f.amount.value);
@@ -1732,7 +1766,17 @@ function spendSheet(tr, s, pre) {
       const payer = f.payer ? f.payer.value : ppl[0].id;
       let sp = f.split ? [...f.querySelectorAll('[name=split]:checked')].map((x) => x.value) : [payer];
       if (!sp.length) sp = [payer];
-      write([[['trips', tr.id, 'spend', s.id], { ...s, amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), date: f.date.value || def, payer, split: sp, t: s.t || Date.now() }], touch(tr.id)]);
+      const mode = f.mode ? f.mode.value : '';
+      let amts = null;
+      if (mode === 'amt') {
+        amts = Object.fromEntries(sp.map((id) => [id, parseAmount(f['amt_' + id].value) || 0]));
+        const left = Math.round((amount - Object.values(amts).reduce((a, b) => a + b, 0)) * 100) / 100;
+        if (left) { toast(t('amtMismatch', { x: money(left, f.cur.value) })); return; }
+      }
+      const v = { ...s, amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), date: f.date.value || def, payer, split: sp, t: s.t || Date.now() };
+      if (mode && (modeTouched || mode !== SPLIT_DEF(v.cat))) v.mode = mode; else delete v.mode;
+      if (amts) v.amts = amts; else delete v.amts;
+      write([[['trips', tr.id, 'spend', s.id], v], touch(tr.id)]);
       closeSheet();
     });
   });
@@ -1742,7 +1786,7 @@ function personSheet(tr, person) {
   person = person || { id: uid('p'), name: '', n: 1, ...(curGrp() && { grp: curGrp() }) };
   openSheet(`<h3>${esc(t('personT'))}</h3><form data-form="person">
     <label class="fld"><span>${esc(t('personName'))}</span><input class="in" name="name" value="${esc(person.name)}" placeholder="${esc(t('personPh'))}" autocomplete="off"></label>
-    <label class="fld"><span>${esc(t('personN'))}</span><input class="in" name="n" inputmode="numeric" value="${person.n || 1}" style="width:110px"></label>
+    <label class="fld"><span>${esc(t('personN'))}</span><input class="in" name="n" inputmode="decimal" value="${person.n || 1}" style="width:110px"></label>
     <p class="note">${esc(t('personNote'))}</p>
     <div class="acts">${isNew || isMe ? `<button type="button" class="btn ghost" data-act="close">${esc(t('cancel'))}</button>` : `<button type="button" class="btn danger" data-act="del-person" data-id="${esc(person.id)}">${esc(t('del'))}</button>`}<button class="btn">${esc(t('save'))}</button></div>
   </form>`, (p) => {
@@ -1752,7 +1796,7 @@ function personSheet(tr, person) {
       e.preventDefault();
       const name = f.name.value.trim();
       if (!name) { f.name.focus(); return; }
-      const n = Math.max(1, Math.min(20, parseInt(f.n.value, 10) || 1));
+      const n = Math.max(0.5, Math.min(20, Math.round((parseAmount(f.n.value) || 1) * 2) / 2)); // 0.5 Schritte / 0.5명 단위
       const entries = [];
       // Beim ersten Mitreisenden auch "우리 가족" speichern / 첫 일행을 넣을 때 '우리 가족'도 저장
       if (!Object.keys(tr.people || {}).length && person.id !== 'me') entries.push([['trips', tr.id, 'people', 'me'], { id: 'me', name: t('us'), n: 1, order: 0 }]);
