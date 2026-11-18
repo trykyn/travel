@@ -168,7 +168,7 @@
       page: p.id, title, icon: p.icon && p.icon.type === 'emoji' ? p.icon.emoji : '',
       cover: p.cover && p.cover.type === 'external' ? p.cover.external.url : '',
       year: year || +((title.match(/(20\d\d)/) || [])[1] || 0) || +String(p.created_time).slice(0, 4),
-      edited: p.last_edited_time, dbs: {}, db: null, pages: [p.id], grpPages: {}, memo: [], gmemo: {}, items: [], checks: [],
+      edited: p.last_edited_time, dbs: {}, db: null, pages: [p.id], grpPages: {}, grpSpans: {}, memo: [], gmemo: {}, items: [], checks: [],
     };
     // Nur die Reiseseite selbst darf "gelöscht" heißen; 404 weiter innen = diese Reise diesmal überspringen
     // 여행 페이지 자체만 '삭제됨'으로 봄. 안쪽 블록의 404는 이번에 이 여행만 건너뜀
@@ -229,9 +229,30 @@
     // 줄 안 페이지 내용 (찾아가는 길, 항공편 메모, 그 안의 표 …)
     const bodies = await childrenMany(rows.map((r) => r.id));
     const nested = [];
+    // Übersichts-Kalender auf der Reiseseite (Datumsspalte vom Typ "date", mindestens eine Zeile mit eigener Tabelle):
+    // jede Zeile ist eine Teilreise mit ihrem Zeitraum – z. B. 서울여행 (mit Tabelle) und 부여, 안면도 (nur Text)
+    // 여행 페이지의 개요 캘린더(날짜 칸이 date 형식이고, 표가 들어 있는 줄이 하나라도 있음): 줄마다 소여행, 줄의 기간이 소여행 기간
+    const overview = depth === 0 && !grp && s.dateType === 'date' && rows.some((r) => (bodies[r.id] || []).some((k) => k.type === 'child_database'));
+    if (overview) s.overview = true;
     rows.forEach((row, i) => {
       const f = rowFields(row, s, out.year);
       if (!f.title && !f.notes) return;
+      if (overview && f.title) {
+        const ds = f.dn.map((d) => d.iso).filter(Boolean).sort();
+        if (ds.length) out.grpSpans[f.title] = [ds[0], ds[ds.length - 1]];
+        out.grpPages[f.title] = row.id;
+        out.pages.push(row.id);
+        const kids = bodies[row.id] || [], lines = kids.filter((k) => k.type !== 'child_database').map(lineOf).filter(Boolean);
+        if (kids.some((k) => k.type === 'child_database')) {
+          for (const k of kids) if (k.type === 'child_database') nested.push([k.id, f.title]);
+          if (lines.length) out.gmemo[f.title] = lines;
+        } else {
+          // Teilreise ohne eigene Tabelle: die Zeile selbst ist ihr einziger Eintrag (Text = Notiz) / 표 없는 소여행: 줄 자체가 그 소여행의 일정
+          out.items.push({ nid: row.id, ndb: id, grp: f.title, order: i, nt: row.last_edited_time, ...f, dn: f.dn.slice(0, 1), body: lines.join('\n').trim().slice(0, 3000) });
+          if (lines.length) out.gmemo[f.title] = lines;
+        }
+        return;
+      }
       const body = [];
       for (const k of bodies[row.id] || []) {
         if (k.type === 'child_database') nested.push([k.id, f.title]);
@@ -325,7 +346,7 @@
       const r = clusterRange(n.items.filter((x) => x.grp === g).flatMap((x) => x.dn.map((d) => d.iso)).filter(Boolean).sort());
       if (r[0]) grpRange[g] = r;
     }
-    const notion = { page: n.page, db: n.db, dbs: n.dbs, pages: n.pages, grpPages: n.grpPages || {}, read: Date.now(), edited: n.edited };
+    const notion = { page: n.page, db: n.db, dbs: n.dbs, pages: n.pages, grpPages: n.grpPages || {}, grpSpans: n.grpSpans || {}, read: Date.now(), edited: n.edited };
     let trip = local;
     if (!trip) {
       let [s, e] = clusterRange(n.items.flatMap((x) => x.dn.map((d) => d.iso)).filter(Boolean).sort());
@@ -601,6 +622,7 @@
       if (!it) return false;
       const db = it.ndb && tr.notion.dbs[it.ndb] ? it.ndb : tr.notion.db, s = tr.notion.dbs[db];
       if (!s) return false;
+      if (!it.nid && s.overview) return false; // nur in der App / 앱에만
       if (it.nid) {
         const P = propsFor(it, s, tr, true);
         if (Object.keys(P).length) afterSave(op.tid, it.id, await call('PATCH', `pages/${it.nid}`, { properties: P }));
