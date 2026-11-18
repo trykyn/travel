@@ -680,7 +680,11 @@ function status(tr) {
   if (sp) return now < sp[0] ? 'up' : now <= sp[1] ? 'now' : 'past';
   return (tr.year || 0) >= new Date().getFullYear() ? 'up' : 'past';
 }
-const items = (tr) => Object.values(tr.items || {}).filter((x) => x && x.id);
+// Ausgeblendete Unterseiten (trip.hideGrps, z. B. Listen der Kinder) zählen nicht als Teilreise und bleiben überall weg
+// 숨긴 하위 페이지(trip.hideGrps, 예: 아이들 목록 페이지)는 소여행이 아니고 어디에도 안 나옴
+const hiddenGrp = (tr, g) => !!g && (tr.hideGrps || []).includes(g);
+const items = (tr) => Object.values(tr.items || {}).filter((x) => x && x.id && !hiddenGrp(tr, x.grp));
+const rawGroups = (tr) => [...new Set([...Object.values(tr.items || {}), ...Object.values(tr.checks || {})].map((x) => x && x.grp).filter(Boolean))];
 function tripDays(tr) {
   if (isDate(tr.start)) {
     const end = isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start, out = [];
@@ -958,7 +962,7 @@ function itemCard(it, tr, day) {
 // Reihenfolge: nach Datum (frühere Reise zuerst), ohne Datum danach, die Haupttabelle zuletzt
 // 순서: 날짜가 빠른 묶음 먼저, 날짜 없는 묶음 다음, 기본 표는 맨 뒤
 function groupsOf(tr) {
-  const gs = [...new Set([...items(tr).map((x) => x.grp || ''), ...Object.values(tr.checks || {}).filter((c) => c && c.grp).map((c) => c.grp)])];
+  const gs = [...new Set([...items(tr).map((x) => x.grp || ''), ...Object.values(tr.checks || {}).filter((c) => c && c.grp && !hiddenGrp(tr, c.grp)).map((c) => c.grp)])];
   const sp = Object.fromEntries(gs.map((g) => [g, groupSpan(tr, g)]));
   return gs.sort((a, b) => (sp[a] ? 0 : 1) - (sp[b] ? 0 : 1) || (sp[a] && sp[b] ? sp[a][0].localeCompare(sp[b][0]) : 0) || (a === '' ? 1 : 0) - (b === '' ? 1 : 0));
 }
@@ -1060,9 +1064,9 @@ function bookTab(tr) {
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 Object.assign(T.ko.tabs, { money: '가계부' });
 Object.assign(T.de.tabs, { money: 'Kosten' });
-Object.assign(T.ko, { splitHow: '나누는 방법', split_eq: '가족마다 똑같이', split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkLabel: '예약', bkNo: '필요 없음', bkNeed: '예약할 것', bkDone: '예약 완료', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
+Object.assign(T.ko, { grpShow: '소여행 (노션 하위 페이지)', grpShowNote: '체크를 끈 페이지는 소여행으로 안 쓰고 일정·체크리스트에서도 숨겨요. 노션에는 그대로 있어요.', splitHow: '나누는 방법', split_eq: '가족마다 똑같이', split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요', movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkLabel: '예약', bkNo: '필요 없음', bkNeed: '예약할 것', bkDone: '예약 완료', noBookList: '예약 안 하는 숙소·이동 {n}개', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)', addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록', recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진',
   todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인', nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개' });
-Object.assign(T.de, { splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}', amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', bkLabel: 'Buchung', bkNo: 'nicht nötig', bkNeed: 'zu buchen', bkDone: 'gebucht', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
+Object.assign(T.de, { grpShow: 'Teilreisen (Notion-Unterseiten)', grpShowNote: 'Abgewählte Seiten sind keine Teilreise und werden im Plan und in Listen ausgeblendet. In Notion bleiben sie.', splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}', amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben', dragHint: 'Karte lange drücken, um sie zu verschieben', bkLabel: 'Buchung', bkNo: 'nicht nötig', bkNeed: 'zu buchen', bkDone: 'gebucht', noBookList: '{n} ohne Buchung (Unterkunft·Fahrt)', ck_todo: 'Aufgaben', ck_pack: 'Packliste', addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)', dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch', recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos',
   todoN: '{n} Aufgaben offen', whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion' });
 Object.assign(T.ko, { mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라', visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기' });
 Object.assign(T.de, { mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …', openTrip: 'Reise öffnen' });
@@ -1958,7 +1962,7 @@ function recordSheet(tr, d) {
 // Startseite: offene Aufgaben (nicht die Packliste) / 홈: 남은 할 일 개수 (짐 체크리스트는 빼고)
 function todoLine(tr) {
   if (status(tr) !== 'up') return '';
-  const n = Object.values(tr.checks || {}).filter((c) => c && c.id && !c.done && !isPack(c)).length;
+  const n = Object.values(tr.checks || {}).filter((c) => c && c.id && !c.done && !isPack(c) && !hiddenGrp(tr, c.grp)).length;
   return n ? `<span class="todo-line">${ms('checklist')} ${esc(t('todoN', { n }))}</span>` : '';
 }
 
@@ -1974,7 +1978,7 @@ const kidColor = (k) => (KIDS.find((x) => x[0] === k) || [])[3] || 'var(--muted)
 const isPack = (x) => x.kind === 'pack' || !!x.who;
 function checkTab(tr) {
   const ck = ui.ck === 'pack' ? 'pack' : 'todo', who = ck === 'pack' ? ui.who || '' : '';
-  const scoped = Object.values(tr.checks || {}).filter((x) => x && x.id && (ui.grp == null || !x.grp || x.grp === ui.grp));
+  const scoped = Object.values(tr.checks || {}).filter((x) => x && x.id && !hiddenGrp(tr, x.grp) && (ui.grp == null || !x.grp || x.grp === ui.grp));
   const open = (k) => scoped.filter((x) => (isPack(x) ? 'pack' : 'todo') === k && !x.done).length;
   const list = scoped.filter((x) => (isPack(x) ? 'pack' : 'todo') === ck && (!who || (who === 'fam' ? !x.who : x.who === who))).sort((a, b) => (!!a.done - !!b.done) || (a.order ?? 0) - (b.order ?? 0));
   const done = list.filter((x) => x.done).length;
@@ -2238,6 +2242,7 @@ function tripSheet(tr, opt = {}) {
     <div class="fld"><span>${esc(t('mode'))}</span><div class="cats modes">${['', 'plane', 'car', 'train', 'ship'].map((m) => `<label><input type="radio" name="mode" value="${m}" ${(tr.mode || '') === m ? 'checked' : ''}><span>${m ? modeSvg(m) : ''}${esc(m ? t('modes.' + m) : t('modeAuto'))}</span></label>`).join('')}</div></div>
     ${record ? `<label class="fld"><span>${esc(t('recordNote'))}</span><textarea class="in" name="memo" rows="3" placeholder="${esc(t('recordPh'))}"></textarea></label>` : ''}
     <label class="fld" ${record ? 'hidden' : ''}><span>${esc(t('budget'))}</span><input class="in" name="budget" inputmode="decimal" value="${tr.budget ?? ''}"></label>
+    ${!isNew && rawGroups(tr).length ? `<div class="fld"><span>${esc(t('grpShow'))}</span><div class="cats">${rawGroups(tr).map((g) => `<label class="c-pp"><input type="checkbox" name="showGrp" value="${esc(g)}" ${hiddenGrp(tr, g) ? '' : 'checked'}><span>${esc(g)}</span></label>`).join('')}</div><p class="note" style="margin:6px 2px 0">${esc(t('grpShowNote'))}</p></div>` : ''}
     <label class="fld"><span>${esc(t('album'))}</span><input class="in" name="album" value="${esc(tr.album || '')}" placeholder="https://photos.app.goo.gl/…" autocomplete="off"></label>
     <label class="fld" ${record ? 'hidden' : ''}><span>${esc(t('cover'))}</span><input class="in" name="cover" value="${esc(tr.cover || '')}" placeholder="https://…" autocomplete="off"></label>
     ${isNew && window.notionSync ? `<label class="toggle"><input type="checkbox" name="toNotion" ${record ? '' : 'checked'}>${esc(t('toNotion'))}</label>` : ''}
@@ -2284,6 +2289,7 @@ function tripSheet(tr, opt = {}) {
       } else {
         // Notion-Reise umbenannt: nur in der App (Notion-Seitentitel bleibt) / 노션 여행 제목을 바꾸면 앱에서만
         if (tr.notion && title !== tr.title) fields.titleLocal = true;
+        if (f.showGrp) { const on = new Set([...f.querySelectorAll('[name=showGrp]:checked')].map((x) => x.value)); fields.hideGrps = rawGroups(tr).filter((g) => !on.has(g)); }
         write(Object.entries(fields).map(([k, v]) => [['trips', tr.id, k], v]));
         closeSheet();
       }
