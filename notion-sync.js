@@ -302,14 +302,15 @@
       for (const x of r.dn) if (x.iso && !keep.includes(x.iso)) xd.push(x.name || x.iso);
     }
     const date = keep[0] || '';
-    let end = '';
+    let end = '', days = [];
     if ((cat === 'stay' || cat === 'move') && keep.length > 1) end = keep[keep.length - 1];
-    else for (const d of keep.slice(1)) { const nm = r.dn.find((x) => x.iso === d); xd.push((nm && nm.name) || d); }
-    return { date, end, xd: [...new Set(xd)] };
+    else days = [...new Set(keep.slice(1))]; // weitere Tage (Skischule an 3 Tagen) / 여러 날 일정 (스키학교 3일 등)
+    return { date, end, days, xd: [...new Set(xd)] };
   }
   const snapOf = (x) => ({
     title: hash(x.title || ''), cat: x.cat || '', time: hash(x.time || ''), notes: hash(x.notes || ''), date: x.date || '', end: x.end || '',
     booked: !!x.booked, links: hash((x.links || []).join(' ')), cost: x.cost ? `${x.cost.amount} ${x.cost.cur}` : '',
+    ...(x.days && x.days.length && { days: x.days.join(',') }),
   });
   function clusterRange(dates) {
     if (!dates.length) return ['', ''];
@@ -363,13 +364,14 @@
       if (ex) { used.add(ex.id); id = ex.id; } // gleiche ID behalten (Ausgaben, offene Fenster zeigen darauf) / 같은 id 유지 (지출·열린 창이 가리킴)
       if (ex && outboxHas('item', tid, ex.id)) { next[ex.id] = ex; continue; } // noch nicht gesendet: App-Stand behalten / 아직 노션에 안 보낸 변경
       const cat = appCat(r);
-      const { date, end, xd } = appDates(r, cat, ctx, grpRange[r.grp]);
+      const { date, end, days, xd } = appDates(r, cat, ctx, grpRange[r.grp]);
       const x = { ...(ex || {}), id, nid: r.nid, ndb: r.ndb, grp: r.grp || '', ncat: r.ncat, cat, title: r.title, time: r.time, notes: r.notes, date, end, booked: r.booked, order: r.order, nt: r.nt };
       if (r.body) x.body = r.body; else delete x.body;
       if (r.links.length) x.links = r.links; else delete x.links;
       const s = n.dbs[r.ndb] || {};
       if (r.num != null) x.cost = { amount: r.num, cur: s.cur || trip.cur || 'EUR' }; else delete x.cost;
       if (xd.length) x.xdates = xd; else delete x.xdates;
+      if (days.length) x.days = days; else delete x.days;
       delete x.mt;
       x.nsnap = snapOf(x);
       next[id] = x;
@@ -514,7 +516,7 @@
     const isos = [];
     if (it.date) {
       if (it.cat === 'stay' && isDate(it.end)) for (let d = it.date; d <= it.end && isos.length < 60; d = addDays(d, 1)) isos.push(d);
-      else { isos.push(it.date); if (it.cat === 'move' && isDate(it.end)) isos.push(it.end); }
+      else { isos.push(it.date); if (it.cat === 'move' && isDate(it.end)) isos.push(it.end); if (it.cat !== 'move') isos.push(...(it.days || []).filter(isDate)); }
     }
     const ko = (d) => { const x = pd(d); return `${x.getMonth() + 1}월 ${x.getDate()}일` + (s.wd ? ' ' + '일월화수목금토'[x.getDay()] : ''); };
     const names = [...new Set([...isos.map(ko), ...(it.xdates || [])])];
@@ -538,7 +540,7 @@
     if (s.cat && ch('cat')) P[s.cat] = { select: { name: notionCat(it.cat, it.ncat) } };
     if (s.time && ch('time')) P[s.time] = { rich_text: rt(it.time) };
     if (s.notes && ch('notes')) P[s.notes] = { rich_text: rt(it.notes) };
-    if (s.date && (ch('date') || ch('end') || ch('cat'))) P[s.date] = notionDates(it, s);
+    if (s.date && (ch('date') || ch('end') || ch('cat') || ch('days'))) P[s.date] = notionDates(it, s);
     if (s.book && ch('booked')) P[s.book] = { checkbox: !!it.booked };
     if (s.files && ch('links')) P[s.files] = { files: (it.links || []).slice(0, 20).map((u) => ({ name: (hostOf(u) || 'link').slice(0, 90), type: 'external', external: { url: u } })) };
     else if (!s.files && s.url && ch('links')) P[s.url] = { url: (it.links || [])[0] || null };

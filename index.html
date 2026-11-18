@@ -352,6 +352,7 @@ input[type="date"].in { min-height: 46px; }
 .seg.bk label > span { display: block; padding: 9px 4px; border-radius: 11px; text-align: center; font-size: 14.5px; font-weight: 800; color: var(--muted); }
 .seg.bk input:checked + span { background: var(--sheet); color: var(--ink); box-shadow: var(--shadow); }
 .seg.bk input:focus-visible + span { outline: 2px solid var(--accent); }
+.md-n { padding: 0 7px; border-radius: 6px; background: var(--soft); color: var(--accent); font-size: 12.5px; font-weight: 800; }
 .bk-go { display: inline-flex; align-items: center; gap: 3px; padding: 2px 10px 2px 8px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 13px; font-weight: 800; }
 .bk-go .ms { font-size: 15px; vertical-align: 0; }
 .bk-todo .ms { font-size: 15px; vertical-align: -.15em; }
@@ -466,7 +467,7 @@ const T = {
     locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요', locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치',
     pickOne: '맞는 곳을 고르세요', grpShow: '소여행 (노션 하위 페이지)', grpShowNote: '체크를 끈 페이지는 소여행으로 안 쓰고 일정·체크리스트에서도 숨겨요. 노션에는 그대로 있어요.', splitHow: '나누는 방법', split_eq: '가족마다 똑같이',
     split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요',
-    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkGo: '예약하러 가기', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
+    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkGo: '예약하러 가기', multiDay: '여러 날이면 날짜를 더 눌러 주세요', dayOf: '{a}/{b}일', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
     addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록',
     recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진', todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인',
     nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개', mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라',
@@ -520,7 +521,7 @@ const T = {
     grpShow: 'Teilreisen (Notion-Unterseiten)', grpShowNote: 'Abgewählte Seiten sind keine Teilreise und werden im Plan und in Listen ausgeblendet. In Notion bleiben sie.',
     splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}',
     amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben',
-    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkGo: 'Jetzt buchen', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
+    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkGo: 'Jetzt buchen', multiDay: 'Mehrere Tage? Einfach weitere Tage antippen', dayOf: 'Tag {a}/{b}', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
     addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)',
     dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch',
     recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos', todoN: '{n} Aufgaben offen',
@@ -704,13 +705,15 @@ const vals = (o) => Object.values(o || {}).filter((x) => x && x.id);
 const items = (tr) => vals(tr.items).filter((x) => !hiddenGrp(tr, x.grp));
 const checksOf = (tr) => vals(tr.checks).filter((c) => !hiddenGrp(tr, c.grp));
 const rawGroups = (tr) => [...new Set([...Object.values(tr.items || {}), ...Object.values(tr.checks || {})].map((x) => x && x.grp).filter(Boolean))];
+const isSpanCat = (c) => c === 'stay' || c === 'move';
+const allDays = (x) => [x.date, ...(isSpanCat(x.cat) ? [] : x.days || [])].filter(isDate);
 function tripDays(tr) {
   if (isDate(tr.start)) {
     const end = isDate(tr.end) && tr.end >= tr.start ? tr.end : tr.start, out = [];
     for (let d = tr.start; d <= end && out.length < 120; d = addDays(d, 1)) out.push(d);
     return out;
   }
-  return [...new Set(items(tr).flatMap((x) => [x.date, x.end]).filter(isDate))].sort();
+  return [...new Set(items(tr).flatMap((x) => [...allDays(x), x.end]).filter(isDate))].sort();
 }
 const eurOf = (cost, tr) => {
   if (!cost || !cost.amount) return 0;
@@ -748,7 +751,7 @@ function timeKey(it, day) {
   return null;
 }
 function dayItems(tr, day) {
-  const list = items(tr).filter((x) => x.date === day || (x.cat === 'move' && x.end === day)).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const list = items(tr).filter((x) => allDays(x).includes(day) || (x.cat === 'move' && x.end === day)).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   let last = 0;
   const keyed = list.map((x) => { const k = timeKey(x, day); last = k ?? last; return { x, k: k ?? last }; });
   return keyed.sort((a, b) => a.k - b.k || (a.x.order ?? 0) - (b.x.order ?? 0)).map((o) => o.x);
@@ -966,6 +969,8 @@ function itemCard(it, tr, day) {
   const isOut = it.cat === 'stay' && day && day === it.end;
   const tm = isOut ? (it.time || '').split(/\n|\//).find((s) => /아웃|out/i.test(s)) || '' : (it.time || '').split('\n')[0];
   if (tm) meta.push(`<span class="tm">${esc(tx(tr, tm.trim()))}</span>`);
+  const ad = allDays(it).sort();
+  if (day && ad.length > 1 && ad.includes(day)) meta.push(`<span class="md-n">${esc(t('dayOf', { a: ad.indexOf(day) + 1, b: ad.length }))}</span>`);
   if (it.cat === 'stay' && isDate(it.date) && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} – ${md(it.end)} · ${nightsText(diff(it.date, it.end))}`));
   if (it.cat === 'move' && isDate(it.end) && !day) meta.push(esc(`${md(it.date)} · ${md(it.end)}`));
   if (!isOut) {
@@ -1008,7 +1013,7 @@ const inGrp = (x) => ui.grp == null || (x.grp || '') === ui.grp;
 function groupSpan(tr, g) {
   // + Zeitraum aus dem Notion-Übersichtskalender / + 노션 개요 캘린더의 기간
   const ov = (g && tr.notion && tr.notion.grpSpans && tr.notion.grpSpans[g]) || [];
-  const ds = [...items(tr).filter((x) => (x.grp || '') === g).flatMap((x) => [x.date, x.end]), ...ov].filter(isDate).sort();
+  const ds = [...items(tr).filter((x) => (x.grp || '') === g).flatMap((x) => [...allDays(x), x.end]), ...ov].filter(isDate).sort();
   return ds.length ? [ds[0], ds[ds.length - 1]] : null;
 }
 const spanDays = (s, e) => { const out = []; for (let d = s; d <= e && out.length < 60; d = addDays(d, 1)) out.push(d); return out; };
@@ -2016,7 +2021,7 @@ function itemSheet(tr, it, defaults = {}) {
     <label class="fld"><span>${esc(t('title'))}</span><input class="in" name="title" value="${esc(it.title)}" placeholder="${esc(t('titlePh'))}" autocomplete="off"></label>
     <div class="two"><label class="fld"><span>${esc(t('date'))}</span><input class="in" type="date" name="date" value="${esc(it.date)}" ${dateMin ? `min="${addDays(dateMin, -60)}"` : ''}></label>
     <label class="fld" data-end><span data-endl>${esc(t(it.cat === 'stay' ? 'endStay' : 'endMove'))}</span><input class="in" type="date" name="end" value="${esc(it.end || '')}"></label></div>
-    ${days.length ? `<div class="picks">${days.slice(0, 21).map((d) => `<button type="button" class="pill${d === it.date ? ' on' : ''}" data-pick="${d}">${esc(md(d))}</button>`).join('')}</div>` : ''}
+    ${days.length ? `<div class="picks">${days.slice(0, 21).map((d) => `<button type="button" class="pill${allDays(it).includes(d) ? ' on' : ''}" data-pick="${d}">${esc(md(d))}</button>`).join('')}</div><p class="note" data-multi style="margin:4px 2px 0">${esc(t('multiDay'))}</p>` : ''}
     <label class="fld"><span>${esc(t('time'))}</span><textarea class="in" name="time" rows="${Math.min(4, (it.time || '').split('\n').length)}" style="min-height:46px" placeholder="${esc(t('timePh'))}">${esc(it.time || '')}</textarea></label>
     <label class="fld"><span>${esc(t('notes'))}</span><textarea class="in" name="notes" rows="4">${esc(it.notes || '')}</textarea></label>
     <div class="two"><label class="toggle"><input type="checkbox" name="need" ${needBook(it) ? 'checked' : ''}>${esc(t('bkNeed'))}</label>
@@ -2050,10 +2055,30 @@ function itemSheet(tr, it, defaults = {}) {
       if (e.target.name === 'need' && !f.need.checked) f.booked.checked = false;
       if (e.target.name === 'booked' || e.target.name === 'need') p.querySelector('[data-bklink]').hidden = f.booked.checked; // gebucht → Link-Feld weg / 예약 완료면 링크 칸 숨김
     });
+    // Ausgewählte Tage: Unterkunft/Fahrt einer (mit Ende), sonst beliebig viele / 고른 날짜: 숙소·이동은 하나(끝 날짜 따로), 나머지는 여러 개
+    let picked = new Set(allDays(it));
+    const showPicks = () => {
+      const span = isSpanCat(f.cat.value);
+      if (span) picked = new Set(f.date.value ? [f.date.value] : []);
+      p.querySelectorAll('[data-pick]').forEach((x) => x.classList.toggle('on', picked.has(x.dataset.pick)));
+      const m = p.querySelector('[data-multi]'); if (m) m.hidden = span;
+    };
     p.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
-      f.date.value = b.dataset.pick;
-      p.querySelectorAll('[data-pick]').forEach((x) => x.classList.toggle('on', x === b));
+      const d = b.dataset.pick;
+      if (isSpanCat(f.cat.value)) picked = new Set([d]);
+      else if (picked.has(d)) picked.delete(d); else picked.add(d);
+      f.date.value = [...picked].sort()[0] || '';
+      showPicks();
     }));
+    f.date.addEventListener('change', () => {
+      // Erstes Datum von Hand geändert: ersetzt das bisher erste / 첫 날짜를 직접 바꾸면 그 날짜로 교체
+      const old = [...picked].sort()[0];
+      if (old) picked.delete(old);
+      if (f.date.value) picked.add(f.date.value);
+      showPicks();
+    });
+    f.addEventListener('change', (e) => { if (e.target.name === 'cat') showPicks(); });
+    showPicks();
     // Ort: nach Namen suchen (OpenStreetMap) oder Link/Koordinaten einfügen / 위치: 이름으로 찾기 또는 링크·좌표 붙여넣기
     let loc = it.loc || null;
     const res = p.querySelector('#geo-res');
@@ -2087,12 +2112,13 @@ function itemSheet(tr, it, defaults = {}) {
       e.preventDefault();
       const amount = parseAmount(f.amount.value);
       const x = {
-        ...it, cat: f.cat.value || 'etc', title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
+        ...it, cat: f.cat.value || 'etc', days: isSpanCat(f.cat.value) ? [] : [...picked].filter((d) => d !== f.date.value).sort(), title: f.title.value.trim(), date: f.date.value || '', end: (f.cat.value === 'stay' || f.cat.value === 'move') ? (f.end.value || '') : '',
         time: f.time.value.trim(), notes: f.notes.value.trim(), booked: f.booked.checked, code: it.code || '',
         links: f.links.value.split(/\s+/).map((s) => s.trim()).filter((s) => /^https?:\/\//.test(s)),
         order: it.order ?? Date.now() / 1000,
       };
       if (!isNaN(amount) && amount) x.cost = { amount, cur: f.cur.value }; else delete x.cost;
+      if (!x.days.length || !x.date) delete x.days;
       // 예약 완료도 need를 켜 둠 (완료를 풀면 '예약할 것'으로 돌아가게) / gebucht behält need, falls die Buchung aufgehoben wird
       delete x.noBook;
       x.need = f.need.checked || f.booked.checked;
@@ -2321,7 +2347,7 @@ function orderDay(list, day) {
   let k = 0;
   return list.map((x) => (x.pos && x.pos[day] != null ? fixed[k++] : x));
 }
-const canChangeDay = (it) => it && it.cat !== 'stay' && !(it.cat === 'move' && isDate(it.end) && it.end !== it.date);
+const canChangeDay = (it) => it && it.cat !== 'stay' && !(it.cat === 'move' && isDate(it.end) && it.end !== it.date) && allDays(it).length < 2;
 (function dragCards() {
   let st = null, suppressUntil = 0, raf = 0;
   const SEL = '.items[data-dnd] > .it';
