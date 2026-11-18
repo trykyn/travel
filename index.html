@@ -1565,11 +1565,21 @@ function optSheet(tr, o) {
 // Mitreisende (trip.people) mit Personenzahl als Gewicht; Ausgaben (trip.spend) mit Zahler und Teilnehmern.
 // Alles in Euro über den Kurs der Reise; nur in der App (nicht in Notion).
 // 일행(trip.people)은 인원 수를 몫의 비율로, 지출(trip.spend)은 낸 사람과 나눌 사람. 유로로 계산, 앱에만 저장.
-const peopleOf = (tr) => {
-  const p = Object.values(tr.people || {}).filter((x) => x && x.id).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+// Mitreisende gehören zur Gruppe (Notion-Unterseite), in der sie angelegt wurden; ältere ohne Gruppe erscheinen dort,
+// wo sie in Ausgaben vorkommen (oder überall, wenn noch nirgends). "우리 가족" ist immer dabei.
+// 일행은 추가한 소여행(노션 하위 페이지)에 속함. 예전에 넣은 일행(소여행 없음)은 그 소여행 지출에 나온 곳에만 (아직 지출이 없으면 어디서나). 우리 가족은 늘.
+const curGrp = () => (ui.grp && ui.grp !== '*' ? ui.grp : '');
+const peopleOf = (tr, all) => {
+  let p = Object.values(tr.people || {}).filter((x) => x && x.id).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const g = curGrp();
+  if (!all && g) {
+    const used = (id, list) => list.some((s) => s.payer === id || (s.split || []).includes(id));
+    const here = ledgerSpends(tr), every = spendsOf(tr);
+    p = p.filter((x) => x.id === 'me' || x.grp === g || (!x.grp && (used(x.id, here) || !used(x.id, every))));
+  }
   return p.length ? p : [{ id: 'me', name: t('us'), n: 1, order: 0 }];
 };
-const pName = (tr, id) => (peopleOf(tr).find((p) => p.id === id) || { name: id === 'me' ? t('us') : '?' }).name;
+const pName = (tr, id) => (peopleOf(tr, true).find((p) => p.id === id) || { name: id === 'me' ? t('us') : '?' }).name;
 const P_COLORS = ['#13294b', '#ff6b4a', '#13946f', '#7a5cd3', '#c27a12', '#2a5db0'];
 // Gewählte Gruppe: nur Ausgaben in deren Zeitraum / 묶음을 고르면 그 기간 지출만
 function ledgerSpends(tr) {
@@ -1729,7 +1739,7 @@ function spendSheet(tr, s, pre) {
 }
 function personSheet(tr, person) {
   const isNew = !person, isMe = person && person.id === 'me';
-  person = person || { id: uid('p'), name: '', n: 1 };
+  person = person || { id: uid('p'), name: '', n: 1, ...(curGrp() && { grp: curGrp() }) };
   openSheet(`<h3>${esc(t('personT'))}</h3><form data-form="person">
     <label class="fld"><span>${esc(t('personName'))}</span><input class="in" name="name" value="${esc(person.name)}" placeholder="${esc(t('personPh'))}" autocomplete="off"></label>
     <label class="fld"><span>${esc(t('personN'))}</span><input class="in" name="n" inputmode="numeric" value="${person.n || 1}" style="width:110px"></label>
