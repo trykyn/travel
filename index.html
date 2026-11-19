@@ -360,6 +360,7 @@ input[type="date"].in { min-height: 46px; }
 .eat-when { display: inline-flex; align-items: center; gap: 3px; padding: 2px 10px 2px 8px; border-radius: 999px; background: var(--soft); color: var(--accent); font-size: 13px; font-weight: 800; }
 .eat-when.on { background: var(--ok-bg); color: var(--ok); }
 .eat-when .ms { font-size: 15px; vertical-align: 0; }
+.picks .pill.mid { background: var(--soft); color: var(--accent); }
 .bk-go { display: inline-flex; align-items: center; gap: 3px; padding: 2px 10px 2px 8px; border-radius: 999px; background: var(--coral); color: #fff; font-size: 13px; font-weight: 800; }
 .bk-go .ms { font-size: 15px; vertical-align: 0; }
 .bk-todo .ms { font-size: 15px; vertical-align: -.15em; }
@@ -2107,17 +2108,35 @@ function itemSheet(tr, it, defaults = {}) {
     });
     // Ausgewählte Tage: Unterkunft/Fahrt einer (mit Ende), sonst beliebig viele / 고른 날짜: 숙소·이동은 하나(끝 날짜 따로), 나머지는 여러 개
     let picked = new Set(allDays(it));
+    // Unterkunft: Check-out folgt dem Check-in (nächster Tag), damit der Kalender nicht bei heute aufgeht
+    // 숙소: 체크인을 고르면 체크아웃을 다음 날로 맞춤 (체크아웃 달력이 오늘에 머물지 않게)
+    const fitEnd = () => {
+      f.end.min = f.date.value || '';
+      if (f.cat.value === 'stay' && f.date.value && (!f.end.value || f.end.value <= f.date.value)) f.end.value = addDays(f.date.value, 1);
+    };
+    let endTapped = false;
     const showPicks = () => {
       const span = isSpanCat(f.cat.value);
       if (span) picked = new Set(f.date.value ? [f.date.value] : []);
-      p.querySelectorAll('[data-pick]').forEach((x) => x.classList.toggle('on', picked.has(x.dataset.pick)));
+      const stay = f.cat.value === 'stay' && f.date.value && f.end.value > f.date.value;
+      p.querySelectorAll('[data-pick]').forEach((x) => {
+        const d = x.dataset.pick;
+        x.classList.toggle('on', picked.has(d) || (stay && d === f.end.value));
+        x.classList.toggle('mid', !!stay && d > f.date.value && d < f.end.value);
+      });
       const m = p.querySelector('[data-multi]'); if (m) m.hidden = span;
     };
     p.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
       const d = b.dataset.pick;
-      if (isSpanCat(f.cat.value)) picked = new Set([d]);
-      else if (picked.has(d)) picked.delete(d); else picked.add(d);
-      f.date.value = [...picked].sort()[0] || '';
+      if (f.cat.value === 'stay') {
+        // 1. Tippen = Check-in, 2. (späterer Tag) = Check-out / 첫 번째 = 체크인, 그다음 더 늦은 날 = 체크아웃
+        if (f.date.value && !endTapped && d > f.date.value) { f.end.value = d; endTapped = true; }
+        else { f.date.value = d; f.end.value = ''; endTapped = false; fitEnd(); }
+      } else {
+        if (isSpanCat(f.cat.value)) picked = new Set([d]);
+        else if (picked.has(d)) picked.delete(d); else picked.add(d);
+        f.date.value = [...picked].sort()[0] || '';
+      }
       showPicks();
     }));
     f.date.addEventListener('change', () => {
@@ -2125,8 +2144,12 @@ function itemSheet(tr, it, defaults = {}) {
       const old = [...picked].sort()[0];
       if (old) picked.delete(old);
       if (f.date.value) picked.add(f.date.value);
+      fitEnd();
       showPicks();
     });
+    f.end.addEventListener('change', () => { endTapped = true; showPicks(); });
+    f.addEventListener('change', (e) => { if (e.target.name === 'cat') { fitEnd(); showPicks(); } });
+    if (!it.end) fitEnd(); else f.end.min = f.date.value || '';
     f.addEventListener('change', (e) => { if (e.target.name === 'cat') showPicks(); });
     showPicks();
     // Ort: nach Namen suchen (OpenStreetMap) oder Link/Koordinaten einfügen / 위치: 이름으로 찾기 또는 링크·좌표 붙여넣기
