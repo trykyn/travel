@@ -1052,12 +1052,8 @@ function planTab(tr) {
       <span>${esc(t('dayNo', { n: i + 1 }))}</span><b>${esc(md(d))}</b></button>`).join('')}</nav>`;
   }
   if (!all.length) h += `<p class="empty">${esc(t('noItems'))}</p>`;
-  const stays = all.filter((x) => x.cat === 'stay' && isDate(x.date) && isDate(x.end));
   days.forEach((d, i) => {
-    const list = dayItems(tr, d).filter(inGrp);
-    // Nächte mitten im Aufenthalt und der Abreisetag / 숙박 중간 밤과 체크아웃 날
-    const mid = stays.filter((s) => s.date < d && d < s.end);
-    const outs = stays.filter((s) => s.end === d);
+    const { mid, cards } = dayCards(tr, d);
     h += `<div class="day" id="d-${d}"><div class="dh"><span class="n">${esc(t('dayNo', { n: i + 1 }))}</span>
       <span class="d">${esc(dayName(d, { month: 'long', day: 'numeric', weekday: 'short' }))}</span>${wxSoon(d) ? `<span class="wx" data-day="${d}" hidden></span>` : ''}${d === now ? `<span class="now">${esc(t('today'))}</span>` : ''}
       <span class="dh-act"><button class="dbtn${ui.dayMaps && ui.dayMaps.has(d) ? ' on' : ''}" data-act="day-map" data-day="${d}">${ms('map')} ${esc(t('mapShort'))}</button>${routeUrl(tr, d) ? `<a class="dbtn" href="${esc(routeUrl(tr, d))}" target="_blank" rel="noopener">${ms('route')} ${esc(t('route'))}</a>` : ''}</span></div>`;
@@ -1066,7 +1062,7 @@ function planTab(tr) {
       h += `<div class="map day-map" data-day="${d}"></div>${noLoc.length ? `<button class="btn small ghost find-day" data-act="find-day" data-day="${d}">${ms('location_on')} ${esc(t('findDay', { n: noLoc.length }))}</button>` : ''}`;
     }
     for (const s of mid) h += `<div class="night">${ms('bed')}<span>${esc(t('night', { a: diff(s.date, d) + 1, b: diff(s.date, s.end) }))} · ${esc(tx(tr, s.title))}</span></div>`;
-    h += `<div class="items" data-dnd="${d}">${orderDay([...outs, ...list], d).map((x) => itemCard(x, tr, d)).join('')}</div>
+    h += `<div class="items" data-dnd="${d}">${cards.map((x) => itemCard(x, tr, d)).join('')}</div>
       ${d <= now ? recordHtml(tr, d) : ''}<button class="add-day" data-act="new-item" data-day="${d}">${esc(t('addHere'))}</button></div>`;
   });
   const set = new Set(days);
@@ -1373,9 +1369,16 @@ async function drawLeaflet(box, pts, opt) {
 
 // ---------- Tageskarte und Tagesroute / 날짜별 지도와 동선 ----------
 // Vom Hotel der Nacht davor über die Orte des Tages in Reihenfolge / 전날 묵은 숙소에서 그날 장소들을 순서대로
+// Karten eines Tages genau wie im Plan (inkl. gezogener Reihenfolge) / 그날 카드 — 일정 화면과 같은 순서 (끌어 옮긴 순서 포함)
+function dayCards(tr, d) {
+  const stays = itemsG(tr).filter((x) => x.cat === 'stay' && isDate(x.date) && isDate(x.end));
+  const mid = stays.filter((s) => s.date < d && d < s.end); // Nächte mitten im Aufenthalt / 숙박 중간 밤
+  const outs = stays.filter((s) => s.end === d); // Abreisetag / 체크아웃 날
+  return { mid, cards: orderDay([...outs, ...dayItems(tr, d).filter(inGrp)], d) };
+}
 function dayStops(tr, d) {
-  const prevStay = items(tr).filter((x) => x.cat === 'stay' && isDate(x.date) && x.date < d && d <= (x.end || x.date) && inGrp(x)).slice(0, 1);
-  const list = [...prevStay, ...dayItems(tr, d).filter((x) => inGrp(x) && (x.cat !== 'move' || x.loc))];
+  const { mid, cards } = dayCards(tr, d);
+  const list = [...mid.slice(0, 1), ...cards.filter((x) => x.cat !== 'move' || x.loc)];
   return list.filter((x, i, a) => a.findIndex((y) => y.id === x.id) === i);
 }
 function dayPoints(tr, d) {
