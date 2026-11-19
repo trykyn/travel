@@ -249,7 +249,7 @@
       if ((bodies[row.id] || []).some((k) => k.type === 'child_database') && body.length) out.gmemo[f.title] = body.slice();
       if ((bodies[row.id] || []).length) out.pages.push(row.id);
     });
-    for (const [nid, name] of nested) if (depth < 2) await readDb(nid, name, depth + 1, out);
+    for (const [nid, name] of nested) if (depth < 1) await readDb(nid, name, depth + 1, out);
   }
   // Die Reiseliste unter "여행": Jahres-Kästen mit Unterseiten / '여행' 아래 연도 칸과 그 안의 여행 페이지
   async function readRoot() {
@@ -555,12 +555,7 @@
     write(e, { sync: true });
   }
   // Neue Reise aus der App → neue Notion-Seite in 엄마's Form / 앱에서 만든 새 여행 → 엄마 폼으로 노션 페이지
-  async function createTrip(tr) {
-    if (!Object.keys(S.callouts).length) await readRoot();
-    const titleProp = { title: { title: rt(tr.title) } };
-    let page;
-    try { page = await call('POST', 'pages', { parent: { page_id: ROOT }, icon: { type: 'emoji', emoji: tr.icon || '✈️' }, properties: titleProp }); }
-    catch (e) { if (e.code !== 'notion') throw e; page = await call('POST', 'pages', { parent: { page_id: ROOT }, properties: titleProp }); }
+  async function createDb(parentPage, title, tr, grp) {
     const c = tr.cur || 'EUR';
     const [numName, fmt] = { JPY: ['엔', 'yen'], KRW: ['원', 'won'], EUR: ['Euro', 'euro'], USD: ['달러', 'dollar'], GBP: ['파운드', 'pound'], CHF: ['프랑', 'franc'], CZK: ['코루나', 'koruna'] }[c] || [c, 'number'];
     const props = {
@@ -569,10 +564,20 @@
       시간: { rich_text: {} }, 주요내용: { rich_text: {} }, 일정: { multi_select: { options: [] } }, 예약: { checkbox: {} },
       'Dateien und Medien': { files: {} }, [numName]: { number: { format: fmt } },
     };
-    let db;
     const withEuro = c !== 'EUR' && tr.rate ? { ...props, 유로: { formula: { expression: `prop("${numName}") * ${tr.rate}` } } } : props;
-    try { db = await call('POST', 'databases', { parent: { type: 'page_id', page_id: page.id }, is_inline: true, title: rt(tr.title), properties: withEuro }); }
-    catch (e) { if (e.code !== 'notion' || withEuro === props) throw e; db = await call('POST', 'databases', { parent: { type: 'page_id', page_id: page.id }, is_inline: true, title: rt(tr.title), properties: props }); }
+    let db;
+    try { db = await call('POST', 'databases', { parent: { type: 'page_id', page_id: parentPage }, is_inline: true, title: rt(title), properties: withEuro }); }
+    catch (e) { if (e.code !== 'notion' || withEuro === props) throw e; db = await call('POST', 'databases', { parent: { type: 'page_id', page_id: parentPage }, is_inline: true, title: rt(title), properties: props }); }
+    const full = await call('GET', `databases/${db.id}`);
+    return [db.id, schemaOf(full, grp || '')];
+  }
+  async function createTrip(tr) {
+    if (!Object.keys(S.callouts).length) await readRoot();
+    const titleProp = { title: { title: rt(tr.title) } };
+    let page;
+    try { page = await call('POST', 'pages', { parent: { page_id: ROOT }, icon: { type: 'emoji', emoji: tr.icon || '✈️' }, properties: titleProp }); }
+    catch (e) { if (e.code !== 'notion') throw e; page = await call('POST', 'pages', { parent: { page_id: ROOT }, properties: titleProp }); }
+    const [dbId, dbSchema] = await createDb(page.id, tr.title, tr, '');
     // Verweis im Jahres-Kasten / 그 해 칸에 링크 넣기
     const y = String((tr.start || '').slice(0, 4) || tr.year || new Date().getFullYear());
     const link = { object: 'block', type: 'link_to_page', link_to_page: { type: 'page_id', page_id: page.id } };
@@ -583,8 +588,7 @@
         if (r.results && r.results[0]) { S.callouts[y] = r.results[0].id; store.put('notion:callouts', S.callouts); }
       }
     } catch (e) { console.warn('notion: year link', e); }
-    const full = await call('GET', `databases/${db.id}`);
-    return { page: page.id, db: db.id, dbs: { [db.id]: schemaOf(full, '') }, pages: [page.id], read: Date.now(), edited: page.last_edited_time };
+    return { page: page.id, db: dbId, dbs: { [dbId]: dbSchema }, pages: [page.id], read: Date.now(), edited: page.last_edited_time };
   }
   async function runOp(op) {
     const tr = trips[op.tid];
@@ -608,9 +612,15 @@
     if (op.k === 'item') {
       const it = tr.items && tr.items[op.id];
       if (!it) return false;
-      const db = it.ndb && tr.notion.dbs[it.ndb] ? it.ndb : tr.notion.db, s = tr.notion.dbs[db];
+      let db = it.ndb && tr.notion.dbs[it.ndb] ? it.ndb : (Object.entries(tr.notion.dbs).find(([, x]) => it.grp && x.grp === it.grp && !x.overview) || [tr.notion.db])[0], s = tr.notion.dbs[db];
       if (!s) return false;
-      if (!it.nid && s.overview) return false; // nur in der App / 앱에만
+      if (!it.nid && s.overview) {
+        const pg = it.grp && (tr.notion.grpPages || {})[it.grp];
+        if (!pg) return false; // nur in der App / 앱에만
+        const [nid, schema] = await createDb(pg, it.grp, tr, it.grp);
+        write([[['trips', op.tid, 'notion', 'dbs', nid], schema]], { sync: true });
+        db = nid; s = schema;
+      }
       if (it.nid) {
         const P = propsFor(it, s, tr, true);
         if (Object.keys(P).length) afterSave(op.tid, it.id, await call('PATCH', `pages/${it.nid}`, { properties: P }));

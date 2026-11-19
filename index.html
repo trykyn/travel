@@ -2054,8 +2054,9 @@ function itemSheet(tr, it, defaults = {}) {
   it = it || { id: uid('i'), cat: defaults.cat || '', title: '', date: defaults.date || '', end: '', time: '', notes: '', booked: false, ...(defaults.need && { need: true, bookOnly: true }) };
   // Neuer Eintrag in einer Notion-Reise mit mehreren Tabellen: in welche? / 노션에 표가 여러 개면 어느 표에 넣을지
   const dbs = tr.notion && tr.notion.dbs ? Object.entries(tr.notion.dbs).filter(([, s]) => !s.overview) : [];
-  const dbPick = isNew && dbs.length > 1
-    ? `<label class="fld"><span>${esc(t('whichTable'))}</span><select class="in" name="ndb">${dbs.map(([id, s]) => `<option value="${esc(id)}" ${(ui.grp != null ? (s.grp || '') === ui.grp : id === tr.notion.db) ? 'selected' : ''}>${esc(s.grp || t('grpMain'))}</option>`).join('')}</select></label>` : '';
+  const picks = tr.notion ? groupsOf(tr).map((g) => { const e = dbs.find(([, s]) => (s.grp || '') === g); return [e ? e[0] : 'g:' + g, g]; }).filter(([v]) => !v.startsWith('g:') || v !== 'g:') : [];
+  const dbPick = isNew && picks.length > 1
+    ? `<label class="fld"><span>${esc(t('whichTable'))}</span><select class="in" name="ndb">${picks.map(([v, g]) => `<option value="${esc(v)}" ${(ui.grp != null ? g === ui.grp : v === tr.notion.db) ? 'selected' : ''}>${esc(g || t('grpMain'))}</option>`).join('')}</select></label>` : '';
   // Tage zum Antippen: die der Gruppe (Notion-Unterseite) dieses Eintrags bzw. der gewählten Gruppe, nicht die ganze Seite
   // 날짜 버튼: 이 일정의 묶음(또는 지금 고른 묶음) 날짜만 — 한 페이지에 스키 여행이 두 번이면 다른 여행 날짜가 섞이지 않게
   const gsp = it.grp ? groupSpan(tr, it.grp) : null;
@@ -2174,7 +2175,8 @@ function itemSheet(tr, it, defaults = {}) {
       if (!x.code) delete x.code;
       if (!x.links.length) delete x.links;
       if (loc) x.loc = loc; else delete x.loc;
-      if (f.ndb) { x.ndb = f.ndb.value; x.grp = (tr.notion.dbs[x.ndb] || {}).grp || ''; }
+      if (f.ndb && f.ndb.value.startsWith('g:')) { x.grp = f.ndb.value.slice(2); delete x.ndb; }
+      else if (f.ndb) { x.ndb = f.ndb.value; x.grp = (tr.notion.dbs[x.ndb] || {}).grp || ''; }
       else if (isNew && tr.notion && ui.grp != null) { const e = dbs.find(([, s]) => (s.grp || '') === ui.grp); if (e) { x.ndb = e[0]; x.grp = ui.grp; } else x.grp = ui.grp; }
       if (!x.title) { f.title.focus(); return; }
       write([[['trips', tr.id, 'items', x.id], x], touch(tr.id)]);
