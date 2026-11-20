@@ -353,7 +353,11 @@ input[type="date"].in { min-height: 46px; }
 .seg.bk input:checked + span { background: var(--sheet); color: var(--ink); box-shadow: var(--shadow); }
 .seg.bk input:focus-visible + span { outline: 2px solid var(--accent); }
 .md-n { padding: 0 7px; border-radius: 6px; background: var(--soft); color: var(--accent); font-size: 12.5px; font-weight: 800; }
-.map.eat-map { height: 260px; min-height: 0; margin: 0 0 10px; }
+.map.area-seg { margin: 0 0 10px; overflow-x: auto; scrollbar-width: none; }
+.area-seg::-webkit-scrollbar { display: none; }
+.area-seg button { flex: 1 0 auto; white-space: nowrap; }
+.area-seg .ms { font-size: 14px; vertical-align: -2px; opacity: .55; }
+.eat-map { height: 260px; min-height: 0; margin: 0 0 10px; }
 .eat-list { margin-top: 6px; }
 .eat-row { position: relative; }
 .eat-no { position: absolute; z-index: 1; left: -6px; top: -6px; display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 999px; background: var(--c); color: #fff; font-size: 12px; font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,.18); }
@@ -475,7 +479,7 @@ const T = {
     locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요', locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치',
     pickOne: '맞는 곳을 고르세요', grpShow: '소여행 (노션 하위 페이지)', grpShowNote: '체크를 끈 페이지는 소여행으로 안 쓰고 일정·체크리스트에서도 숨겨요. 노션에는 그대로 있어요.', splitHow: '나누는 방법', split_eq: '가족마다 똑같이',
     split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요',
-    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkGo: '예약하러 가기', eatFood: '음식점', eatCafe: '카페', addEat: '+ 새 맛집', toPlan: '날짜 정하기', pickDayT: '언제 갈까요?', noEat: '가고 싶은 음식점·카페를 + 새 맛집으로 모아 두세요. 지도에 한눈에 보이고, 날짜를 정하면 그날 일정에 들어가요.', eatPlanned: '{d} 일정', eatNoLoc: '위치가 없는 곳 {n}개', multiDay: '여러 날이면 날짜를 더 눌러 주세요', dayOf: '{a}/{b}일', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
+    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkGo: '예약하러 가기', areaN: '지역 {n}', areaRename: '지역 이름 (비우면 자동으로)', eatFood: '음식점', eatCafe: '카페', addEat: '+ 새 맛집', toPlan: '날짜 정하기', pickDayT: '언제 갈까요?', noEat: '가고 싶은 음식점·카페를 + 새 맛집으로 모아 두세요. 지도에 한눈에 보이고, 날짜를 정하면 그날 일정에 들어가요.', eatPlanned: '{d} 일정', eatNoLoc: '위치가 없는 곳 {n}개', multiDay: '여러 날이면 날짜를 더 눌러 주세요', dayOf: '{a}/{b}일', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
     addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록',
     recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진', todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인',
     nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개', mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라',
@@ -529,7 +533,7 @@ const T = {
     grpShow: 'Teilreisen (Notion-Unterseiten)', grpShowNote: 'Abgewählte Seiten sind keine Teilreise und werden im Plan und in Listen ausgeblendet. In Notion bleiben sie.',
     splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}',
     amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben',
-    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkGo: 'Jetzt buchen', eatFood: 'Restaurants', eatCafe: 'Cafés', addEat: '+ Neues Lokal', toPlan: 'Tag wählen', pickDayT: 'Wann?', noEat: 'Sammle hier Restaurants und Cafés mit + Neues Lokal. Sie stehen auf der Karte; mit einem Tag landen sie im Plan.', eatPlanned: 'am {d}', eatNoLoc: '{n} ohne Ort', multiDay: 'Mehrere Tage? Einfach weitere Tage antippen', dayOf: 'Tag {a}/{b}', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
+    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkGo: 'Jetzt buchen', areaN: 'Gebiet {n}', areaRename: 'Name des Gebiets (leer = automatisch)', eatFood: 'Restaurants', eatCafe: 'Cafés', addEat: '+ Neues Lokal', toPlan: 'Tag wählen', pickDayT: 'Wann?', noEat: 'Sammle hier Restaurants und Cafés mit + Neues Lokal. Sie stehen auf der Karte; mit einem Tag landen sie im Plan.', eatPlanned: 'am {d}', eatNoLoc: '{n} ohne Ort', multiDay: 'Mehrere Tage? Einfach weitere Tage antippen', dayOf: 'Tag {a}/{b}', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
     addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)',
     dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch',
     recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos', todoN: '{n} Aufgaben offen',
@@ -1471,16 +1475,97 @@ function visitedSheet() {
 
 // ---------- 맛집 ----------
 const isEat = (x) => x.cat === 'food' || x.cat === 'cafe';
-const eatList = (tr) => itemsG(tr).filter(isEat).filter((x) => !ui.eatK || x.cat === ui.eatK)
+// Gebiete: nahe Lokale (≤ 40 km, verkettet) bilden ein Gebiet; Unterkünfte mit Ort helfen beim Gruppieren, Sortieren und Benennen.
+// Ein einzelnes Lokal ohne Unterkunft in der Nähe kommt zum nächsten Gebiet. Schlüssel = Unterkunft (sonst erstes Lokal), damit Umbenennen hält.
+// 지역: 가까운 맛집(40km 안, 이어서)끼리 한 지역. 위치 있는 숙소도 묶기·순서·이름에 씀.
+// 숙소 없이 혼자 떨어진 맛집 하나는 가까운 지역에 붙임. 열쇠 = 숙소 (없으면 첫 맛집) — 이름을 바꿔도 유지되게.
+const AREA_KM = 40;
+const hasLoc = (x) => x.loc && isFinite(x.loc.lat);
+function eatAreas(tr) {
+  const eats = itemsG(tr).filter((x) => isEat(x) && hasLoc(x));
+  const stays = itemsG(tr).filter((x) => x.cat === 'stay' && hasLoc(x));
+  const pts = [...eats, ...stays], up = pts.map((_, i) => i);
+  const root = (i) => (up[i] === i ? i : (up[i] = root(up[i])));
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) if (km(pts[i].loc, pts[j].loc) <= AREA_KM) up[root(i)] = root(j);
+  const by = new Map();
+  pts.forEach((x, i) => { const r = root(i); if (!by.has(r)) by.set(r, { eats: [], stays: [] }); by.get(r)[x.cat === 'stay' ? 'stays' : 'eats'].push(x); });
+  let areas = [...by.values()].filter((a) => a.eats.length);
+  // Einzelnes Lokal ohne Unterkunft → zum nächsten Gebiet / 숙소 없는 외톨이 맛집 → 가까운 지역으로
+  for (const a of areas.filter((a) => a.eats.length === 1 && !a.stays.length)) {
+    const rest = areas.filter((b) => b !== a && b.eats.length);
+    if (!rest.length) continue;
+    const near = rest.reduce((m, b) => { const d = Math.min(...[...b.eats, ...b.stays].map((y) => km(a.eats[0].loc, y.loc))); return d < m[0] ? [d, b] : m; }, [Infinity, null])[1];
+    near.eats.push(...a.eats); a.eats = [];
+  }
+  areas = areas.filter((a) => a.eats.length);
+  for (const a of areas) {
+    a.stays.sort((x, y) => (x.date || '9').localeCompare(y.date || '9'));
+    a.eats.sort((x, y) => (x.order ?? 0) - (y.order ?? 0));
+    a.anchor = a.stays[0] || a.eats[0];
+    a.key = a.anchor.id;
+    a.first = [...a.stays, ...a.eats].map((x) => x.date).filter(isDate).sort()[0] || '9';
+  }
+  return areas.sort((a, b) => a.first.localeCompare(b.first) || b.eats.length - a.eats.length);
+}
+// Lokal ohne Ort: Gebiet über das Datum (Nacht in einer Unterkunft des Gebiets) / 위치 없는 맛집: 그날 묵는 숙소의 지역으로
+const areaOf = (areas, x) => areas.find((a) => a.eats.includes(x) || (!hasLoc(x) && isDate(x.date) && a.stays.some((s) => s.date <= x.date && x.date <= (s.end || s.date))));
+// Namen: selbst vergeben (trip.areaNames, geteilt) oder automatisch (Region bzw. Stadt, nur auf diesem Gerät zwischengespeichert)
+// 이름: 직접 바꾼 이름(trip.areaNames, 가족과 같이) 또는 자동 (지방 또는 도시, 이 기기에만 저장)
+const areaGeoKey = (a) => `area:${ui.lang}:${a.anchor.loc.lat.toFixed(2)},${a.anchor.loc.lng.toFixed(2)}`;
+function areaName(tr, areas, a) {
+  const own = (tr.areaNames || {})[a.key];
+  if (own) return own;
+  const g = store.get(areaGeoKey(a), null);
+  if (!g) return t('areaN', { n: areas.indexOf(a) + 1 });
+  // Regionsname, wenn er die Gebiete unterscheidet, sonst Stadt / 지방 이름이 지역을 구분하면 지방, 아니면 도시
+  const regions = areas.map((b) => (store.get(areaGeoKey(b), null) || {}).region);
+  return (g.region && regions.filter((r) => r === g.region).length === 1 ? g.region : g.city || g.region) || t('areaN', { n: areas.indexOf(a) + 1 });
+}
+let areaLookup = false;
+async function nameAreas(tr, areas) {
+  if (areaLookup) return;
+  const todo = areas.filter((a) => !(tr.areaNames || {})[a.key] && !store.get(areaGeoKey(a), null));
+  if (!todo.length) return;
+  areaLookup = true;
+  try {
+    for (const a of todo) {
+      const p = new URLSearchParams({ lat: a.anchor.loc.lat, lon: a.anchor.loc.lng, format: 'jsonv2', zoom: '10', 'accept-language': ui.lang === 'de' ? 'de,en' : 'ko,en' });
+      const r = await fetch('https://nominatim.openstreetmap.org/reverse?' + p);
+      if (!r.ok) break;
+      const ad = (await r.json()).address || {};
+      store.put(areaGeoKey(a), { region: ad.state || ad.region || ad.province || '', city: ad.city || ad.town || ad.village || ad.municipality || ad.county || '' });
+      await sleep(1100); // Nominatim: höchstens 1 Anfrage pro Sekunde / 1초에 한 번까지
+    }
+  } catch (e) { console.warn(e); }
+  areaLookup = false;
+  if (ui.view === 'trip' && ui.tab === 'eat') render();
+}
+// Liste im gewählten Gebiet / 고른 지역의 목록
+function eatScope(tr) {
+  const all = itemsG(tr).filter(isEat), areas = eatAreas(tr);
+  const a = areas.length > 1 && areas.find((b) => b.key === ui.eatA);
+  return { areas, area: a || null, all: a ? all.filter((x) => areaOf(areas, x) === a) : all };
+}
+const eatList = (tr) => eatScope(tr).all.filter((x) => !ui.eatK || x.cat === ui.eatK)
   .sort((a, b) => (isDate(a.date) ? 0 : 1) - (isDate(b.date) ? 0 : 1) || (a.date || '').localeCompare(b.date || '') || (a.order ?? 0) - (b.order ?? 0));
 function eatPoints(tr) {
   return eatList(tr).filter((x) => x.loc && isFinite(x.loc.lat))
     .map((x, i) => ({ lat: x.loc.lat, lng: x.loc.lng, label: i + 1, cls: `pin c-${x.cat}`, title: x.title, html: popupHtml(x) }));
 }
 function eatTab(tr) {
-  const list = eatList(tr), all = itemsG(tr).filter(isEat);
+  const { areas, area, all } = eatScope(tr), list = eatList(tr);
   const noLoc = list.filter((x) => !x.loc && cleanName(x.title));
-  let h = `<div class="tpl">${[['', t('whoAll')], ['food', t('eatFood')], ['cafe', t('eatCafe')]].map(([k, l]) => `<button class="pill${(ui.eatK || '') === k ? ' on' : ''}" data-act="eat-k" data-k="${k}">${k ? ms(CAT_ICON[k]) + ' ' : ''}${esc(l)}<small> ${all.filter((x) => !k || x.cat === k).length}</small></button>`).join('')}</div>`;
+  let h = '';
+  // Gebiete als Reiter, wenn die Lokale an mehreren Orten liegen; nochmal tippen = umbenennen
+  // 맛집이 여러 곳에 있으면 지역 탭. 고른 지역을 한 번 더 누르면 이름 바꾸기
+  if (areas.length > 1) {
+    nameAreas(tr, areas);
+    h += `<div class="seg area-seg">${[[null, t('whoAll')], ...areas.map((a) => [a, areaName(tr, areas, a)])].map(([a, l]) => {
+      const on = a ? area === a : !area;
+      return `<button class="${on ? 'on' : ''}" data-act="eat-a" data-k="${a ? esc(a.key) : ''}">${esc(l)}${a && on ? ` ${ms('edit')}` : ''}</button>`;
+    }).join('')}</div>`;
+  }
+  h += `<div class="tpl">${[['', t('whoAll')], ['food', t('eatFood')], ['cafe', t('eatCafe')]].map(([k, l]) => `<button class="pill${(ui.eatK || '') === k ? ' on' : ''}" data-act="eat-k" data-k="${k}">${k ? ms(CAT_ICON[k]) + ' ' : ''}${esc(l)}<small> ${all.filter((x) => !k || x.cat === k).length}</small></button>`).join('')}</div>`;
   if (!all.length) return h + `<p class="empty">${esc(t('noEat'))}</p>`;
   if (list.some((x) => x.loc)) h += '<div class="map eat-map"></div>';
   if (noLoc.length) h += `<button class="btn small ghost find-day" data-act="find-eat">${ms('location_on')} ${esc(t('findDay', { n: noLoc.length }))}</button>`;
@@ -2396,6 +2481,18 @@ const ACT = {
   'book-link': (b) => { if (/^https?:\/\//i.test(b.dataset.url)) window.open(b.dataset.url, '_blank', 'noopener'); },
   'new-eat': () => itemSheet(cur(), null, { cat: ui.eatK || '', eat: true }),
   'eat-k': (b) => { ui.eatK = b.dataset.k; render(true); },
+  'eat-a': (b) => {
+    const tr = cur(), k = b.dataset.k;
+    if (k && ui.eatA === k) {
+      // Nochmal tippen: Namen ändern (leer = automatisch) / 한 번 더 누르면 이름 바꾸기 (비우면 자동 이름)
+      const areas = eatAreas(tr), a = areas.find((x) => x.key === k);
+      const v = prompt(t('areaRename'), a ? areaName(tr, areas, a) : '');
+      if (v == null) return;
+      write([[['trips', tr.id, 'areaNames', k], v.trim() || null], touch(tr.id)]);
+      return;
+    }
+    ui.eatA = k; render(true);
+  },
   'to-plan': (b) => { const tr = cur(), it = tr.items[b.dataset.id]; if (it) pickDaySheet(tr, it); },
   'set-day': (b) => { const tr = cur(), it = tr.items[b.dataset.id]; if (!it) return; write([[['trips', tr.id, 'items', it.id, 'date'], b.dataset.day], touch(tr.id)]); closeSheet(); toast(t('movedTo', { d: dayName(b.dataset.day, { month: 'long', day: 'numeric', weekday: 'short' }) })); },
   'find-eat': (b) => { const tr = cur(); findAll(eatList(tr).filter((x) => !x.loc && cleanName(x.title)), b); },
