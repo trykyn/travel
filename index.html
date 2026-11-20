@@ -1328,7 +1328,7 @@ async function drawMap(box, pts, opt = {}) {
 const pinHtml = (p) => `<div class="${p.cls || 'pin c-etc'}"><span>${esc(String(p.label ?? ''))}</span></div>`;
 async function drawGoogle(box, pts, opt) {
   const gm = await loadGoogle();
-  const [{ Map, InfoWindow, Polyline }, { AdvancedMarkerElement }] = await Promise.all([gm.importLibrary('maps'), gm.importLibrary('marker')]);
+  const [{ Map, InfoWindow }, { AdvancedMarkerElement }] = await Promise.all([gm.importLibrary('maps'), gm.importLibrary('marker')]);
   if (!document.body.contains(box)) return;
   const map = new Map(box, { mapId: GM().mapId || 'DEMO_MAP_ID', gestureHandling: opt.keep ? 'greedy' : 'cooperative', mapTypeControl: false, streetViewControl: false, fullscreenControl: false });
   if (!opt.keep) maps.push({ remove() { box.innerHTML = ''; } });
@@ -1341,7 +1341,6 @@ async function drawGoogle(box, pts, opt) {
     if (p.html) m.addEventListener('gmp-click', () => { info.setContent(p.html); info.open({ map, anchor: m }); });
     path.push(pos);
   }
-  if (opt.route && path.length > 1) new Polyline({ map, path, strokeColor: '#ff6b4a', strokeOpacity: 0.85, strokeWeight: 3 });
   if (path.length > 1) { const b = new gm.LatLngBounds(); path.forEach((p) => b.extend(p)); map.fitBounds(b, 40); }
   else if (path.length) { map.setCenter(path[0]); map.setZoom(14); }
   else { map.setCenter({ lat: 48.14, lng: 11.58 }); map.setZoom(4); }
@@ -1361,7 +1360,6 @@ async function drawLeaflet(box, pts, opt) {
     if (p.html) m.bindPopup(p.html);
     ll.push([p.lat, p.lng]);
   }
-  if (opt.route && ll.length > 1) L.polyline(ll, { color: '#ff6b4a', weight: 3, opacity: 0.85, dashArray: '6 7' }).addTo(map);
   const place = () => (ll.length ? map.fitBounds(ll, { padding: [36, 36], maxZoom: 15 }) : map.setView([48.14, 11.58], 4));
   place();
   setTimeout(() => { try { map.invalidateSize(); place(); } catch {} }, 250); // Safari: Größe neu messen / 크기 다시 재기
@@ -1966,7 +1964,7 @@ function afterRender() {
     const key = [ui.trip, ui.lang, box.dataset.day, JSON.stringify(pts.map((p) => [p.lat, p.lng, p.label, p.title, p.cls]))].join('|');
     const old = dayMapCache.get(key);
     if (old && !keepMaps.has(key)) { box.replaceWith(old); keepMaps.set(key, old); continue; }
-    drawMap(box, pts, { route: true, keep: true });
+    drawMap(box, pts, { keep: true }); // nur nummerierte Pins, keine Linie / 번호 핀만, 선 없음
     keepMaps.set(key, box);
   }
   const eb = ui.view === 'trip' && ui.tab === 'eat' && document.querySelector('.eat-map');
