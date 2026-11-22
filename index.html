@@ -340,7 +340,8 @@ input[type="date"].in { min-height: 46px; }
 .panel h4 { margin: 20px 0 8px; font-size: 15px; color: var(--muted); }
 .fld { display: block; margin-bottom: 12px; }
 .fld > span { display: block; margin: 0 0 5px 2px; font-size: 14px; font-weight: 600; color: var(--muted); }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.two > * { min-width: 0; }
 .cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .cats label { position: relative; }
 .cats input { position: absolute; opacity: 0; pointer-events: none; }
@@ -416,6 +417,9 @@ a.btn { text-decoration: none; }
 .map { position: relative; z-index: 0; height: 60vh; min-height: 320px; border-radius: 18px; overflow: hidden; background: var(--field); }
 .pin { width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--c); border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .35); display: grid; place-items: center; }
 .pin span { transform: rotate(45deg); color: #fff; font: 800 13px/1 var(--sans); }
+.pin.multi { width: 34px; height: 34px; }
+.pin.multi span { font-size: 10.5px; letter-spacing: -.02em; }
+.pop-sep { border: 0; border-top: 1px solid var(--line, #e3e8ef); margin: 8px 0; }
 .leaflet-popup-content { margin: 12px 14px; font: 14px/1.45 var(--sans); }
 .pop b { display: block; font-size: 16px; margin-bottom: 2px; }
 .pop .row-btns { margin-top: 8px; }
@@ -428,6 +432,8 @@ a.btn { text-decoration: none; }
 #toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); z-index: 30; max-width: calc(100% - 32px);
   padding: 11px 18px; border-radius: 14px; background: #10302f; color: #fff; font-size: 15px; font-weight: 600; opacity: 0; pointer-events: none; transition: .2s; }
 #toast.on { opacity: 1; transform: translate(-50%, 0); }
+#toast.act { pointer-events: auto; display: flex; align-items: center; gap: 10px; }
+#toast .undo { flex: none; padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,.16); color: #ffd36b; font-weight: 800; }
 @keyframes up { from { transform: translateY(40px); opacity: .4; } }
 @keyframes fade { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
@@ -451,7 +457,10 @@ const store = {
   put(k, v) { try { localStorage.setItem(LS + ':' + k, JSON.stringify(v)); } catch {} },
 };
 let trips = store.get('trips', {});
-let unsynced = new Set(store.get('unsynced', []));
+let unsynced = new Set(store.get('unsynced', [])); // alte Version: nur Reise-IDs / 예전 버전: 여행 ID만
+// Änderungen, die noch nicht in Firebase sind (offline, Familiencode noch nicht geladen): einzeln, nicht ganze Reisen
+// 아직 Firebase에 못 올린 변경 (오프라인, 가족 코드 로딩 전): 여행 통째가 아니라 바뀐 칸만 모아 둠
+let pendingW = store.get('pendingW', []);
 
 // ---------- Texte / 문구 ----------
 const T = {
@@ -479,7 +488,7 @@ const T = {
     locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요', locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치',
     pickOne: '맞는 곳을 고르세요', grpShow: '소여행 (노션 하위 페이지)', grpShowNote: '체크를 끈 페이지는 소여행으로 안 쓰고 일정·체크리스트에서도 숨겨요. 노션에는 그대로 있어요.', splitHow: '나누는 방법', split_eq: '가족마다 똑같이',
     split_n: '인원수대로', split_amt: '직접 입력', amtLeft: '남은 금액 {x}', amtMismatch: '금액 합계가 안 맞아요 (남은 금액 {x})', addBook: '+ 예약할 것', movedTo: '{d}(으)로 옮겼어요',
-    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkGo: '예약하러 가기', areaN: '지역 {n}', areaRename: '지역 이름 (비우면 자동으로)', eatFood: '음식점', eatCafe: '카페', addEat: '+ 새 맛집', toPlan: '날짜 정하기', pickDayT: '언제 갈까요?', noEat: '가고 싶은 음식점·카페를 + 새 맛집으로 모아 두세요. 지도에 한눈에 보이고, 날짜를 정하면 그날 일정에 들어가요.', eatPlanned: '{d} 일정', eatNoLoc: '위치가 없는 곳 {n}개', multiDay: '여러 날이면 날짜를 더 눌러 주세요', dayOf: '{a}/{b}일', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
+    movedCand: '날짜 미정으로 옮겼어요', dragHint: '카드를 꾹 누르면 끌어서 옮길 수 있어요', bkNeed: '예약할 것', bkGo: '예약하러 가기', undo: '되돌리기', deletedX: '지웠어요 {t}', areaN: '지역 {n}', areaRename: '지역 이름 (비우면 자동으로)', eatFood: '음식점', eatCafe: '카페', addEat: '+ 새 맛집', toPlan: '날짜 정하기', pickDayT: '언제 갈까요?', noEat: '가고 싶은 음식점·카페를 + 새 맛집으로 모아 두세요. 지도에 한눈에 보이고, 날짜를 정하면 그날 일정에 들어가요.', eatPlanned: '{d} 일정', eatNoLoc: '위치가 없는 곳 {n}개', multiDay: '여러 날이면 날짜를 더 눌러 주세요', dayOf: '{a}/{b}일', bkDone: '예약 완료', ck_todo: '할 일', ck_pack: '체크리스트', addTodoPh: '할 일 (예: 렌트카 예약)',
     addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록',
     recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진', todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인',
     nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개', mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라',
@@ -533,7 +542,7 @@ const T = {
     grpShow: 'Teilreisen (Notion-Unterseiten)', grpShowNote: 'Abgewählte Seiten sind keine Teilreise und werden im Plan und in Listen ausgeblendet. In Notion bleiben sie.',
     splitHow: 'Wie teilen', split_eq: 'je Familie gleich', split_n: 'nach Personen', split_amt: 'Beträge eintragen', amtLeft: 'Noch offen: {x}',
     amtMismatch: 'Summe passt nicht (offen: {x})', addBook: '+ Zu buchen', movedTo: 'Auf {d} verschoben', movedCand: 'Zu „ohne Datum“ verschoben',
-    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkGo: 'Jetzt buchen', areaN: 'Gebiet {n}', areaRename: 'Name des Gebiets (leer = automatisch)', eatFood: 'Restaurants', eatCafe: 'Cafés', addEat: '+ Neues Lokal', toPlan: 'Tag wählen', pickDayT: 'Wann?', noEat: 'Sammle hier Restaurants und Cafés mit + Neues Lokal. Sie stehen auf der Karte; mit einem Tag landen sie im Plan.', eatPlanned: 'am {d}', eatNoLoc: '{n} ohne Ort', multiDay: 'Mehrere Tage? Einfach weitere Tage antippen', dayOf: 'Tag {a}/{b}', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
+    dragHint: 'Karte lange drücken, um sie zu verschieben', bkNeed: 'zu buchen', bkGo: 'Jetzt buchen', undo: 'Rückgängig', deletedX: 'Gelöscht: {t}', areaN: 'Gebiet {n}', areaRename: 'Name des Gebiets (leer = automatisch)', eatFood: 'Restaurants', eatCafe: 'Cafés', addEat: '+ Neues Lokal', toPlan: 'Tag wählen', pickDayT: 'Wann?', noEat: 'Sammle hier Restaurants und Cafés mit + Neues Lokal. Sie stehen auf der Karte; mit einem Tag landen sie im Plan.', eatPlanned: 'am {d}', eatNoLoc: '{n} ohne Ort', multiDay: 'Mehrere Tage? Einfach weitere Tage antippen', dayOf: 'Tag {a}/{b}', bkDone: 'gebucht', ck_todo: 'Aufgaben', ck_pack: 'Packliste',
     addTodoPh: 'Aufgabe (z. B. Mietwagen buchen)', addPackPh: 'Mitnehmen (z. B. Reisepass)',
     dayNoLoc: 'Für diesen Tag gibt es noch keine Orte. Tippe unten auf „Orte suchen“.', localTime: 'Ortszeit', homeTime: 'München', recAdd: 'Tagebuch', recT: 'Reisetagebuch',
     recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos', todoN: '{n} Aufgaben offen',
@@ -596,9 +605,10 @@ function fmtRange(tr) {
   if (s === e) return `${y1}.${md(s)}`;
   return y1 === y2 ? `${y1}.${md(s)} – ${md(e)}` : `${y1}.${md(s)} – ${y2}.${md(e)}`;
 }
-function money(n, cur) {
+function money(n, cur, exact) {
   if (n == null || isNaN(n)) return '';
-  const zero = ['JPY', 'KRW', 'HUF', 'IDR', 'VND', 'CZK'].includes(cur) || Math.abs(n) >= 1000;
+  // exact: Cent auch über 1000 (Abrechnung) / exact: 1000 넘어도 센트까지 (정산)
+  const zero = ['JPY', 'KRW', 'HUF', 'IDR', 'VND', 'CZK'].includes(cur) || (!exact && Math.abs(n) >= 1000);
   try { return new Intl.NumberFormat(locale(), { style: 'currency', currency: cur, currencyDisplay: 'narrowSymbol', maximumFractionDigits: zero ? 0 : 2, minimumFractionDigits: zero || Number.isInteger(n) ? 0 : 2 }).format(n); }
   catch { return n.toLocaleString(locale()) + ' ' + cur; }
 }
@@ -613,9 +623,26 @@ function linkify(text) {
   });
   return out + esc(String(text || '').slice(last));
 }
-function toast(msg) {
-  const el = $('#toast'); el.textContent = msg; el.classList.add('on');
-  clearTimeout(toast.tm); toast.tm = setTimeout(() => el.classList.remove('on'), 2400);
+function toast(msg, undo) {
+  const el = $('#toast'); el.textContent = msg;
+  // Mit "되돌리기"-Knopf (6 Sekunden) / '되돌리기' 버튼과 함께 (6초)
+  if (undo) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'undo'; b.textContent = t('undo');
+    b.addEventListener('click', () => { el.classList.remove('on', 'act'); clearTimeout(toast.tm); undo(); });
+    el.append(' ', b);
+  }
+  el.classList.toggle('act', !!undo); el.classList.add('on');
+  clearTimeout(toast.tm); toast.tm = setTimeout(() => el.classList.remove('on', 'act'), undo ? 6000 : 2400);
+}
+// Löschen mit Rückgängig: alter Stand wird zurückgeschrieben (Notion-Löschung wartet so lange) / 지우고 되돌리기 (노션 지우기는 그동안 기다림)
+function delUndo(path, label, after) {
+  const old = getAt(path), tid = path[1];
+  if (old === undefined) return;
+  const keep = JSON.parse(JSON.stringify(old));
+  write([[path, null], ...(path.length > 2 ? [touch(tid)] : [])]);
+  if (after) after();
+  toast(t('deletedX', { t: label || '' }).trim(), () => { write([[path, keep], ...(path.length > 2 ? [touch(tid)] : [])]); if (path.length === 2) go('#/t/' + tid); });
 }
 
 // ---------- Daten ändern / 데이터 바꾸기 ----------
@@ -654,8 +681,10 @@ function write(entries, opts = {}) {
     if (value == null) delete o[k]; else o[k] = JSON.parse(JSON.stringify(value));
   }
   persist();
-  if (connected()) window.cloud.write(entries);
-  else { for (const [path] of entries) unsynced.add(path[1]); store.put('unsynced', [...unsynced]); }
+  if (connected() && window.cloud.live) window.cloud.write(entries);
+  // Nur merken, wenn schon mit einer Familie verbunden war (sonst wird beim ersten Verbinden alles hochgeladen)
+  // 가족과 연결한 적이 있을 때만 모아 둠 (처음 연결할 때는 어차피 전부 올림)
+  else if (store.get('house', null)) { pendingW.push(...JSON.parse(JSON.stringify(entries))); store.put('pendingW', pendingW); }
   if (!opts.sync && window.notionSync) window.notionSync.changed(entries, before);
   scheduleVac();
   render(!opts.sync);
@@ -1096,7 +1125,8 @@ function bookTab(tr) {
   if (isDate(sc.start) && isDate(sc.end) && sc.end > sc.start) {
     const gaps = [];
     for (let d = sc.start; d < sc.end; d = addDays(d, 1)) {
-      if (!allStays.some((s) => staysOn(s, d))) gaps.push(d);
+      const night = items(tr).some((x) => x.cat === 'move' && isDate(x.date) && isDate(x.end) && x.date <= d && d < x.end);
+      if (!night && !allStays.some((s) => staysOn(s, d))) gaps.push(d);
     }
     if (gaps.length) h += `<div class="card"><b>${esc(t('gaps'))}</b><div class="gaps">${gaps.map((d) => `<span>${esc(dayName(d, { month: 'numeric', day: 'numeric', weekday: 'short' }))}</span>`).join('')}</div></div>`;
   }
@@ -1110,7 +1140,13 @@ function bookTab(tr) {
 
 // ---------- 오늘 (nur während der Reise) / 여행 중 오늘 화면 ----------
 const notionUrl = (id) => 'https://www.notion.so/' + String(id || '').replace(/-/g, '');
-const parseAmount = (v) => parseFloat(String(v).replace(/\s/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.'));
+// Beträge lesen: Tausenderpunkte (1.234,56) und -kommas (15,000 · ¥15,000), Dezimalkomma (12,50) / 금액 읽기: 천 단위 점·쉼표, 소수점 쉼표
+const parseAmount = (v) => {
+  let s = String(v).replace(/[^\d.,-]/g, '');
+  s = s.replace(/\.(?=\d{3}(\D|$))/g, ''); // 1.234 → 1234
+  s = s.replace(/(\d),(?=\d{3}(?!\d))/g, (m, d, off) => (d === '0' && off === 0 ? m : d)); // 15,000 → 15000 (0,125 bleibt)
+  return parseFloat(s.replace(',', '.'));
+};
 const staysOn = (s, d) => isDate(s.date) && s.date <= d && d < (isDate(s.end) ? s.end : addDays(s.date, 1));
 const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
 const spendsOf = (tr) => vals(tr.spend).filter((s) => s.amount);
@@ -1330,12 +1366,38 @@ async function drawMap(box, pts, opt = {}) {
   await drawLeaflet(box, pts, opt);
 }
 const pinHtml = (p) => `<div class="${p.cls || 'pin c-etc'}"><span>${esc(String(p.label ?? ''))}</span></div>`;
+// Pins, die sich auf dem Bildschirm überdecken, werden zu einem Pin ("1–3", "2·5") zusammengefasst; Tippen zoomt hinein
+// (oder zeigt alle, wenn sie am selben Ort liegen). Nach jedem Zoomen neu berechnet.
+// 화면에서 겹치는 핀은 하나로 묶음 ('1–3', '2·5'). 누르면 그 곳을 확대 (같은 자리면 모두 보여 줌). 확대·축소할 때마다 다시 계산.
+const PACK_PX = 28;
+function packPins(n, px) {
+  const groups = [];
+  for (let i = 0; i < n; i++) {
+    const q = px(i);
+    const g = q && groups.find((x) => Math.hypot(x.x - q.x, x.y - q.y) < PACK_PX);
+    if (g) g.ids.push(i); else groups.push({ x: q ? q.x : 0, y: q ? q.y : 0, ids: [i] });
+  }
+  return groups;
+}
+function packLabel(labels) {
+  if (labels.length === 1) return String(labels[0] ?? '');
+  const nums = labels.map(Number);
+  if (nums.every((x) => Number.isInteger(x))) {
+    nums.sort((a, b) => a - b);
+    if (nums.every((x, i) => !i || x === nums[i - 1] + 1)) return `${nums[0]}–${nums[nums.length - 1]}`;
+    return nums.length === 2 ? `${nums[0]}·${nums[1]}` : `${nums[0]}·${nums[1]}+`;
+  }
+  return `${labels[0]}+${labels.length - 1}`;
+}
+const samePlace = (ps) => ps.every((p) => km(p, ps[0]) < 0.03);
+const packHtml = (ps) => ps.map((p) => p.html).filter(Boolean).join('<hr class="pop-sep">');
 // Wiederverwendete Google-Karte: nach dem Umhängen im Bildschirm verliert sie die Pins → neu anheften
 // 다시 쓰는 구글 지도는 화면을 다시 그릴 때 핀이 사라짐 → 핀을 다시 붙임
 function reviveMap(box) {
   const g = box._gm;
   if (!g) return;
-  for (const m of g.marks) { m.map = null; m.map = g.map; }
+  for (const m of g.marks) m.map = null;
+  g.regroup();
 }
 async function drawGoogle(box, pts, opt) {
   const gm = await loadGoogle();
@@ -1344,16 +1406,39 @@ async function drawGoogle(box, pts, opt) {
   const map = new Map(box, { mapId: GM().mapId || 'DEMO_MAP_ID', gestureHandling: opt.keep ? 'greedy' : 'cooperative', mapTypeControl: false, streetViewControl: false, fullscreenControl: false });
   if (!opt.keep) maps.push({ remove() { box.innerHTML = ''; } });
   const info = new InfoWindow(), path = [], marks = [];
-  for (const p of pts) {
+  pts.forEach((p, i) => {
     const holder = document.createElement('div');
     holder.innerHTML = pinHtml(p);
     const pos = { lat: p.lat, lng: p.lng };
-    const m = new AdvancedMarkerElement({ map, position: pos, content: holder.firstElementChild, title: p.title || '', gmpClickable: !!p.html });
-    if (p.html) m.addEventListener('gmp-click', () => { info.setContent(p.html); info.open({ map, anchor: m }); });
+    const m = new AdvancedMarkerElement({ position: pos, content: holder.firstElementChild, title: p.title || '', gmpClickable: true });
+    m._i = i; m._grp = [i];
+    m.addEventListener('gmp-click', () => {
+      const ps = m._grp.map((k) => pts[k]);
+      if (ps.length > 1 && !samePlace(ps)) { const b = new gm.LatLngBounds(); ps.forEach((x) => b.extend(x)); map.fitBounds(b, 60); info.close(); return; }
+      const html = packHtml(ps);
+      if (html) { info.setContent(html); info.open({ map, anchor: m }); }
+    });
     path.push(pos);
     marks.push(m);
-  }
-  box._gm = { map, marks };
+  });
+  const regroup = () => {
+    const proj = map.getProjection(), z = map.getZoom();
+    if (!proj || z == null) { for (const m of marks) m.map = map; return; }
+    const s = 2 ** z;
+    const groups = packPins(pts.length, (i) => { const w = proj.fromLatLngToPoint(path[i]); return w && { x: w.x * s, y: w.y * s }; });
+    for (const g of groups) {
+      const lead = marks[g.ids[0]];
+      lead._grp = g.ids;
+      const span = lead.content.querySelector('span');
+      if (span) span.textContent = packLabel(g.ids.map((k) => pts[k].label));
+      lead.content.classList.toggle('multi', g.ids.length > 1);
+      if (lead.map !== map) lead.map = map;
+      for (const k of g.ids.slice(1)) if (marks[k].map) marks[k].map = null;
+    }
+  };
+  map.addListener('idle', regroup);
+  box._gm = { map, marks, regroup };
+  for (const m of marks) m.map = map;
   if (path.length > 1) { const b = new gm.LatLngBounds(); path.forEach((p) => b.extend(p)); map.fitBounds(b, 40); }
   else if (path.length) { map.setCenter(path[0]); map.setZoom(14); }
   else { map.setCenter({ lat: 48.14, lng: 11.58 }); map.setZoom(4); }
@@ -1365,17 +1450,24 @@ async function drawLeaflet(box, pts, opt) {
   const map = L.map(box);
   if (!opt.keep) maps.push(map);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>' }).addTo(map);
-  const ll = [];
-  for (const p of pts) {
-    const size = p.wide ? [48, 24] : [30, 30];
-    const icn = L.divIcon({ className: '', html: pinHtml(p), iconSize: size, iconAnchor: p.wide ? [24, 12] : [15, 30], popupAnchor: [0, p.wide ? -12 : -28] });
-    const m = L.marker([p.lat, p.lng], { icon: icn, title: p.title || '' }).addTo(map);
-    if (p.html) m.bindPopup(p.html);
-    ll.push([p.lat, p.lng]);
-  }
+  const ll = pts.map((p) => [p.lat, p.lng]);
+  const layer = L.layerGroup().addTo(map);
+  const regroup = () => {
+    layer.clearLayers();
+    for (const g of packPins(pts.length, (i) => map.latLngToLayerPoint(ll[i]))) {
+      const ps = g.ids.map((k) => pts[k]), p = ps[0], multi = ps.length > 1;
+      const size = p.wide ? [48, 24] : [30, 30];
+      const html = pinHtml({ ...p, label: packLabel(ps.map((x) => x.label)), cls: (p.cls || 'pin c-etc') + (multi ? ' multi' : '') });
+      const icn = L.divIcon({ className: '', html, iconSize: size, iconAnchor: p.wide ? [24, 12] : [15, 30], popupAnchor: [0, p.wide ? -12 : -28] });
+      const m = L.marker(ll[g.ids[0]], { icon: icn, title: ps.map((x) => x.title || '').join(', ') }).addTo(layer);
+      if (multi && !samePlace(ps)) m.on('click', () => map.fitBounds(g.ids.map((k) => ll[k]), { padding: [50, 50], maxZoom: 18 }));
+      else if (packHtml(ps)) m.bindPopup(packHtml(ps));
+    }
+  };
+  map.on('zoomend', regroup);
   const place = () => (ll.length ? map.fitBounds(ll, { padding: [36, 36], maxZoom: 15 }) : map.setView([48.14, 11.58], 4));
-  place();
-  setTimeout(() => { try { map.invalidateSize(); place(); } catch {} }, 250); // Safari: Größe neu messen / 크기 다시 재기
+  place(); regroup();
+  setTimeout(() => { try { map.invalidateSize(); place(); regroup(); } catch {} }, 250); // Safari: Größe neu messen / 크기 다시 재기
 }
 
 // ---------- Tageskarte und Tagesroute / 날짜별 지도와 동선 ----------
@@ -1501,6 +1593,7 @@ function eatAreas(tr) {
   let areas = [...by.values()].filter((a) => a.eats.length);
   // Einzelnes Lokal ohne Unterkunft → zum nächsten Gebiet / 숙소 없는 외톨이 맛집 → 가까운 지역으로
   for (const a of areas.filter((a) => a.eats.length === 1 && !a.stays.length)) {
+    if (a.eats.length !== 1 || a.stays.length) continue; // inzwischen gewachsen / 그사이 다른 맛집이 붙었으면 그대로
     const rest = areas.filter((b) => b !== a && b.eats.length);
     if (!rest.length) continue;
     const near = rest.reduce((m, b) => { const d = Math.min(...[...b.eats, ...b.stays].map((y) => km(a.eats[0].loc, y.loc))); return d < m[0] ? [d, b] : m; }, [Infinity, null])[1];
@@ -1530,24 +1623,27 @@ function areaName(tr, areas, a) {
   const regions = areas.map((b) => (store.get(areaGeoKey(b), null) || {}).region);
   return (g.region && regions.filter((r) => r === g.region).length === 1 ? g.region : g.city || g.region) || t('areaN', { n: areas.indexOf(a) + 1 });
 }
-let areaLookup = false;
+let areaLookup = false, areaFail = 0;
 async function nameAreas(tr, areas) {
-  if (areaLookup) return;
+  // Offline oder kurz nach einem Fehler: nicht fragen (sonst Dauerschleife) / 오프라인이거나 방금 실패했으면 묻지 않음 (무한 반복 방지)
+  if (areaLookup || navigator.onLine === false || Date.now() - areaFail < 5 * 60 * 1000) return;
   const todo = areas.filter((a) => !(tr.areaNames || {})[a.key] && !store.get(areaGeoKey(a), null));
   if (!todo.length) return;
   areaLookup = true;
+  let got = 0;
   try {
     for (const a of todo) {
       const p = new URLSearchParams({ lat: a.anchor.loc.lat, lon: a.anchor.loc.lng, format: 'jsonv2', zoom: '10', 'accept-language': ui.lang === 'de' ? 'de,en' : 'ko,en' });
       const r = await fetch('https://nominatim.openstreetmap.org/reverse?' + p);
-      if (!r.ok) break;
+      if (!r.ok) { areaFail = Date.now(); break; }
       const ad = (await r.json()).address || {};
+      got++;
       store.put(areaGeoKey(a), { region: ad.state || ad.region || ad.province || '', city: ad.city || ad.town || ad.village || ad.municipality || ad.county || '' });
       await sleep(1100); // Nominatim: höchstens 1 Anfrage pro Sekunde / 1초에 한 번까지
     }
-  } catch (e) { console.warn(e); }
+  } catch (e) { areaFail = Date.now(); console.warn(e); }
   areaLookup = false;
-  if (ui.view === 'trip' && ui.tab === 'eat') render();
+  if (got && ui.view === 'trip' && ui.tab === 'eat') render();
 }
 // Liste im gewählten Gebiet / 고른 지역의 목록
 function eatScope(tr) {
@@ -1609,16 +1705,29 @@ const peopleOf = (tr, all) => {
   if (!all && g) {
     const used = (id, list) => list.some((s) => s.payer === id || (s.split || []).includes(id));
     const here = ledgerSpends(tr), every = spendsOf(tr);
-    p = p.filter((x) => x.id === 'me' || x.grp === g || (!x.grp && (used(x.id, here) || !used(x.id, every))));
+    p = p.filter((x) => x.id === 'me' || x.grp === g || used(x.id, here) || (!x.grp && !used(x.id, every)));
   }
   return p.length ? p : [{ id: 'me', name: t('us'), n: 1, order: 0 }];
 };
 const pName = (tr, id) => (peopleOf(tr, true).find((p) => p.id === id) || { name: id === 'me' ? t('us') : '?' }).name;
 const P_COLORS = ['#13294b', '#ff6b4a', '#13946f', '#7a5cd3', '#c27a12', '#2a5db0'];
-// Gewählte Gruppe: nur Ausgaben in deren Zeitraum / 묶음을 고르면 그 기간 지출만
+// Teilreise einer Ausgabe: gespeichert (s.grp) oder – bei älteren – über das Datum; am Wechseltag zählt die neue Teilreise (nicht doppelt)
+// 지출의 소여행: 저장된 것(s.grp), 예전 지출은 날짜로. 소여행이 바뀌는 날은 새 소여행 쪽 (두 번 세지 않음)
+function spendGrp(tr, s) {
+  if (typeof s.grp === 'string') return s.grp;
+  const hit = groupSpans(tr).filter(([, sp]) => sp && s.date >= sp[0] && s.date <= sp[1]);
+  if (!hit.length) return null;
+  return (hit.find(([, sp]) => s.date < sp[1]) || hit[0])[0];
+}
+// Neue Ausgabe bekommt die Teilreise fest mit (wenn es Teilreisen gibt) / 새 지출에 소여행을 적어 둠 (소여행이 있을 때)
+function withGrp(tr, s) {
+  if (typeof s.grp === 'string' || groupsOf(tr).length < 2) return s;
+  const g = ui.grp != null ? ui.grp : spendGrp(tr, s);
+  return g == null ? s : { ...s, grp: g };
+}
+// Gewählte Gruppe: nur ihre Ausgaben / 묶음을 고르면 그 묶음 지출만
 function ledgerSpends(tr) {
-  const scm = ui.grp != null ? groupSpan(tr, ui.grp) : null;
-  return spendsOf(tr).filter((s) => !scm || (s.date >= scm[0] && s.date <= scm[1]));
+  return spendsOf(tr).filter((s) => ui.grp == null || spendGrp(tr, s) === ui.grp);
 }
 const SPLIT_DEF = (cat) => (cat === 'stay' || cat === 'move' ? 'eq' : 'n');
 function balances(tr, spends) {
@@ -1708,10 +1817,10 @@ function moneyTab(tr) {
     const { bal } = balances(tr, spends), tx = settle(bal);
     h += `<div class="card"><b>${esc(t('settle'))}</b><ul class="lines bal">${ppl.map((p) => {
       const b = bal[p.id], v = b.paid - b.share;
-      return `<li><span class="x">${esc(p.name)}<small>${esc(t('paid'))} ${esc(money(b.paid, 'EUR'))} · ${esc(t('share'))} ${esc(money(b.share, 'EUR'))}</small></span>
-        <span class="${v >= 0 ? 'ok' : 'todo'}">${esc(v >= 0.005 ? t('gets', { x: money(v, 'EUR') }) : v <= -0.005 ? t('owes', { x: money(-v, 'EUR') }) : '±0')}</span></li>`;
+      return `<li><span class="x">${esc(p.name)}<small>${esc(t('paid'))} ${esc(money(b.paid, 'EUR', true))} · ${esc(t('share'))} ${esc(money(b.share, 'EUR', true))}</small></span>
+        <span class="${v >= 0 ? 'ok' : 'todo'}">${esc(v >= 0.005 ? t('gets', { x: money(v, 'EUR', true) }) : v <= -0.005 ? t('owes', { x: money(-v, 'EUR', true) }) : '±0')}</span></li>`;
     }).join('')}</ul>
-      ${tx.map(([a, b, x]) => `<div class="settle"><b>${esc(pName(tr, a))}</b><span aria-hidden="true">→</span><b>${esc(pName(tr, b))}</b><span class="amt">${esc(money(x, 'EUR'))}</span></div>`).join('') || `<p class="note">${esc(t('settleNone'))}</p>`}
+      ${tx.map(([a, b, x]) => `<div class="settle"><b>${esc(pName(tr, a))}</b><span aria-hidden="true">→</span><b>${esc(pName(tr, b))}</b><span class="amt">${esc(money(x, 'EUR', true))}</span></div>`).join('') || `<p class="note">${esc(t('settleNone'))}</p>`}
       ${tx.length ? `<div class="set-row" style="margin-top:8px"><button class="btn small ghost" data-act="copy-settle">${esc(t('copySettle'))}</button></div>` : ''}</div>`;
   }
   const max = Math.max(1, ...Object.values(by));
@@ -1746,8 +1855,8 @@ function moneyTab(tr) {
 function settleText(tr) {
   const spends = ledgerSpends(tr), { bal, total } = balances(tr, spends);
   const lines = [`${tr.icon || ''} ${placeName(tr.title)}${ui.grp ? ' · ' + ui.grp : ''} — ${t('settle')}`, `${t('ledgerTotal')}: ${money(total, 'EUR')}`];
-  for (const p of peopleOf(tr)) lines.push(`· ${p.name}: ${t('paid')} ${money(bal[p.id].paid, 'EUR')} / ${t('share')} ${money(bal[p.id].share, 'EUR')}`);
-  for (const [a, b, x] of settle(bal)) lines.push(`→ ${pName(tr, a)} ➜ ${pName(tr, b)}: ${money(x, 'EUR')}`);
+  for (const p of peopleOf(tr)) lines.push(`· ${p.name}: ${t('paid')} ${money(bal[p.id].paid, 'EUR', true)} / ${t('share')} ${money(bal[p.id].share, 'EUR', true)}`);
+  for (const [a, b, x] of settle(bal)) lines.push(`→ ${pName(tr, a)} ➜ ${pName(tr, b)}: ${money(x, 'EUR', true)}`);
   return lines.join('\n');
 }
 function spendSheet(tr, s, pre) {
@@ -1804,7 +1913,7 @@ function spendSheet(tr, s, pre) {
         const left = Math.round((amount - Object.values(amts).reduce((a, b) => a + b, 0)) * 100) / 100;
         if (left) { toast(t('amtMismatch', { x: money(left, f.cur.value) })); return; }
       }
-      const v = { ...s, amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), date: f.date.value || def, payer, split: sp, t: s.t || Date.now() };
+      const v = withGrp(tr, { ...s, amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), date: f.date.value || def, payer, split: sp, t: s.t || Date.now() });
       if (mode && (modeTouched || mode !== SPLIT_DEF(v.cat))) v.mode = mode; else delete v.mode;
       if (amts) v.amts = amts; else delete v.amts;
       write([[['trips', tr.id, 'spend', s.id], v], touch(tr.id)]);
@@ -2055,7 +2164,7 @@ function afterRender() {
     const pts = dayPoints(trips[ui.trip], box.dataset.day);
     // Ohne Orte keine Weltkarte zeigen / 위치가 없으면 엉뚱한 지도 대신 안내
     if (!pts.length) { box.classList.add('nomap'); box.textContent = t('dayNoLoc'); continue; }
-    const key = [ui.trip, ui.lang, box.dataset.day, JSON.stringify(pts.map((p) => [p.lat, p.lng, p.label, p.title, p.cls]))].join('|');
+    const key = [ui.trip, ui.lang, box.dataset.day, JSON.stringify(pts.map((p) => [p.lat, p.lng, p.label, p.title, p.cls, p.html]))].join('|'); // html: Zeit/Datum im Popup / 팝업의 시간·날짜
     const old = dayMapCache.get(key);
     if (old && !keepMaps.has(key)) { box.replaceWith(old); reviveMap(old); keepMaps.set(key, old); continue; }
     drawMap(box, pts, { keep: true }); // nur nummerierte Pins, keine Linie / 번호 핀만, 선 없음
@@ -2064,7 +2173,7 @@ function afterRender() {
   const eb = ui.view === 'trip' && ui.tab === 'eat' && document.querySelector('.eat-map');
   if (eb) {
     const pts = eatPoints(trips[ui.trip]);
-    const key = [ui.trip, ui.lang, 'eat', ui.grp, JSON.stringify(pts.map((p) => [p.lat, p.lng, p.label, p.title, p.cls]))].join('|');
+    const key = [ui.trip, ui.lang, 'eat', ui.grp, JSON.stringify(pts.map((p) => [p.lat, p.lng, p.label, p.title, p.cls, p.html]))].join('|');
     const old = dayMapCache.get(key);
     if (old) { eb.replaceWith(old); reviveMap(old); } else drawMap(eb, pts, { keep: true });
     keepMaps.set(key, old || eb);
@@ -2072,7 +2181,7 @@ function afterRender() {
   dayMapCache = keepMaps;
   const conv = $('#conv');
   if (conv) conv.addEventListener('input', () => {
-    const tr = trips[ui.trip], v = parseFloat(conv.value.replace(/[^\d.,]/g, '').replace(',', '.'));
+    const tr = trips[ui.trip], v = parseAmount(conv.value);
     $('#conv-out').textContent = isNaN(v) ? '€' : money(v * tr.rate, 'EUR');
   });
 }
@@ -2088,7 +2197,7 @@ function route(hash) {
   const m = (typeof hash === 'string' ? hash : location.hash).match(/^#\/t\/([^/]+)(?:\/(\w+))?/);
   if (m && valid(trips[m[1]])) {
     ui.view = 'trip';
-    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = undefined; ui.who = ''; ui.ck = ''; ui.dayMaps = new Set(); if (window.notionSync) window.notionSync.opened(m[1]); }
+    if (ui.trip !== m[1]) { ui.memoEdit = false; ui.grp = undefined; ui.who = ''; ui.ck = ''; ui.eatK = ''; ui.eatA = undefined; ui.dayMaps = new Set(); if (window.notionSync) window.notionSync.opened(m[1]); }
     ui.trip = m[1]; ui.tab = m[2] || (status(trips[m[1]]) === 'now' ? 'today' : 'plan');
   }
   else { ui.view = 'home'; ui.trip = null; ui.scrolled = ''; }
@@ -2444,7 +2553,7 @@ const ACT = {
   'del-trip': () => {
     const tr = cur();
     if (!confirm(t('delTripQ', { t: tr.title }))) return;
-    closeSheet(); go('#/'); put(['trips', tr.id], null);
+    closeSheet(); go('#/'); delUndo(['trips', tr.id], tr.title);
   },
   'new-item': (b) => {
     const tr = cur(), now = today();
@@ -2455,8 +2564,7 @@ const ACT = {
   'del-item': (b) => {
     const it = cur().items[b.dataset.id];
     if (!it) { closeSheet(); return; }
-    if (!confirm(t('delItemQ', { t: it.title }))) return;
-    write([[['trips', ui.trip, 'items', it.id], null], touch(ui.trip)]); closeSheet();
+    closeSheet(); delUndo(['trips', ui.trip, 'items', it.id], it.title);
   },
   'toggle-book': (b) => { const it = cur().items[b.dataset.id]; if (!it) return; write([[['trips', ui.trip, 'items', it.id, 'booked'], !it.booked], [['trips', ui.trip, 'items', it.id, 'need'], true], touch(ui.trip)]); },
   jump: (b) => { const el = document.getElementById('d-' + b.dataset.day); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
@@ -2466,27 +2574,26 @@ const ACT = {
     if (r) { write([[['trips', tr.id, 'rate'], r], touch(tr.id)]); toast(t('rateOk')); } else toast(t('rateFail'));
   },
   check: (b) => { const x = cur().checks[b.dataset.id]; if (!x) return; write([[['trips', ui.trip, 'checks', x.id, 'done'], !x.done], touch(ui.trip)]); },
-  'rm-check': (b) => write([[['trips', ui.trip, 'checks', b.dataset.id], null], touch(ui.trip)]),
+  'rm-check': (b) => { const c = cur().checks[b.dataset.id]; if (c) delUndo(['trips', ui.trip, 'checks', c.id], c.text); },
   'toggle-done': (b) => { const it = cur().items[b.dataset.id]; if (!it) return; write([[['trips', ui.trip, 'items', it.id, 'done'], !it.done], touch(ui.trip)]); },
   'new-spend': () => spendSheet(cur()),
   // Geplanten Betrag als bezahlt eintragen (zählt dann nur als Ausgabe) / 계획 금액을 지출로 (그러면 지출로만 셈)
   'plan-to-spend': (b) => {
     const tr = cur(), x = tr.items[b.dataset.id];
     if (!x || !x.cost) return;
-    spendSheet(tr, null, { date: isDate(x.date) ? x.date : today(), amount: x.cost.amount, cur: x.cost.cur, cat: x.cat === 'cafe' ? 'food' : ['move', 'stay', 'food', 'see', 'shop'].includes(x.cat) ? x.cat : 'etc', title: x.title, item: x.id });
+    spendSheet(tr, null, { date: isDate(x.date) ? x.date : today(), amount: x.cost.amount, cur: x.cost.cur, cat: x.cat === 'cafe' ? 'food' : ['move', 'stay', 'food', 'see', 'shop'].includes(x.cat) ? x.cat : 'etc', title: x.title, item: x.id, ...(groupsOf(tr).length > 1 && { grp: x.grp || '' }) });
   },
   'edit-spend': (b) => spendSheet(cur(), cur().spend[b.dataset.id]),
-  'del-spendx': (b) => { if (!confirm(t('spendDelQ'))) return; write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); closeSheet(); },
+  'del-spendx': (b) => { const s = cur().spend[b.dataset.id]; closeSheet(); if (s) delUndo(['trips', ui.trip, 'spend', s.id], s.title); },
   'add-person': () => personSheet(cur()),
   'edit-person': (b) => personSheet(cur(), peopleOf(cur()).find((p) => p.id === b.dataset.id)),
   'del-person': (b) => {
     const tr = cur(), id = b.dataset.id;
     if (spendsOf(tr).some((s) => s.payer === id || (s.split || []).includes(id))) { toast(t('personUsed')); return; }
-    if (!confirm(t('personDelQ', { n: pName(tr, id) }))) return;
-    write([[['trips', tr.id, 'people', id], null], touch(tr.id)]); closeSheet();
+    closeSheet(); delUndo(['trips', tr.id, 'people', id], pName(tr, id));
   },
   'copy-settle': async () => { try { await navigator.clipboard.writeText(settleText(cur())); toast(t('settleCopied')); } catch { toast(t('copied')); } },
-  'del-spend': (b) => { if (confirm(t('spendDelQ'))) write([[['trips', ui.trip, 'spend', b.dataset.id], null], touch(ui.trip)]); },
+  'del-spend': (b) => { const s = cur().spend[b.dataset.id]; if (s) delUndo(['trips', ui.trip, 'spend', s.id], s.title); },
   'book-link': (b) => { if (/^https?:\/\//i.test(b.dataset.url)) window.open(b.dataset.url, '_blank', 'noopener'); },
   'new-eat': () => itemSheet(cur(), null, { cat: ui.eatK || '', eat: true }),
   'eat-k': (b) => { ui.eatK = b.dataset.k; render(true); },
@@ -2669,7 +2776,7 @@ document.addEventListener('submit', async (e) => {
     ui.spendCur = f.cur.value; ui.spendCat = f.cat.value;
     const id = uid('s');
     const ppl = peopleOf(trips[ui.trip]);
-    write([[['trips', ui.trip, 'spend', id], { id, date: today(), amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), payer: ppl[0].id, split: ppl.map((p) => p.id), t: Date.now() }], touch(ui.trip)]);
+    write([[['trips', ui.trip, 'spend', id], withGrp(trips[ui.trip], { id, date: today(), amount, cur: f.cur.value, cat: f.cat.value || 'etc', title: f.title.value.trim(), payer: ppl[0].id, split: ppl.map((p) => p.id), t: Date.now() })], touch(ui.trip)]);
   } else if (kind === 'memo') {
     e.preventDefault();
     ui.memoEdit = false;
@@ -2691,6 +2798,8 @@ window.travel = {
   setTrips(remote) { trips = remote || {}; persist(); if (ui.view === 'trip' && !valid(trips[ui.trip])) go('#/'); else render(); window.refreshSettings(); },
   unsynced: () => unsynced,
   clearUnsynced() { unsynced = new Set(); store.put('unsynced', []); },
+  pending: () => pendingW,
+  clearPending() { pendingW = []; store.put('pendingW', []); },
   syncedHouse: () => store.get('house', null),
   setSyncedHouse: (h) => store.put('house', h),
   refresh() { render(); window.refreshSettings(); },
@@ -2720,49 +2829,125 @@ if (cfg && APP) {
   if (A) {
     const fb = initializeApp(cfg), auth = A.getAuth(fb);
     const db = F.initializeFirestore(fb, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) });
+    // Ein Dokument je Reise (households/{code}_travel_{id}), damit die 1-MB-Grenze nur je Reise gilt, nicht für alle zusammen.
+    // Das Hauptdokument {code}_travel hält nur das Verzeichnis index {id: Zeit}. Alte Form (trips im Hauptdokument) wird einmal umgezogen,
+    // vorher als {code}_travel_backup gesichert.
+    // 여행마다 문서 하나 (1MB 한도가 여행 전체가 아니라 여행 하나에만 걸리게). 기본 문서에는 목록(index)만.
+    // 예전 형식(기본 문서 안의 trips)은 한 번 옮김 — 옮기기 전 내용은 {code}_travel_backup 에 보관.
     const tdoc = () => F.doc(db, 'households', cloud.house + '_travel');
-    let unsub = null, retryTimer = 0, retries = 0;
+    const rdoc = (id) => F.doc(db, 'households', cloud.house + '_travel_' + String(id).replace(/[\\/]/g, '_'));
+    const clean = (v) => JSON.parse(JSON.stringify(v));
+    let unsub = null, retryTimer = 0, retries = 0, subs = new Map(), data = {}, seen = new Set(), index = {}, firstDone = false, emitT = 0, migrating = false;
     const msg = () => (document.documentElement.lang === 'de' ? 'Speichern fehlgeschlagen. Bitte Internetverbindung prüfen' : '서버에 저장하지 못했어요. 인터넷 연결을 확인해 주세요');
     const fail = (e) => { console.warn('sync', e); cloud.error = msg(); APP.refresh(); };
     const ok = () => { if (cloud.error) { cloud.error = ''; APP.refresh(); } };
-    function stop() { if (unsub) unsub(); unsub = null; cloud.live = false; }
+    function stop() {
+      if (unsub) unsub(); unsub = null; cloud.live = false;
+      for (const u of subs.values()) u();
+      subs = new Map(); data = {}; seen = new Set(); index = {}; firstDone = false;
+    }
 
     cloud.write = (entries) => {
-      const args = [];
-      // JSON hin und zurück: Firestore lehnt "undefined" ab / Firestore는 undefined 값을 거부하므로 정리
-      for (const [path, v] of entries) args.push(new F.FieldPath(...path), v == null ? F.deleteField() : JSON.parse(JSON.stringify(v)));
-      return F.updateDoc(tdoc(), ...args).then(ok, fail);
+      const b = F.writeBatch(db), byTrip = new Map(), idx = [];
+      for (const [path, v] of entries) {
+        if (path[0] !== 'trips' || path.length < 2) continue;
+        const id = path[1];
+        if (path.length === 2) {
+          // Ganze Reise: eigenes Dokument setzen bzw. als gelöscht markieren / 여행 통째: 문서를 새로 쓰거나 지움 표시
+          byTrip.delete(id);
+          if (v == null) { b.set(rdoc(id), { deleted: Date.now() }); idx.push(new F.FieldPath('index', id), F.deleteField()); }
+          else { b.set(rdoc(id), clean(v)); idx.push(new F.FieldPath('index', id), Date.now()); }
+          continue;
+        }
+        if (!byTrip.has(id)) byTrip.set(id, []);
+        // JSON hin und zurück: Firestore lehnt "undefined" ab / Firestore는 undefined 값을 거부하므로 정리
+        byTrip.get(id).push(new F.FieldPath(...path.slice(2)), v == null ? F.deleteField() : clean(v));
+      }
+      for (const [id, args] of byTrip) b.update(rdoc(id), ...args);
+      if (idx.length) b.update(tdoc(), ...idx);
+      return b.commit().then(ok, fail);
     };
+
+    // Alle Reisen zusammen an die App (erst wenn jede Reise einmal da ist) / 모든 여행을 모아 앱에 (여행마다 한 번씩 받은 뒤)
+    function emit() {
+      clearTimeout(emitT);
+      emitT = setTimeout(() => {
+        const ids = Object.keys(index);
+        if (!firstDone) { if (!ids.every((id) => seen.has(id))) return; firstContact(); }
+        const all = {};
+        for (const id of Object.keys(index)) if (data[id]) all[id] = data[id];
+        APP.setTrips(all);
+      }, 0);
+    }
+    function follow(ids) {
+      for (const [id, u] of subs) if (!ids.includes(id)) { u(); subs.delete(id); delete data[id]; seen.delete(id); }
+      for (const id of ids) {
+        if (subs.has(id)) continue;
+        subs.set(id, F.onSnapshot(rdoc(id), (s) => {
+          const d = s.exists() ? s.data() : null;
+          if (d && !d.deleted && d.title !== undefined) data[id] = d; else delete data[id];
+          seen.add(id); emit();
+        }, (e) => { console.warn('sync trip', id, e); seen.add(id); emit(); }));
+      }
+    }
+    // Erster Kontakt: Reisen, die nur hier liegen, hochladen; Offline-Änderungen einzeln nachreichen (überschreibt nichts Neueres)
+    // 처음 연결: 이 기기에만 있는 여행을 올리고, 오프라인 때 바꾼 칸만 하나씩 올림 (다른 폰의 새 내용을 덮어쓰지 않음)
+    function firstContact() {
+      firstDone = true;
+      const mine = APP.trips(), synced = APP.syncedHouse(), out = [];
+      const firstEver = !synced, same = synced === cloud.house, dirty = APP.unsynced();
+      for (const id of Object.keys(mine)) {
+        if (!mine[id] || !mine[id].title || index[id]) continue;
+        // Nur hier vorhanden: allererster Kontakt oder (alte Version) offline angelegt / 이 기기에만 있음: 처음 연결이거나 예전 버전에서 오프라인으로 만든 여행
+        if (firstEver || (same && dirty.has(id))) { out.push([['trips', id], mine[id]]); data[id] = mine[id]; index[id] = Date.now(); }
+      }
+      if (same) {
+        for (const e of APP.pending()) {
+          const p = e[0];
+          // Nur für Reisen, die es noch gibt (oder ganze Reisen) / 아직 있는 여행이나 여행 통째인 것만
+          if (p[0] === 'trips' && (p.length === 2 || index[p[1]])) out.push(e);
+        }
+      }
+      APP.clearUnsynced(); APP.clearPending(); APP.setSyncedHouse(cloud.house);
+      if (out.length) cloud.write(out);
+      cloud.live = true;
+      APP.vacSync();
+      if (window.notionSync) setTimeout(() => window.notionSync.start(), 500);
+    }
+    // Alte Form einmal in eigene Dokumente umziehen; spätere Teil-Änderungen alter Geräte werden dazugemischt
+    // 예전 형식을 여행별 문서로 한 번 옮김. 옛 버전 기기가 그 뒤에 쓴 일부 변경도 합쳐 줌
+    async function migrate(legacy, hadIndex) {
+      if (migrating) return;
+      migrating = true;
+      try {
+        if (!hadIndex) await F.setDoc(F.doc(db, 'households', cloud.house + '_travel_backup'), { trips: clean(legacy), at: Date.now() });
+        const b = F.writeBatch(db), idx = [];
+        for (const [id, t] of Object.entries(legacy)) {
+          if (!t || typeof t !== 'object') continue;
+          b.set(rdoc(id), clean(t), { merge: true });
+          if (t.title !== undefined) idx.push(new F.FieldPath('index', id), Date.now());
+        }
+        b.update(tdoc(), 'trips', F.deleteField(), 'v', 2, ...idx);
+        await b.commit();
+      } catch (e) { fail(e); }
+      migrating = false;
+    }
 
     function listen() {
       stop(); clearTimeout(retryTimer);
-      let first = true, creating = false;
+      let creating = false;
       unsub = F.onSnapshot(tdoc(), async (snap) => {
         if (!snap.exists()) {
           // Erstes Mal für diese Familie: Dokument anlegen / 이 가족의 첫 여행 문서 만들기
-          if (!creating) { creating = true; try { await F.setDoc(tdoc(), { trips: {}, created: Date.now() }, { merge: true }); } catch (e) { fail(e); } }
+          if (!creating) { creating = true; try { await F.setDoc(tdoc(), { index: {}, v: 2, created: Date.now() }, { merge: true }); } catch (e) { fail(e); } }
           return;
         }
         retries = 0;
-        const remote = snap.data().trips || {};
-        if (first) {
-          first = false;
-          // Beim ersten Kontakt: Reisen, die nur hier liegen, mitnehmen; bei einem anderen Familiencode nichts mitnehmen.
-          // 처음 연결: 이 기기에만 있는 여행을 올림. 다른 가족 코드로 옮길 때는 올리지 않음.
-          const mine = APP.trips(), synced = APP.syncedHouse(), entries = [];
-          const firstEver = !synced, same = synced === cloud.house, dirty = APP.unsynced();
-          for (const id of Object.keys(mine)) {
-            if (!mine[id] || !mine[id].title) continue;
-            if ((firstEver && !remote[id]) || (same && dirty.has(id))) { entries.push([['trips', id], mine[id]]); remote[id] = mine[id]; }
-          }
-          if (same) for (const id of dirty) if (!mine[id] && remote[id]) { entries.push([['trips', id], null]); delete remote[id]; }
-          APP.clearUnsynced(); APP.setSyncedHouse(cloud.house);
-          if (entries.length) cloud.write(entries);
-          cloud.live = true;
-          APP.vacSync();
-          if (window.notionSync) setTimeout(() => window.notionSync.start(), 500);
-        }
-        APP.setTrips(remote);
+        const d = snap.data();
+        if (d.trips && Object.keys(d.trips).length) { migrate(d.trips, !!d.index); return; }
+        index = { ...(d.index || {}) };
+        follow(Object.keys(index));
+        emit();
       }, (e) => {
         stop(); fail(e);
         retryTimer = setTimeout(() => { if (cloud.user && cloud.house) listen(); }, Math.min(120, 10 * ++retries) * 1000);
