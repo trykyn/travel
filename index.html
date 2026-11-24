@@ -1195,7 +1195,46 @@ function inKorea(it) {
   const { lat, lng } = it.loc;
   return lat > 33 && lat < 38.7 && lng > 124.5 && (lng < 129.6 || (lat > 37 && lng < 131.9));
 }
-const naverUrl = (it) => { const q = cleanName(it.title) || (it.loc && shortName(it.loc.name).split(',')[0]) || ''; return q ? `https://map.naver.com/p/search/${encodeURIComponent(q)}` : ''; };
+// Ketten (z. B. 서동한우) zeigt Naver sonst in Seoul: Stadt/Landkreis vor den Namen setzen ("부여 서동한우").
+// 체인점은 네이버가 서울 지점을 먼저 보여줘서, 검색어 앞에 시·군 이름을 붙임 ("부여 서동한우")
+// "대한민국 충청남도 부여군 …" → "부여", "서울특별시 중구 …" → "서울 중구", "성남시 분당구" → "성남 분당구"
+function krRegion(s) {
+  const w = String(s || '').split(/[\s,]+/);
+  const c = w.find((x) => /^[가-힣]{2,}(특별시|광역시|특별자치시|시|군)$/.test(x));
+  if (!c) return '';
+  const gu = w.slice(w.indexOf(c) + 1).find((x) => /^[가-힣]{1,4}구$/.test(x));
+  return c.replace(/(특별시|광역시|특별자치시|시|군)$/, '') + (gu ? ' ' + gu : '');
+}
+const krKey = (l) => `kr:${l.lat.toFixed(3)},${l.lng.toFixed(3)}`;
+const naverRegion = (it) => (it.loc && (krRegion(it.loc.name) || (isFinite(it.loc.lat) && store.get(krKey(it.loc), '')))) || '';
+const naverUrl = (it) => {
+  let q = cleanName(it.title) || (it.loc && shortName(it.loc.name).split(',')[0]) || '';
+  const r = naverRegion(it);
+  if (q && r && !q.includes(r.split(' ')[0])) q = r + ' ' + q;
+  return q ? `https://map.naver.com/p/search/${encodeURIComponent(q)}` : '';
+};
+// Fehlende Orte im Hintergrund nachschlagen (OpenStreetMap, 1/s, auf dem Gerät gemerkt)
+// 주소가 없는 장소는 좌표로 시·군을 찾아 둠 (1초에 한 번, 이 기기에 저장)
+async function krRegions(tr) {
+  if (areaLookup || navigator.onLine === false || Date.now() - areaFail < 5 * 60 * 1000) return;
+  const seen = new Set(), todo = items(tr).filter((x) => x.loc && isFinite(x.loc.lat) && inKorea(x) && !krRegion(x.loc.name) && store.get(krKey(x.loc), null) == null && !seen.has(krKey(x.loc)) && seen.add(krKey(x.loc)));
+  if (!todo.length) return;
+  areaLookup = true;
+  let got = 0;
+  try {
+    for (const x of todo.slice(0, 40)) {
+      const p = new URLSearchParams({ lat: x.loc.lat, lon: x.loc.lng, format: 'jsonv2', zoom: '10', 'accept-language': 'ko' });
+      const r = await fetch('https://nominatim.openstreetmap.org/reverse?' + p);
+      if (!r.ok) { areaFail = Date.now(); break; }
+      const ad = (await r.json()).address || {};
+      store.put(krKey(x.loc), krRegion([ad.city, ad.county, ad.borough].filter(Boolean).join(' ')));
+      got++;
+      await sleep(1100);
+    }
+  } catch (e) { areaFail = Date.now(); console.warn(e); }
+  areaLookup = false;
+  if (got && ui.view === 'trip') render();
+}
 const googleUrl = (it) => dirUrl(it, true);
 const dirLabel = (it) => (inKorea(it) ? t('naver') : t('dir'));
 const dirIcon = (it) => (inKorea(it) ? '<span class="nv" aria-hidden="true">N</span>' : ms('near_me'));
@@ -2193,6 +2232,7 @@ function memoTab(tr) {
 }
 
 function afterRender() {
+  if (ui.view === 'trip' && trips[ui.trip]) setTimeout(() => krRegions(trips[ui.trip]), 1500);
   // Während der Reise beim Öffnen zum heutigen Tag springen / 여행 중이면 처음 열 때 오늘로 이동
   if (ui.view === 'trip' && ui.tab === 'plan' && ui.scrolled !== ui.trip) {
     ui.scrolled = ui.trip;
