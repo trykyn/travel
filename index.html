@@ -15,7 +15,7 @@
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=add,attractions,backpack,beach_access,bed,bedtime,castle,check,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,event,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_cafe,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,open_in_new,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=add,attractions,backpack,beach_access,bed,bedtime,castle,check,check_circle,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,event,event_available,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_cafe,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,open_in_new,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
 <title>여행</title>
 <style>
 /* Aussehen „Bordkarte“: hellblauer Himmel, weiße Tickets mit Abrisskante und Strichcode, Navy-Schrift, Koralle als Akzent.
@@ -207,7 +207,18 @@ h2:first-child { margin-top: 2px; }
 .people.small .av { width: 20px; height: 20px; font-size: 11px; }
 .people.small .person.add { padding: 3px 10px; font-size: 14px; border: 1px solid var(--line); box-shadow: none; color: var(--muted); }
 .link-btn { display: block; margin: 10px 0 0; padding: 2px 0; font-size: 13px; font-weight: 600; color: var(--muted); }
-.lines li.plan .x { color: var(--muted); }
+.lines li.plan .x { color: var(--ink); }
+.paysplit { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin: 10px 0 2px; }
+.paysplit .ps { padding: 10px 12px; border-radius: 14px; background: var(--sheet); }
+.paysplit .ps span { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.paysplit .ps .ms { font-size: 17px; }
+.paysplit .ps b { display: block; margin-top: 2px; font-size: 19px; font-variant-numeric: tabular-nums; }
+.paysplit .ps small { display: block; font-size: 12.5px; color: var(--muted); }
+.paysplit .paid span .ms, .pay-h.paid .ms { color: var(--ok); }
+.paysplit .due span .ms, .pay-h.due .ms { color: var(--accent2, #e8553a); }
+.pay-h { display: flex; align-items: center; justify-content: flex-start; gap: 6px; text-align: left; }
+.pay-h > span:last-child { margin-left: auto; font-size: 15px; font-variant-numeric: tabular-nums; }
+.pay-note { margin: 8px 2px 14px; }
 .lines li .to-spend { flex: none; align-self: center; padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--line); }
 .st .stm { display: block; width: 17px; height: 17px; margin: 0 auto 2px; }
 .plane svg { display: block; width: 24px; height: 24px; }
@@ -482,7 +493,7 @@ const T = {
     importBad: '여행 파일이 아니에요', replaceQ: '이미 있는 여행 {n}개가 파일 내용으로 바뀌어요. 계속할까요?', lang: '언어', signinFail: '로그인하지 못했어요. 다시 시도해 주세요', joinFail: '연결하지 못했어요. 인터넷 연결을 확인해 주세요',
     nextUp: '다음 일정', allDone: '오늘 남은 일정이 없어요', noToday: '오늘은 정해진 일정이 없어요', inHM: '{h}시간 {m}분 후', inM: '{m}분 후', nowish: '곧', tonight: '오늘 밤 숙소', checkoutToday: '오늘 체크아웃',
     tomorrow: '내일', dir: '길찾기', todayPlan: '오늘 일정', dayOfTrip: '{n}일째', spendT: '지출 기록', spendPh: '무엇에? (선택)', spendAdd: '기록', spendToday: '오늘 쓴 돈 {x}',
-    spendDelQ: '이 지출을 지울까요?', sp: { food: '식비', move: '교통', stay: '숙박', shop: '쇼핑', see: '입장료', etc: '기타' }, planned: '예약·계획', spent: '실제 지출', foundAll: '{a}개 모두 찾았어요',
+    spendDelQ: '이 지출을 지울까요?', sp: { food: '식비', move: '교통', stay: '숙박', shop: '쇼핑', see: '입장료', etc: '기타' }, planned: '현지에서 계산할 것', spent: '이미 계산한 것', foundAll: '{a}개 모두 찾았어요',
     mapAll: '전체', finding: '찾는 중… {a}/{b}', found: '{a}개 찾았어요 · 못 찾은 {b}개는 일정을 눌러 현지 이름으로 찾아 주세요', locQPh: '찾을 이름 (현지 이름이 잘 찾아져요)',
     gmFail: '구글 지도를 쓸 수 없어서 기본 지도로 보여 줘요 (오늘 사용 상한에 닿았을 수 있어요)', mapFail: '지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요', loc: '위치', locNone: '위치 없음', locSearch: '이름으로 찾기',
     locPaste: '구글 지도 링크나 좌표 붙여넣기', locBad: '링크에서 좌표를 찾지 못했어요. 짧은 공유 링크 대신 이름으로 찾아 보세요', locClear: '지우기', locNoRes: '찾지 못했어요. 이름을 조금 바꿔 보세요', locAuto: '자동으로 찾은 위치',
@@ -492,7 +503,7 @@ const T = {
     addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록',
     recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진', todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인',
     nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개', mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라',
-    visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기', bookLink: '예약 링크 (한 줄에 하나)', splitFriends: '일행과 나누기', toSpend: '지출로', plannedTag: '예약·계획', history: '내역',
+    visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기', bookLink: '예약 링크 (한 줄에 하나)', splitFriends: '일행과 나누기', toSpend: '계산했어요', noPaid: '아직 계산한 게 없어요.', noDue: '현지에서 낼 금액이 없어요.', dueHint: '일정에 넣은 금액 중 아직 안 낸 것이에요. 냈으면 ‘계산했어요’를 누르세요 (누가 냈는지도 고를 수 있어요).', plannedTag: '예약·계획', history: '내역',
     noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.', us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수',
     personNote: '‘인원수대로’ 나눌 때 쓰는 숫자예요. 어린아이는 0.5명으로 적어도 돼요. 예: 우리 가족 3.5명, 지민네 2명 → 3.5:2. 숙소·교통은 기본이 ‘가족마다 똑같이’라 인원 수와 상관없이 반반이에요.', personDelQ: '"{n}"을(를) 일행에서 뺄까요?',
     personUsed: '이 일행이 들어간 지출이 있어서 뺄 수 없어요', ledgerTotal: '총 지출', paid: '낸 돈', share: '몫', gets: '받을 돈 {x}', owes: '낼 돈 {x}', settle: '정산', settleNone: '정산할 게 없어요',
@@ -532,8 +543,8 @@ const T = {
     joinFail: 'Verbindung fehlgeschlagen. Bitte Internet prüfen', nextUp: 'Als Nächstes', allDone: 'Heute steht nichts mehr an', noToday: 'Heute ist nichts geplant',
     inHM: 'in {h} Std. {m} Min.', inM: 'in {m} Min.', nowish: 'gleich', tonight: 'Heute Nacht', checkoutToday: 'Heute Check-out', tomorrow: 'Morgen', dir: 'Route',
     todayPlan: 'Heute', dayOfTrip: 'Tag {n}', spendT: 'Ausgabe eintragen', spendPh: 'Wofür? (optional)', spendAdd: 'Eintragen', spendToday: 'Heute ausgegeben {x}',
-    spendDelQ: 'Diese Ausgabe löschen?', sp: { food: 'Essen', move: 'Verkehr', stay: 'Unterkunft', shop: 'Einkauf', see: 'Eintritt', etc: 'Sonstiges' }, planned: 'geplant',
-    spent: 'ausgegeben', foundAll: 'Alle {a} gefunden', mapAll: 'Alle', finding: 'Suche … {a}/{b}',
+    spendDelQ: 'Diese Ausgabe löschen?', sp: { food: 'Essen', move: 'Verkehr', stay: 'Unterkunft', shop: 'Einkauf', see: 'Eintritt', etc: 'Sonstiges' }, planned: 'Vor Ort zu zahlen',
+    spent: 'Schon bezahlt', foundAll: 'Alle {a} gefunden', mapAll: 'Alle', finding: 'Suche … {a}/{b}',
     found: '{a} gefunden · {b} fehlen: im Eintrag mit dem Namen in Landessprache suchen', locQPh: 'Suchbegriff (Name in Landessprache klappt am besten)',
     gmFail: 'Google Maps nicht verfügbar – zeige die einfache Karte (vielleicht ist das Tageslimit erreicht)', mapFail: 'Karte nicht ladbar. Bitte Internet prüfen',
     loc: 'Ort', locNone: 'Kein Ort', locSearch: 'Nach Namen suchen', locPaste: 'Google-Maps-Link oder Koordinaten einfügen',
@@ -548,7 +559,7 @@ const T = {
     recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos', todoN: '{n} Aufgaben offen',
     whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion',
     mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …',
-    openTrip: 'Reise öffnen', bookLink: 'Buchungslink (einer pro Zeile)', splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', plannedTag: 'geplant', history: 'Einträge',
+    openTrip: 'Reise öffnen', bookLink: 'Buchungslink (einer pro Zeile)', splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', noPaid: 'Noch nichts bezahlt.', noDue: 'Vor Ort ist nichts mehr zu zahlen.', dueHint: 'Beträge aus dem Plan, die noch offen sind. Nach dem Bezahlen auf „Bezahlt“ tippen (auch wer bezahlt hat).', plannedTag: 'geplant', history: 'Einträge',
     noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.', us: 'Wir', ppl: ' P.', addPerson: '+ Mitreisende', personT: 'Mitreisende',
     personName: 'Name', personPh: 'z. B. Familie Kim', personN: 'Personen',
     personNote: 'Zählt beim Teilen „nach Personen“. Kleine Kinder gern als 0,5. Beispiel: wir 3,5, Familie Kim 2 → 3,5:2. Unterkunft und Fahrten werden standardmäßig je Familie gleich geteilt.',
@@ -1802,8 +1813,11 @@ function moneyTab(tr) {
       <button class="person add" data-act="add-person" aria-label="${esc(t('addPerson'))}">+</button></div>`;
   }
   h += `<div class="card"><div class="stat"><span>${esc(t('total'))}</span><b>${esc(money(total, 'EUR'))}</b></div>`;
-  if (spent && planned) h += `<div class="note" style="margin:2px 0 0">${esc(t('spent'))} ${esc(money(spent, 'EUR'))} · ${esc(t('planned'))} ${esc(money(planned, 'EUR'))}</div>`;
-  if (tr.cur && tr.cur !== 'EUR' && local) h += `<div class="note" style="margin:2px 0 0">${esc(t('inLocal', { x: money(local, tr.cur) }))}</div>`;
+  // Schon bezahlt (Ausgaben) / vor Ort zu zahlen (Beträge aus dem Plan, noch nicht bezahlt) / 이미 계산함 / 현지에서 계산
+  const planLocal = plans.filter((x) => x.cost.cur === tr.cur && tr.cur !== 'EUR').reduce((a, x) => a + x.cost.amount, 0);
+  if (spent || planned) h += `<div class="paysplit"><div class="ps paid"><span>${ms('check_circle')} ${esc(t('spent'))}</span><b>${esc(money(spent, 'EUR'))}</b></div>
+    <div class="ps due"><span>${ms('schedule')} ${esc(t('planned'))}</span><b>${esc(money(planned, 'EUR'))}</b>${planLocal ? `<small>${esc(money(planLocal, tr.cur))}</small>` : ''}</div></div>`;
+  if (tr.cur && tr.cur !== 'EUR' && local && !(spent || planned)) h += `<div class="note" style="margin:2px 0 0">${esc(t('inLocal', { x: money(local, tr.cur) }))}</div>`;
   if (tr.budget) {
     const pct = Math.min(100, Math.round((total / tr.budget) * 100)), over = total > tr.budget;
     h += `<div class="progress${over ? ' over' : ''}"><span style="width:${pct}%"></span></div>
@@ -1812,6 +1826,29 @@ function moneyTab(tr) {
   if (missing) h += `<p class="note">${esc(t('noRate'))}</p>`;
   if (!multi) h += `<button class="link-btn" data-act="add-person">${ms('group')} ${esc(t('splitFriends'))}</button>`;
   h += '</div>';
+  if (!plans.length && !spends.length) h += `<p class="empty">${esc(t('noMoney'))}</p>`;
+  else {
+    // Zwei Listen: schon bezahlt (Ausgaben) und vor Ort zu zahlen (geplante Beträge, mit "계산했어요")
+    // 두 목록: 이미 계산한 것(지출)과 현지에서 계산할 것(일정의 금액, '계산했어요' 버튼)
+    const byDate = (a, b) => (a.date || '9').localeCompare(b.date || '9');
+    const spendRow = (s) => {
+      const e = eurOf(s, tr), split = (s.split || []).map((id) => pName(tr, id));
+      return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title ? tx(tr, s.title) : t('sp.' + (s.cat || 'etc')))}
+        ${multi ? `<small>${ms('credit_card')} ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ` · ${ms('group')} ` + esc(split.join(', ')) : ''}</small>` : ''}</button>
+        <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
+    };
+    const planRow = (x) => {
+      const e = eurOf(x.cost, tr);
+      return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${ms(icon(x))} ${esc(tx(tr, x.title))}${x.booked ? `<small>${ms('event_available')} ${esc(t('booked'))}</small>` : ''}</button>
+        <span class="am">${esc(money(x.cost.amount, x.cost.cur))}${x.cost.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
+        <button class="to-spend" data-act="plan-to-spend" data-id="${x.id}">${ms('check')} ${esc(t('toSpend'))}</button></li>`;
+    };
+    const head = (icn, label, sum, cls) => `<h2 class="pay-h ${cls}">${ms(icn)} ${esc(label)}<span>${esc(money(sum, 'EUR'))}</span></h2>`;
+    h += head('check_circle', t('spent'), spent, 'paid');
+    h += spends.length ? `<ul class="lines">${[...spends].sort(byDate).map(spendRow).join('')}</ul>` : `<p class="note">${esc(t('noPaid'))}</p>`;
+    h += head('schedule', t('planned'), planned, 'due');
+    h += plans.length ? `<ul class="lines">${[...plans].sort(byDate).map(planRow).join('')}</ul><p class="note pay-note">${esc(t('dueHint'))}</p>` : `<p class="note">${esc(t('noDue'))}</p>`;
+    }
   // Abrechnung / 정산
   if (multi && spends.length) {
     const { bal } = balances(tr, spends), tx = settle(bal);
@@ -1833,23 +1870,6 @@ function moneyTab(tr) {
       <button class="btn small ghost" data-act="fetch-rate">${esc(t('fetchRate'))}</button></div>
       ${tr.rate ? `<div class="conv"><input class="in" id="conv" inputmode="decimal" placeholder="${esc(money(1000, tr.cur))}" aria-label="${esc(t('conv'))}"><output id="conv-out">€</output></div>` : ''}</div>`;
   }
-  // Alles nach Datum: Ausgaben und geplante Beträge / 내역: 지출과 계획 금액을 날짜순으로
-  h += `<h2>${esc(t('history'))}</h2>`;
-  if (!plans.length && !spends.length) return h + `<p class="empty">${esc(t('noMoney'))}</p>`;
-  const rows = [...spends.map((s) => ({ d: s.date, s })), ...plans.map((x) => ({ d: x.date, x }))]
-    .sort((a, b) => (a.d || '9').localeCompare(b.d || '9') || (a.s ? 0 : 1) - (b.s ? 0 : 1));
-  h += `<ul class="lines">${rows.map(({ s, x }) => {
-    if (s) {
-      const e = eurOf(s, tr), split = (s.split || []).map((id) => pName(tr, id));
-      return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title ? tx(tr, s.title) : t('sp.' + (s.cat || 'etc')))}
-        ${multi ? `<small>${ms('credit_card')} ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ` · ${ms('group')} ` + esc(split.join(', ')) : ''}</small>` : ''}</button>
-        <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
-    }
-    const e = eurOf(x.cost, tr);
-    return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${ms(icon(x))} ${esc(tx(tr, x.title))}<small>${ms('push_pin')} ${esc(t('plannedTag'))}</small></button>
-      <span class="am">${esc(money(x.cost.amount, x.cost.cur))}${x.cost.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
-      <button class="to-spend" data-act="plan-to-spend" data-id="${x.id}">${esc(t('toSpend'))}</button></li>`;
-  }).join('')}</ul>`;
   return h;
 }
 function settleText(tr) {
