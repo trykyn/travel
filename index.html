@@ -15,7 +15,7 @@
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=add,attractions,backpack,beach_access,bed,bedtime,castle,check,check_circle,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,event,event_available,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_cafe,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,open_in_new,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,0&icon_names=add,attractions,backpack,beach_access,bed,bedtime,castle,check,check_circle,checklist,checkroom,cloud,cloud_done,cloud_off,cloud_sync,cloud_upload,confirmation_number,cookie,credit_card,directions_boat,directions_bus,directions_car,downhill_skiing,edit,edit_note,event,event_available,face,flight,foggy,gondola_lift,group,headphones,hiking,icecream,link,local_cafe,local_drink,local_taxi,location_on,luggage,map,menu_book,near_me,open_in_new,park,partly_cloudy_day,payments,pending,pets,photo_library,pool,public,push_pin,rainy,restaurant,route,sailing,savings,schedule,settings,shopping_bag,sticky_note_2,sunny,thunderstorm,toys,train,umbrella,weather_snowy&display=block">
 <title>여행</title>
 <style>
 /* Aussehen „Bordkarte“: hellblauer Himmel, weiße Tickets mit Abrisskante und Strichcode, Navy-Schrift, Koralle als Akzent.
@@ -219,6 +219,9 @@ h2:first-child { margin-top: 2px; }
 .pay-h { display: flex; align-items: center; justify-content: flex-start; gap: 6px; text-align: left; }
 .pay-h > span:last-child { margin-left: auto; font-size: 15px; font-variant-numeric: tabular-nums; }
 .pay-note { margin: 8px 2px 14px; }
+.lines li .x small.dep { color: var(--ok); font-weight: 700; white-space: normal; }
+.dep-hint { margin: -2px 2px 12px; display: flex; gap: 6px; align-items: flex-start; }
+.dep-hint .ms { font-size: 17px; color: var(--ok); }
 .lines li .to-spend { flex: none; align-self: center; padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--line); }
 .st .stm { display: block; width: 17px; height: 17px; margin: 0 auto 2px; }
 .plane svg { display: block; width: 24px; height: 24px; }
@@ -503,7 +506,7 @@ const T = {
     addPackPh: '챙길 것 (예: 여권)', dayNoLoc: '이 날 일정에 위치가 아직 없어요. 아래 ‘위치 찾기’를 눌러 보세요.', localTime: '현지', homeTime: '뮌헨', recAdd: '오늘의 기록', recT: '여행 기록', recText: '한 줄 기록',
     recPh: '오늘 어땠어요?', recKid: '제일 좋았던 것', album: '사진 앨범 링크 (구글 포토 등)', photos: '사진', todoN: '할 일 {n}', whoAll: '전체', whoFam: '공통', nSaved: '노션에 저장됨', nProblem: '노션 연결 확인',
     nSyncing: '노션과 맞추는 중', nWaiting: '노션에 보낼 것 {n}개', mapShort: '지도', route: '동선', findDay: '위치 찾기 {n}개', visitedT: '다녀온 곳', visitedN: '{a}번의 여행 · {b}개 나라',
-    visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기', bookLink: '예약 링크 (한 줄에 하나)', splitFriends: '일행과 나누기', toSpend: '계산했어요', noPaid: '아직 계산한 게 없어요.', noDue: '현지에서 낼 금액이 없어요.', dueHint: '일정에 넣은 금액 중 아직 안 낸 것이에요. 냈으면 ‘계산했어요’를 누르세요 (누가 냈는지도 고를 수 있어요).', plannedTag: '예약·계획', history: '내역',
+    visitedFinding: '여행지 위치를 찾는 중…', openTrip: '여행 열기', bookLink: '예약 링크 (한 줄에 하나)', splitFriends: '일행과 나누기', toSpend: '계산했어요', depPaid: '{a} 냄 · 전체 {b}', depOf: '선금 · {t}', restOf: '잔금 · {t}', depHint: '선금(예약금)만 냈으면 낸 금액만 적으세요. 나머지는 ‘현지에서 계산할 것’에 남아요.', noPaid: '아직 계산한 게 없어요.', noDue: '현지에서 낼 금액이 없어요.', dueHint: '일정에 넣은 금액 중 아직 안 낸 것이에요. 냈으면 ‘계산했어요’를 누르세요 (누가 냈는지도 고를 수 있어요).', plannedTag: '예약·계획', history: '내역',
     noMoney: '아직 비용이 없어요. 쓴 돈은 + 지출로, 예약 금액은 일정에 넣으면 여기 모여요.', us: '우리 가족', ppl: '명', addPerson: '+ 일행', personT: '일행', personName: '이름', personPh: '예: 지민네', personN: '인원 수',
     personNote: '‘인원수대로’ 나눌 때 쓰는 숫자예요. 어린아이는 0.5명으로 적어도 돼요. 예: 우리 가족 3.5명, 지민네 2명 → 3.5:2. 숙소·교통은 기본이 ‘가족마다 똑같이’라 인원 수와 상관없이 반반이에요.', personDelQ: '"{n}"을(를) 일행에서 뺄까요?',
     personUsed: '이 일행이 들어간 지출이 있어서 뺄 수 없어요', ledgerTotal: '총 지출', paid: '낸 돈', share: '몫', gets: '받을 돈 {x}', owes: '낼 돈 {x}', settle: '정산', settleNone: '정산할 게 없어요',
@@ -559,7 +562,7 @@ const T = {
     recText: 'Eine Zeile', recPh: 'Wie war der Tag?', recKid: 'Am schönsten', album: 'Link zum Fotoalbum (z. B. Google Fotos)', photos: 'Fotos', todoN: '{n} Aufgaben offen',
     whoAll: 'Alle', whoFam: 'Gemeinsam', nSaved: 'In Notion gespeichert', nProblem: 'Notion prüfen', nSyncing: 'Gleiche mit Notion ab', nWaiting: '{n} warten auf Notion',
     mapShort: 'Karte', route: 'Route', findDay: '{n} Orte suchen', visitedT: 'Wo wir waren', visitedN: '{a} Reisen · {b} Länder', visitedFinding: 'Suche die Orte …',
-    openTrip: 'Reise öffnen', bookLink: 'Buchungslink (einer pro Zeile)', splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', noPaid: 'Noch nichts bezahlt.', noDue: 'Vor Ort ist nichts mehr zu zahlen.', dueHint: 'Beträge aus dem Plan, die noch offen sind. Nach dem Bezahlen auf „Bezahlt“ tippen (auch wer bezahlt hat).', plannedTag: 'geplant', history: 'Einträge',
+    openTrip: 'Reise öffnen', bookLink: 'Buchungslink (einer pro Zeile)', splitFriends: 'Mit anderen teilen', toSpend: 'Bezahlt', depPaid: '{a} bezahlt · gesamt {b}', depOf: 'Anzahlung · {t}', restOf: 'Restzahlung · {t}', depHint: 'Nur angezahlt? Dann nur den bezahlten Betrag eintragen – der Rest bleibt bei „Vor Ort zu zahlen“.', noPaid: 'Noch nichts bezahlt.', noDue: 'Vor Ort ist nichts mehr zu zahlen.', dueHint: 'Beträge aus dem Plan, die noch offen sind. Nach dem Bezahlen auf „Bezahlt“ tippen (auch wer bezahlt hat).', plannedTag: 'geplant', history: 'Einträge',
     noMoney: 'Noch keine Kosten. Ausgaben mit + Ausgabe, gebuchte Preise im Plan eintragen.', us: 'Wir', ppl: ' P.', addPerson: '+ Mitreisende', personT: 'Mitreisende',
     personName: 'Name', personPh: 'z. B. Familie Kim', personN: 'Personen',
     personNote: 'Zählt beim Teilen „nach Personen“. Kleine Kinder gern als 0,5. Beispiel: wir 3,5, Familie Kim 2 → 3,5:2. Unterkunft und Fahrten werden standardmäßig je Familie gleich geteilt.',
@@ -773,6 +776,17 @@ const eurOf = (cost, tr) => {
   if (cost.cur === tr.cur && tr.rate) return cost.amount * tr.rate;
   return null;
 };
+// Schon bezahlter Teil eines geplanten Betrags (Ausgaben mit item = dieser Eintrag), in dessen Währung; Rest = offen
+// 일정 금액 중 이미 낸 부분(그 일정에 연결된 지출 합, 일정 통화로), 나머지 = 현지에서 낼 것
+function paidPart(tr, x) {
+  const c = x.cost, unit = eurOf({ amount: 1, cur: c.cur }, tr);
+  return spendsOf(tr).filter((s) => s.item === x.id).reduce((a, s) => {
+    if (s.cur === c.cur) return a + s.amount;
+    const e = eurOf(s, tr);
+    return a + (e != null && unit ? e / unit : c.amount); // nicht umrechenbar: als ganz bezahlt / 바꿀 수 없으면 다 낸 것으로
+  }, 0);
+}
+const dueOf = (tr, x) => { const paid = paidPart(tr, x), left = Math.round((x.cost.amount - paid) * 100) / 100; return { paid, left: left > Math.max(0.5, x.cost.amount * 0.005) ? left : 0 }; };
 const CAT_ORDER = ['move', 'stay', 'food', 'cafe', 'see', 'shop', 'etc'];
 const CAT_ICON = { move: 'flight', stay: 'bed', food: 'restaurant', cafe: 'local_cafe', see: 'location_on', shop: 'shopping_bag', etc: 'sticky_note_2' };
 function icon(it) {
@@ -1791,14 +1805,14 @@ function settle(bal) {
 function moneyTab(tr) {
   const ppl = peopleOf(tr), multi = ppl.length > 1;
   const spends = ledgerSpends(tr);
-  const recorded = new Set(spendsOf(tr).map((s) => s.item).filter(Boolean));
-  const plans = itemsG(tr).filter((x) => x.cost && x.cost.amount && !recorded.has(x.id));
+  // Offener Rest je Eintrag (nach Anzahlung) / 일정마다 남은 금액 (선금 뺀 것)
+  const plans = itemsG(tr).filter((x) => x.cost && x.cost.amount).map((x) => { const d = dueOf(tr, x); return { ...x, due: { amount: d.left, cur: x.cost.cur }, paidPart: d.paid }; }).filter((x) => x.due.amount > 0);
   let planned = 0, spent = 0, local = 0, missing = 0;
   const by = {};
   for (const x of plans) {
-    const e = eurOf(x.cost, tr);
+    const e = eurOf(x.due, tr);
     if (e == null) missing++; else { planned += e; by[x.cat] = (by[x.cat] || 0) + e; }
-    if (x.cost.cur === tr.cur) local += x.cost.amount;
+    if (x.due.cur === tr.cur) local += x.due.amount;
   }
   for (const s of spends) {
     const e = eurOf(s, tr);
@@ -1814,7 +1828,7 @@ function moneyTab(tr) {
   }
   h += `<div class="card"><div class="stat"><span>${esc(t('total'))}</span><b>${esc(money(total, 'EUR'))}</b></div>`;
   // Schon bezahlt (Ausgaben) / vor Ort zu zahlen (Beträge aus dem Plan, noch nicht bezahlt) / 이미 계산함 / 현지에서 계산
-  const planLocal = plans.filter((x) => x.cost.cur === tr.cur && tr.cur !== 'EUR').reduce((a, x) => a + x.cost.amount, 0);
+  const planLocal = plans.filter((x) => x.due.cur === tr.cur && tr.cur !== 'EUR').reduce((a, x) => a + x.due.amount, 0);
   if (spent || planned) h += `<div class="paysplit"><div class="ps paid"><span>${ms('check_circle')} ${esc(t('spent'))}</span><b>${esc(money(spent, 'EUR'))}</b></div>
     <div class="ps due"><span>${ms('schedule')} ${esc(t('planned'))}</span><b>${esc(money(planned, 'EUR'))}</b>${planLocal ? `<small>${esc(money(planLocal, tr.cur))}</small>` : ''}</div></div>`;
   if (tr.cur && tr.cur !== 'EUR' && local && !(spent || planned)) h += `<div class="note" style="margin:2px 0 0">${esc(t('inLocal', { x: money(local, tr.cur) }))}</div>`;
@@ -1831,16 +1845,26 @@ function moneyTab(tr) {
     // Zwei Listen: schon bezahlt (Ausgaben) und vor Ort zu zahlen (geplante Beträge, mit "계산했어요")
     // 두 목록: 이미 계산한 것(지출)과 현지에서 계산할 것(일정의 금액, '계산했어요' 버튼)
     const byDate = (a, b) => (a.date || '9').localeCompare(b.date || '9');
+    // Teilzahlung zu einem geplanten Eintrag (선금) / 일정 금액의 일부만 낸 지출 (선금)
+    const depTag = (s) => {
+      const it = s.item && tr.items && tr.items[s.item];
+      if (!it || !it.cost) return '';
+      // Erste Teilzahlung = 선금, spätere = 잔금; eine einzige volle Zahlung bekommt kein Etikett / 첫 번째 = 선금, 그다음 = 잔금, 한 번에 다 냈으면 표시 없음
+      const all = spendsOf(tr).filter((x) => x.item === it.id).sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.t || 0) - (b.t || 0));
+      if (all.length === 1 && !(s.cur === it.cost.cur && s.amount < it.cost.amount - 0.5)) return '';
+      return `<small class="dep">${ms('savings')} ${esc(t(all[0] === s ? 'depOf' : 'restOf', { t: tx(tr, it.title) }))}</small>`;
+    };
     const spendRow = (s) => {
       const e = eurOf(s, tr), split = (s.split || []).map((id) => pName(tr, id));
       return `<li><span class="dt">${s.date ? esc(md(s.date)) : '–'}</span><button class="x" data-act="edit-spend" data-id="${s.id}">${ms(SP_ICON[s.cat] || 'payments')} ${esc(s.title ? tx(tr, s.title) : t('sp.' + (s.cat || 'etc')))}
-        ${multi ? `<small>${ms('credit_card')} ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ` · ${ms('group')} ` + esc(split.join(', ')) : ''}</small>` : ''}</button>
+        ${depTag(s)}${multi ? `<small>${ms('credit_card')} ${esc(pName(tr, s.payer || 'me'))}${split.length > 1 ? ` · ${ms('group')} ` + esc(split.join(', ')) : ''}</small>` : ''}</button>
         <span class="am">${esc(money(s.amount, s.cur))}${s.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span></li>`;
     };
     const planRow = (x) => {
-      const e = eurOf(x.cost, tr);
-      return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${ms(icon(x))} ${esc(tx(tr, x.title))}${x.booked ? `<small>${ms('event_available')} ${esc(t('booked'))}</small>` : ''}</button>
-        <span class="am">${esc(money(x.cost.amount, x.cost.cur))}${x.cost.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
+      const e = eurOf(x.due, tr);
+      const sub = x.paidPart ? `<small class="dep">${ms('savings')} ${esc(t('depPaid', { a: money(x.paidPart, x.cost.cur), b: money(x.cost.amount, x.cost.cur) }))}</small>` : x.booked ? `<small>${ms('event_available')} ${esc(t('booked'))}</small>` : '';
+      return `<li class="plan"><span class="dt">${x.date ? esc(md(x.date)) : '–'}</span><button class="x" data-act="edit-item" data-id="${x.id}">${ms(icon(x))} ${esc(tx(tr, x.title))}${sub}</button>
+        <span class="am">${esc(money(x.due.amount, x.due.cur))}${x.due.cur !== 'EUR' && e != null ? `<small>${esc(money(e, 'EUR'))}</small>` : ''}</span>
         <button class="to-spend" data-act="plan-to-spend" data-id="${x.id}">${ms('check')} ${esc(t('toSpend'))}</button></li>`;
     };
     const head = (icn, label, sum, cls) => `<h2 class="pay-h ${cls}">${ms(icn)} ${esc(label)}<span>${esc(money(sum, 'EUR'))}</span></h2>`;
@@ -1889,6 +1913,7 @@ function spendSheet(tr, s, pre) {
     <div class="fld"><span>${esc(t('cost'))}</span><div class="two" style="grid-template-columns:1fr 110px"><input class="in" name="amount" inputmode="decimal" value="${s.amount ?? ''}" style="font-size:22px;font-weight:800" aria-label="${esc(t('cost'))}">
       <select class="in" name="cur" aria-label="${esc(t('cur'))}">${curs.map((c) => `<option ${c === (s.cur || 'EUR') ? 'selected' : ''}>${c}</option>`).join('')}</select></div></div>
     <div class="cats">${['food', 'move', 'stay', 'shop', 'see', 'etc'].map((c) => `<label class="c-${c}"><input type="radio" name="cat" value="${c}" ${(s.cat || 'etc') === c ? 'checked' : ''}><span>${ms(SP_ICON[c])} ${esc(t('sp.' + c))}</span></label>`).join('')}</div>
+    ${s.item && isNew ? `<p class="note dep-hint">${ms('savings')} ${esc(t('depHint'))}</p>` : ''}
     <label class="fld"><span>${esc(t('spendTitle'))}</span><input class="in" name="title" value="${esc(s.title || '')}" placeholder="${esc(t('spendPh'))}" autocomplete="off"></label>
     <label class="fld"><span>${esc(t('spendDate'))}</span><input class="in" type="date" name="date" value="${esc(s.date || '')}"></label>
     ${ppl.length > 1 ? `<div class="fld"><span>${esc(t('payer'))}</span><div class="cats">${ppl.map((p) => `<label class="c-pp"><input type="radio" name="payer" value="${esc(p.id)}" ${(s.payer || 'me') === p.id ? 'checked' : ''}><span>${esc(p.name)}</span></label>`).join('')}</div></div>
@@ -2601,7 +2626,7 @@ const ACT = {
   'plan-to-spend': (b) => {
     const tr = cur(), x = tr.items[b.dataset.id];
     if (!x || !x.cost) return;
-    spendSheet(tr, null, { date: isDate(x.date) ? x.date : today(), amount: x.cost.amount, cur: x.cost.cur, cat: x.cat === 'cafe' ? 'food' : ['move', 'stay', 'food', 'see', 'shop'].includes(x.cat) ? x.cat : 'etc', title: x.title, item: x.id, ...(groupsOf(tr).length > 1 && { grp: x.grp || '' }) });
+    spendSheet(tr, null, { date: isDate(x.date) && x.date <= today() ? x.date : today(), amount: dueOf(tr, x).left || x.cost.amount, cur: x.cost.cur, cat: x.cat === 'cafe' ? 'food' : ['move', 'stay', 'food', 'see', 'shop'].includes(x.cat) ? x.cat : 'etc', title: x.title, item: x.id, ...(groupsOf(tr).length > 1 && { grp: x.grp || '' }) });
   },
   'edit-spend': (b) => spendSheet(cur(), cur().spend[b.dataset.id]),
   'del-spendx': (b) => { const s = cur().spend[b.dataset.id]; closeSheet(); if (s) delUndo(['trips', ui.trip, 'spend', s.id], s.title); },
